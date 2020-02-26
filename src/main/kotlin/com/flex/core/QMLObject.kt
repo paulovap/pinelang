@@ -16,9 +16,9 @@ interface QMLObject {
 
     fun addDynamicProperty(property: QMLProperty)
 
-    fun connect(propertyName: String, slot: () -> Unit = {}): Boolean
+    fun connect(propertyName: String, slot: () -> Unit = {})
 
-    fun disconnect(propertyName: String, slot: () -> Unit = {}): Boolean
+    fun disconnect(propertyName: String, slot: () -> Unit = {})
 
     fun getProperty(name: String): QMLProperty?
 

@@ -79,24 +79,14 @@ open class QtObject : QMLObject {
 
     }
 
-    override fun connect(propertyName: String, slot: () -> Unit): Boolean {
-        val prop = getProperty(propertyName)
-
-        if (prop != null) {
-            prop.signal.connect(slot)
-            return true
-        }
-        return false
+    override fun connect(propertyName: String, slot: () -> Unit) {
+        val prop = getProperty(propertyName) ?: throw QMLRuntimeException("Property $propertyName not found")
+        prop.signal.connect(slot)
     }
 
-    override fun disconnect(propertyName: String, slot: () -> Unit): Boolean {
-        val prop = getProperty(propertyName)
-
-        if (prop != null) {
-            prop.signal.disconnect(slot)
-            return true
-        }
-        return false
+    override fun disconnect(propertyName: String, slot: () -> Unit) {
+        val prop = getProperty(propertyName) ?: throw QMLRuntimeException("Property $propertyName not found")
+        prop.signal.disconnect(slot)
     }
 
     override fun getProperty(name: String): QMLProperty? {

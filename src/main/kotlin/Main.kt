@@ -3,7 +3,6 @@ import com.flex.core.QtObject
 import com.flex.ui.Window
 import javax.swing.JFrame
 import javax.swing.JLabel
-
 /*
 BSD License
 
@@ -39,23 +38,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 fun main(argv: Array<String>) {
     val engine = QMLEngine.Builder()
         .registerQMLType("QtQuick", "QtObject", QtObject::class)
-        .registerQMLType("QtQuick", "Window", Window::class)
+        .registerQMLType("QtQuick", "Page", Window::class)
         .build()
 
-    val root = engine.load(
-        "import QtQuick 1.0; " +
-                "Window { " +
-                "visible: true" +
-                "} ") as Window
+    val root = engine.load("""
+       import QtQuick 1.0;
+       Page { 
+            visible: false
+       }  
+        """.trimIndent()) as Window
 
     print(root.getProperty("visible")!!.get())
 //    // lambda to print property name
-//    val slot = { println(root.getProperty("myProp").toString()) }
+    val slot = { println("base connected"); root.show(root.getProperty("visible")!!.get() as Boolean) }
 //    // connecting lambda to "myProp" it will be triggered
 //    // when "myProp" changes..
-//    root.connect("myProp", slot)
+    root.connect("visible", slot)
 //    // set new object to my prop
-//    root.getProperty("myProp")!!.set(QtObject())
+    root.getProperty("visible")!!.set(true)
 
-    root.show(root.getProperty("visible")!!.get() as Boolean)
+    //root.show(root.getProperty("visible")!!.get() as Boolean)
 }

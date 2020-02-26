@@ -41,8 +41,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class Window : QtObject() {
     val frame = JFrame("Hello World")
+
     init {
-        declaredProperties.add(QMLProperty("visible", Boolean::class, false, false))
+        val visibleProp = QMLProperty("visible", Boolean::class, false, false)
+        declaredProperties.add(visibleProp)
+
 
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
@@ -55,6 +58,7 @@ class Window : QtObject() {
     }
 
     fun show(flip: Boolean) {
+        println("showing $flip")
         frame.isVisible = flip
     }
 }

@@ -31,8 +31,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-import com.flex.util.WeakValueHashMap
+import java.util.*
 
 class QMLContext(var parent: QMLContext? = null) {
     /**
@@ -40,7 +39,7 @@ class QMLContext(var parent: QMLContext? = null) {
      * This will be accessable on the QML scripts using the 'id' special property.
      * References that are not present on unitLocals and globals will throw an exception
      */
-    private var unitLocals = WeakValueHashMap<String, Any>()
+    private var unitLocals = WeakHashMap<String, Any>()
 
     fun fetch(reference: String): Any? {
         return when {
