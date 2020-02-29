@@ -1,12 +1,17 @@
-package com.flex.core
+package com.flex.ui
 
-import kotlin.reflect.KClass
-import kotlin.reflect.full.cast
+import com.flex.core.PineObject
+import java.awt.Color
+import java.awt.Dimension
+import javax.swing.JFrame
+import javax.swing.JPanel
+import javax.swing.SwingUtilities
+
 
 /*
 BSD License
 
-Copyright (c) 2018, ${user}
+Copyright (c) 2018, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,42 +40,32 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-open class QMLProperty(
-    val name: String,
-    val kClass: KClass<*>,
-    initialValue: Any?,
-    val isDynamic: Boolean
-) {
-    val signal: QMLSignal = QMLSignal()
+class Rectangle : PineObject() {
+    val panel = JPanel(null)
 
-    private var value: Any? = null
+    var x: Int by intProp(::x, initialValue = 1) { resizeSlot() }
+    var y: Int by intProp(::y, initialValue = 1) { resizeSlot() }
+    var width: Int by intProp(::width, initialValue = 50) { resizeSlot() }
+    var height: Int by intProp(::height, initialValue = 50) { resizeSlot() }
+    var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
+    val color: String by stringProp(::color, initialValue = "#000000") { panel.background = Color.decode(color) }
 
     init {
-        this.value = initialValue?.let { cast(initialValue) }
-    }
+        panel.background = Color.decode(color)
+        resizeSlot()
 
-    fun set(value: Any?) {
-        if (this.value != value) {
-            this.value = cast(value)
-            signal.emit()
+        childrenChanged.connect {
+            panel.removeAll()
+            for (child in children) {
+                if (child is Rectangle) {
+                    panel.add(child.panel)
+                }
+            }
         }
     }
 
-    fun get(): Any? {
-        return value
-    }
-
-    private fun cast(value: Any?): Any {
-        try {
-            return kClass.cast(value)
-        } catch (e: ClassCastException) {
-            throw QMLRuntimeException(
-                e,
-                "%s cannot be casted to %s",
-                value!!.javaClass.simpleName,
-                kClass.simpleName
-            )
-        }
-
+    private fun resizeSlot() {
+        panel.bounds = java.awt.Rectangle(x, y, width, height)
+        panel.isVisible = visible
     }
 }

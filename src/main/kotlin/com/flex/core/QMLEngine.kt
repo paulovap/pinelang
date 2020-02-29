@@ -32,53 +32,47 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.flex.core
 
 import java.util.HashMap
-import kotlin.reflect.KClass
 
-class QMLEngine private constructor(private var namespaces: LinkedHashMap<String, HashMap<String, KClass<*>>>) {
+// id, parent, children, properties
+typealias ObjectAllocator = (Long) -> PineObject
+
+
+class QMLEngine private constructor(private var types: HashMap<String, ObjectAllocator>) {
 
     private var compiler: QMLCompiler = QMLCompiler(this)
     val rootContext = QMLContext(null)
 
-    fun load(script: String): QMLObject {
+    fun load(script: String): PineObject {
         return compiler.compile(script)
     }
 
-    fun getKClass(qmlType: String): KClass<*>? {
-        for (name in namespaces.keys) {
-            if (namespaces[name]!!.containsKey(qmlType)) {
-                return namespaces[name]!![qmlType]
-            }
-        }
-        return null
+    fun getAllocator(qmlType: String): ObjectAllocator {
+        return types[qmlType]?: throw QMLRuntimeException("Allocator of type $qmlType not found")
     }
 
 
+    class QtObject(id: Long) : PineObject(id) {
+        val a: Float by makePineProp(PineType.DOUBLE, ::a, "a", 0.2f)
+    }
+
     class Builder {
-        private val namespaces = LinkedHashMap<String, HashMap<String, KClass<*>>>()
+        private val types = HashMap<String, ObjectAllocator>()
 
         init {
             // @TODO: For conversion reasons, ints always have to be Longs in QML.
             // The reason for this is Number.parse() returns Long for integers
             // Don't know best approach yet
-            namespaces[""] = HashMap()
-            namespaces[""]!!["int"] = Long::class
-            namespaces[""]!!["long"] = Long::class
-            namespaces[""]!!["double"] = Double::class
-            namespaces[""]!!["real"] = Double::class
-            namespaces[""]!!["string"] = String::class
-            namespaces[""]!!["bool"] = Boolean::class
-            namespaces[""]!!["var"] = QtObject::class
-            namespaces[""]!!["QtObject"] = QtObject::class
+            types["var"] = { id -> PineObject(id)}
+            types["QtObject"] = { id -> QtObject(id)}
         }
 
-        fun registerQMLType(namespace: String, typeName: String, clazz: KClass<out QMLObject>): Builder {
-            namespaces[namespace] = namespaces[namespace] ?: HashMap()
-            namespaces[namespace]!![typeName] = clazz
+        fun registerQMLType(typeName: String, allocator: ObjectAllocator): Builder {
+            types[typeName] = allocator
             return this
         }
 
         fun build(): QMLEngine {
-            return QMLEngine(namespaces)
+            return QMLEngine(types)
         }
     }
 }

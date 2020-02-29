@@ -34,22 +34,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import com.flex.core.QMLContext
 import com.flex.core.QMLEngine
-import com.flex.core.QMLObject
-import com.flex.parser.QMLParser
+import com.flex.core.PineObject
+import com.flex.parser.PineScriptParser
 
 import java.util.ArrayList
 
-class ProgramVisitor(engine: QMLEngine, parentContext: QMLContext?) : QMLVisitor<QMLObject>(engine, parentContext) {
+class ProgramVisitor(engine: QMLEngine, parentContext: QMLContext?) : PineScriptVisitor<PineObject>(engine, parentContext) {
 
-    override fun visitProgram(ctx: QMLParser.ProgramContext): QMLObject {
+    override fun visitProgram(ctx: PineScriptParser.ProgramContext): PineObject {
 
-        val objectVisitor = ObjectDefinitionVisitor(engine, context, null)
+        val objectVisitor = ObjectDefinitionVisitor(engine, context)
 
         return objectVisitor.visit(ctx.rootMember().objectDefinition())
     }
 
     /* @TODO: implement imports */
-    internal fun loadImports(ctx: QMLParser.ProgramContext): List<ImportNode> {
+    internal fun loadImports(ctx: PineScriptParser.ProgramContext): List<ImportNode> {
 
         val importVisitor = ImportVisitor()
         val imports = ArrayList<ImportNode>()

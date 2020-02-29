@@ -34,12 +34,28 @@ package com.flex.core
 
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.properties.ObservableProperty
+import kotlin.reflect.KProperty
 
-class QMLSignal {
+class PineProp<T>(val type: PineType, val kProp: KProperty<T>, initialValue: T) : ObservableProperty<T>(initialValue) {
 
     private val slots = CopyOnWriteArrayList<() -> Unit>()
 
     private val enabled = AtomicBoolean(true)
+
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+        for(slot in slots) {
+            slot()
+        }
+    }
+
+    fun getValue(): T {
+        return getValue(this, kProp)
+    }
+
+    fun setValue(value: T) {
+        setValue(this, kProp, value)
+    }
 
     /**
      * Execute all Slots.
@@ -74,4 +90,18 @@ class QMLSignal {
     fun disconnectAll() {
         slots.clear()
     }
+
+    fun asBool(): PineProp<Boolean> = asType(PineType.BOOL)
+    fun asDouble(): PineProp<Double> = asType(PineType.DOUBLE)
+    fun asInt(): PineProp<Int> = asType(PineType.INT)
+    fun asString(): PineProp<String> = asType(PineType.STRING)
+    fun asObject(): PineProp<Any> = asType(PineType.OBJECT)
+
+    private fun <X>asType(newType: PineType): PineProp<X> {
+        if (newType != this.type) {
+            throw QMLRuntimeException("${newType.typeName} cannot be cast to ${this.type.typeName}")
+        }
+        return this as PineProp<X>
+    }
+
 }

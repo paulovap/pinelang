@@ -32,36 +32,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.flex.ast.expression
 
-import com.flex.core.QMLContext
-import com.flex.core.QMLEngine
-import com.flex.core.QMLObject
-import com.flex.core.QMLRuntimeException
-import com.flex.core.expression.QMLExpression
-import com.flex.core.expression.QMLPrimaryExpression
-import com.flex.parser.QMLParser
+import com.flex.core.PineProp
+import com.flex.parser.PineScriptBaseVisitor
+import com.flex.parser.PineScriptParser
 
-import java.text.NumberFormat
-import java.text.ParseException
+class PrimaryExpressionVisitor(private val prop: PineProp<*>): PineScriptBaseVisitor<Unit>() {
 
-class PrimaryExpressionVisitor(engine: QMLEngine, parentContext: QMLContext?, owner: QMLObject) :
-    ExpressionVisitor(engine, parentContext, owner) {
-
-    override fun visitPrimaryExpression(ctx: QMLParser.PrimaryExpressionContext): QMLExpression {
-
-        var value: Any? = null
-
+    override fun visitPrimaryExpression(ctx: PineScriptParser.PrimaryExpressionContext) {
         when {
-            ctx.THIS() != null -> value = owner
-            ctx.TRUE() != null -> value = java.lang.Boolean.TRUE
-            ctx.FALSE() != null -> value = java.lang.Boolean.FALSE
-            ctx.StringLiteral() != null -> value = ctx.StringLiteral().text.substring(1, ctx.StringLiteral().text.length - 1)
-            ctx.NumericLiteral() != null -> try {
-                value = NumberFormat.getInstance().parse(ctx.NumericLiteral().text)
-            } catch (e: ParseException) {
-                throw QMLRuntimeException("Number %s cannot be parsed", ctx.NumericLiteral().text)
-            }
-            ctx.JsIdentifier() != null -> value = context.fetch(ctx.JsIdentifier().text)
+            ctx.TRUE() != null -> prop.setBoolean(true)
+            ctx.FALSE() != null -> prop.setBoolean(false)
+            ctx.StringLiteral() != null -> prop.setString(ctx.StringLiteral().text.substring(1, ctx.StringLiteral().text.length - 1))
+            ctx.IntegerLiteral() != null -> prop.setInt(Integer.parseInt(ctx.IntegerLiteral().text))
+            ctx.FloatLiteral() != null -> prop.setFloat(ctx.FloatLiteral().text.toDouble())
         }
-        return QMLPrimaryExpression(context, owner, value)
     }
+
+    private fun PineProp<*>.setBoolean(value: Boolean) = asBool().setValue(value)
+    private fun PineProp<*>.setString(value: String) = asString().setValue(value)
+    private fun PineProp<*>.setFloat(value: Double) = asDouble().setValue(value)
+    private fun PineProp<*>.setInt(value: Int) = asInt().setValue(value)
+
 }

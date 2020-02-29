@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //based on
 // https://www.kdab.com/wp-content/uploads/stories/ast-big.png
-grammar QML;
+grammar PineScript;
 @header {
     package com.flex.parser;
 }
@@ -46,18 +46,12 @@ program
 //    : PRAGMA Identifier;
 
 import_
-    : IMPORT importIdentifier NumericLiteral SEMICOLON?
-    | IMPORT importIdentifier NumericLiteral AS importAlias SEMICOLON?
-    | IMPORT importIdentifier AS JsIdentifier SEMICOLON?
+    : IMPORT importIdentifier NumericLiteral SEMICOLON
     ;
 
 importIdentifier
     : JsIdentifier
     | StringLiteral
-    ;
-
-importAlias
-    : JsIdentifier
     ;
 
 rootMember
@@ -74,66 +68,14 @@ objectInitializer
 
 objectMember
     : objectDefinition
-//    | qualifiedId COLON LBRACKET arrayMemberList RBRACKET
-//    | qualifiedId COLON qualifiedId objectInitializer
-    | declaredPropertyScriptStatement
-//    | qualifiedId ON qualifiedId objectInitializer
-//    | SIGNAL Identifier LPAREN parameterList* RPAREN SEMICOLON?
-//    | SIGNAL Identifier SEMICOLON?
-//    | DEFAULT PROPERTY Identifier LT propertyType GT JsIdentifier SEMICOLON?
-//    | PROPERTY Identifier LT propertyType GT JsIdentifier SEMICOLON?
-//    | PROPERTY Identifier LT propertyType GT JsIdentifier COLON LBRACKET arrayMemberList RBRACKET
-//    | ENUM IDENTIFIER LBRACE EnumMemberList RBRACE
-
-    | propertyDeclarationAndAssignScriptStatement
-    | propertyDeclarationAndAssignObjectDefinition
-    | propertyDeclaration
-//    | functionDeclaration
-//    | variableStatement
+    | propertyAssignement
     ;
 
-declaredPropertyScriptStatement
-    : JsIdentifier COLON scriptStatement
+propertyAssignement
+    : JsIdentifier COLON primaryExpression SEMICOLON?
     ;
 
-propertyDeclaration
-    : DEFAULT? PROPERTY propertyType JsIdentifier SEMICOLON?
-    ;
 
-propertyDeclarationAndAssignObjectDefinition
-    : READONLY? PROPERTY propertyType JsIdentifier COLON objectDefinition
-    ;
-
-propertyDeclarationAndAssignScriptStatement
-    : propertyModifier? PROPERTY propertyType JsIdentifier COLON scriptStatement
-    ;
-
-propertyModifier
-    : DEFAULT
-    | READONLY
-    ;
-
-parameterList
-    : propertyType JsIdentifier
-    | parameterList COMMA propertyType JsIdentifier
-    ;
-
-propertyType
-    : JsIdentifier //TODO: also thise
-//    | propertyType DOT Identifier
-    ;
-arrayMemberList
-    : objectDefinition
-    | arrayMemberList COMMA objectDefinition
-    ;
-scriptStatement
-    : expression SEMICOLON?
-//    | block
-//    | ifStatement
-//    | withStatement
-//    | switchStatement
-//    | tryStatement
-    ;
 
 statement
     : block
@@ -331,12 +273,13 @@ sourceElement
 functionDeclaration : FUNCTION JsIdentifier LPAREN formalParameterList* RPAREN LBRACE functionBody* RBRACE ;
 
 primaryExpression
-    : THIS
-    | JsIdentifier
-    | NULL
-    | TRUE
+//    : THIS
+//    | JsIdentifier
+//    | NULL
+    : TRUE
     | FALSE
-    | NumericLiteral
+    | IntegerLiteral
+    | FloatLiteral
     | StringLiteral
 //    | DIVIDE_
 //    | DIVIDE_EQ
@@ -974,19 +917,17 @@ fragment UnicodeLetter
     | [\uFFDA-\uFFDC]
     ;
 
-NumericLiteral
-    : DecimalLiteral
+IntegerLiteral
+    : DecimalIntegerLiteral
     ;
 
-DecimalLiteral
+FloatLiteral
     : DecimalIntegerLiteral '.' [0-9]* ExponentPart?
     | '.' [0-9]+ ExponentPart?
-    | DecimalIntegerLiteral ExponentPart?
     ;
 
 fragment DecimalIntegerLiteral
-    : '0'
-    | [1-9] [0-9]*
+    : [1-9] [0-9]*
     ;
 fragment ExponentPart
     : [eE] [+-]? [0-9]+

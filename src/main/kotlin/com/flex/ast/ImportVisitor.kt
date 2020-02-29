@@ -1,5 +1,8 @@
 package com.flex.ast
 
+import com.flex.parser.PineScriptBaseVisitor
+import com.flex.parser.PineScriptParser
+
 /*
 BSD License
 
@@ -32,12 +35,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.parser.QMLBaseVisitor
-import com.flex.parser.QMLParser
+class ImportVisitor : PineScriptBaseVisitor<ImportNode>() {
 
-class ImportVisitor : QMLBaseVisitor<ImportNode>() {
-
-    override fun visitImport_(ctx: QMLParser.Import_Context): ImportNode {
+    override fun visitImport_(ctx: PineScriptParser.Import_Context): ImportNode {
 
         if (ctx.exception != null) {
             throw ctx.exception
@@ -48,9 +48,8 @@ class ImportVisitor : QMLBaseVisitor<ImportNode>() {
         val stringLiteral = importIdentifierContext.text
 
         val importName = if (identifier != null) identifier.text else stringLiteral
-        val alias = if (ctx.importAlias() != null) ctx.importAlias().text else null
         val version = java.lang.Double.parseDouble(ctx.NumericLiteral().toString())
 
-        return ImportNode(importName, version, alias)
+        return ImportNode(importName, version)
     }
 }

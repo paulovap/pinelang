@@ -33,26 +33,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-import java.util.Objects
-
-class ImportNode(val identifier: String, val version: Double, val alias: String?) {
-
-    override fun toString(): String {
-        return "(" +
-                " identifier: " + identifier +
-                ", version: " + version +
-                ", alias: " + alias +
-                ")"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return other === this || other is ImportNode &&
-                this.identifier == other.identifier &&
-                this.version == other.version &&
-                this.alias == other.alias
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(identifier, version, alias)
-    }
-}
+data class ImportNode(val identifier: String, val version: Double)

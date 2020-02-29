@@ -1,4 +1,4 @@
-package com.flex.ast.expression
+package com.flex.ast
 
 /*
 BSD License
@@ -32,20 +32,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.ast.QMLVisitor
 import com.flex.core.QMLContext
 import com.flex.core.QMLEngine
-import com.flex.core.QMLObject
-import com.flex.core.expression.QMLExpression
-import com.flex.parser.QMLParser
+import com.flex.parser.PineScriptBaseVisitor
 
-open class ExpressionVisitor(engine: QMLEngine, parentContext: QMLContext?, protected var owner: QMLObject) :
-    QMLVisitor<QMLExpression>(engine, parentContext) {
+open class PineScriptVisitor<T>(protected val engine: QMLEngine, parentContext: QMLContext?) : PineScriptBaseVisitor<T>() {
+    protected val context: QMLContext = QMLContext(parentContext)
 
-    override fun visitExpression(ctx: QMLParser.ExpressionContext): QMLExpression {
-
-        return if (ctx.binaryExpression() != null) {
-            BinaryExpressionVisitor(engine, context, owner).visit(ctx.binaryExpression())
-        } else super.visitExpression(ctx)
-    }
 }

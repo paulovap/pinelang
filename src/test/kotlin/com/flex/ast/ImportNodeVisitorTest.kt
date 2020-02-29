@@ -1,8 +1,8 @@
 package com.flex.ast
 
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNull
 import org.antlr.v4.runtime.misc.ParseCancellationException
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import java.io.IOException
 
@@ -41,15 +41,15 @@ class ImportNodeVisitorTest {
 
 
     private val acceptables =
-        arrayOf("import QtQuick 1.0", "import 'http://www.google.com' 0.2", "import QtQuick.Controls 2.3 as Controls")
+        arrayOf("import QtQuick 1.0;", "import 'http://www.google.com' 0.2;", "import QtQuick.Controls 2.3;")
 
     private val errorImport =
         arrayOf("import 3 1.0", "import QtQuick;", "import QtQuick T.T as Good", "import QtQuick 1.1 as 10")
 
     private val acceptableResults = arrayOf(
-        ImportNode("QtQuick", 1.0, null),
-        ImportNode("'http://www.google.com'", 0.2, null),
-        ImportNode("QtQuick.Controls", 2.3, "Controls")
+        ImportNode("QtQuick", 1.0),
+        ImportNode("'http://www.google.com'", 0.2),
+        ImportNode("QtQuick.Controls", 2.3)
     )
 
     @Test

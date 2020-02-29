@@ -32,36 +32,49 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import org.antlr.v4.runtime.*
 import com.flex.ast.ProgramVisitor
-import com.flex.parser.QMLLexer
-import com.flex.parser.QMLParser
-
+import com.flex.parser.PineScriptLexer
+import com.flex.parser.PineScriptParser
+import org.antlr.v4.runtime.*
+import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 class QMLCompiler internal constructor(private val engine: QMLEngine) {
 
+    private val baseErrorListener = object: BaseErrorListener() {
+        override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
+                                 charPositionInLine: Int, msg: String, e: RecognitionException?) {
+            throw ParseCancellationException("line $line:$charPositionInLine $msg")
+        }
+    }
+
     private val rootContext = QMLContext()
 
-    fun compile(unit: String): QMLObject {
+    fun compile(unit: String): PineObject {
         return loadAst(unit)
     }
 
-    private fun loadAst(unit: String): QMLObject {
+    private fun loadAst(unit: String): PineObject {
         try {
             val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
-            val lexer = QMLLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+            val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+
+            lexer.removeErrorListeners()
+            lexer.addErrorListener(baseErrorListener)
+
             val tokens = CommonTokenStream(lexer)
-            val parser = QMLParser(tokens)
-            //parser.setErrorHandler(new BailErrorStrategy());
+            val parser = PineScriptParser(tokens)
+
+            parser.removeErrorListeners()
+            parser.addErrorListener(baseErrorListener)
+
             val tree = parser.program()
 
             val programVisitor = ProgramVisitor(engine, rootContext)
             return programVisitor.visit(tree)
         } catch (e: IOException) {
-            e.printStackTrace()
             throw QMLRuntimeException(e, "unable to load unit")
         }
 

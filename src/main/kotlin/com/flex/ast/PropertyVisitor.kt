@@ -32,55 +32,22 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.ast.statement.ScriptStatementVisitor
+import com.flex.ast.expression.PrimaryExpressionVisitor
 import com.flex.core.*
-import com.flex.parser.QMLParser
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
+import com.flex.parser.PineScriptParser
 
-class PropertyVisitor(engine: QMLEngine, parentContext: QMLContext?, private val owner: QMLObject) :
-    QMLVisitor<QMLProperty>(engine, parentContext) {
+class PropertyVisitor(engine: QMLEngine, parentContext: QMLContext?, var owner: PineObject) :
+    PineScriptVisitor<Unit>(engine, parentContext) {
 
-    override fun visitDeclaredPropertyScriptStatement(ctx: QMLParser.DeclaredPropertyScriptStatementContext?): QMLProperty {
-        //TODO: how do we know if the binding result can be casted to the property?
+    //    override fun visitDeclaredPropertyScriptStatement(ctx: PineScriptParser.DeclaredPropertyScriptStatementContext?) {
+//        //TODO: how do we know if the binding result can be casted to the property?
+
+//
+//    }
+
+    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
         val propName = ctx!!.JsIdentifier().text
-        val prop = owner.declaredProperties.firstOrNull { it.name == propName } ?:
-        throw QMLRuntimeException(null,
-            "type %s does not have declared property %s",
-            owner::class.qualifiedName,
-            propName)
-        val binding = ScriptStatementVisitor(engine, context, owner).visit(ctx.scriptStatement())
-
-        return QMLBindedProperty(ctx.JsIdentifier().text, prop.kClass, binding, false)
-    }
-
-    override fun visitPropertyDeclaration(ctx: QMLParser.PropertyDeclarationContext): QMLProperty {
-        val clazz = castQMLType(ctx.propertyType().text)
-        return QMLProperty(ctx.JsIdentifier().text, clazz, null, true)
-    }
-
-    override fun visitPropertyDeclarationAndAssignObjectDefinition(ctx: QMLParser.PropertyDeclarationAndAssignObjectDefinitionContext): QMLProperty {
-        val propertyType = ctx.propertyType().text
-        val clazz = castQMLType(propertyType)
-
-        if (!clazz.isSubclassOf(QMLObject::class)) {
-            throw QMLRuntimeException("Invalid property type in object assignment")
-        }
-
-        //@TODO verify if object declared in property have parent assigned
-        val initialValue = ObjectDefinitionVisitor(engine, context, null).visit(ctx.objectDefinition())
-        return QMLProperty(ctx.JsIdentifier().text, clazz, initialValue, true)
-    }
-
-    override fun visitPropertyDeclarationAndAssignScriptStatement(ctx: QMLParser.PropertyDeclarationAndAssignScriptStatementContext): QMLProperty {
-        val propertyType = ctx.propertyType().text
-        val clazz = castQMLType(propertyType)
-        val binding = ScriptStatementVisitor(engine, context, owner).visit(ctx.scriptStatement())
-        return QMLBindedProperty(ctx.JsIdentifier().text, clazz, binding, true)
-    }
-
-    private fun castQMLType(type: String): KClass<*> {
-
-        return engine.getKClass(type) ?: throw QMLRuntimeException("type %s is not defined", type)
+        val prop = owner.getProp(propName)?: throw QMLRuntimeException("Prop $propName not found")
+        PrimaryExpressionVisitor(prop).visit(ctx.primaryExpression())
     }
 }

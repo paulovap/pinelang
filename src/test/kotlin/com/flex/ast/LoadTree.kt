@@ -32,8 +32,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.flex.ast
 
-import com.flex.parser.QMLLexer
-import com.flex.parser.QMLParser
+import com.flex.parser.PineScriptLexer
+import com.flex.parser.PineScriptParser
 import org.antlr.v4.runtime.BailErrorStrategy
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -45,11 +45,11 @@ import java.nio.charset.StandardCharsets
 object LoadTree {
 
     @Throws(IOException::class)
-    fun loadTree(code: String): QMLParser {
+    fun loadTree(code: String): PineScriptParser {
         val stream = ByteArrayInputStream(code.toByteArray(StandardCharsets.UTF_8))
-        val lexer = QMLLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+        val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
         val tokens = CommonTokenStream(lexer)
-        val parser = QMLParser(tokens)
+        val parser = PineScriptParser(tokens)
         parser.errorHandler = BailErrorStrategy()
         return parser
     }

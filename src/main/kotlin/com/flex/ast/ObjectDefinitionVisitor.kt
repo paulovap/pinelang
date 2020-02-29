@@ -33,98 +33,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.flex.ast
 
 import com.flex.core.*
-import com.flex.parser.QMLParser
+import com.flex.parser.PineScriptParser
 
 import java.lang.reflect.InvocationTargetException
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.memberProperties
 
-class ObjectDefinitionVisitor(engine: QMLEngine, parentContext: QMLContext?, private val parent: QMLObject?) :
-    QMLVisitor<QMLObject>(engine, parentContext) {
+class ObjectDefinitionVisitor(engine: QMLEngine, parentContext: QMLContext?) :
+    PineScriptVisitor<PineObject>(engine, parentContext) {
 
-    override fun visitObjectDefinition(ctx: QMLParser.ObjectDefinitionContext): QMLObject? {
+    override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): PineObject? {
 
         val type = ctx.JsIdentifier().text
 
-        val kClass = engine.getKClass(type)
-            ?: //@TODO: throw line number
-            throw QMLRuntimeException("%s is not a type", type)
+        val alloc = engine.getAllocator(type)
 
         try {
-            val obj = kClass.createInstance() as QMLObject
-
-            if (parent != null) {
-                obj.setParent(parent)
-            }
-
+            val obj = alloc(-1)
             // add getChildren
             for (memberCtx in ctx.objectInitializer().objectMember()) {
 
                 /* getChildren parsing */
                 if (memberCtx.objectDefinition() != null) {
-                    ObjectDefinitionVisitor(engine, context, obj).visit(memberCtx.objectDefinition())
+                    obj.addChild(ObjectDefinitionVisitor(engine, context).visit(memberCtx.objectDefinition()))
                 }
 
-                /* declared properties parsing */
-                if (memberCtx.propertyDeclaration() != null) {
-                    val prop = PropertyVisitor(engine, context, obj).visit(memberCtx.propertyDeclaration())
-                    obj.addDynamicProperty(prop)
-                }
-
-                /* declared properties with object */
-                if (memberCtx.propertyDeclarationAndAssignObjectDefinition() != null) {
-                    val prop = PropertyVisitor(
-                        engine,
-                        context,
-                        obj
-                    ).visit(memberCtx.propertyDeclarationAndAssignObjectDefinition())
-                    obj.addDynamicProperty(prop)
-                }
-
-                /* declared properties with script */
-                if (memberCtx.propertyDeclarationAndAssignScriptStatement() != null) {
-                    val prop = PropertyVisitor(
-                        engine,
-                        context,
-                        obj
-                    ).visit(memberCtx.propertyDeclarationAndAssignScriptStatement())
-                    obj.addDynamicProperty(prop)
-                }
 
                 /* assigning script to a declared property */
-                if (memberCtx.declaredPropertyScriptStatement() != null) {
-                    val prop = PropertyVisitor(
-                        engine,
-                        context,
-                        obj
-                    ).visit(memberCtx.declaredPropertyScriptStatement())
-                    obj.declaredProperties.replaceAll { if (it.name == prop.name) prop else it }
+                if (memberCtx.propertyAssignement() != null) {
+                    PropertyVisitor(engine, context, obj).visit(memberCtx.propertyAssignement())
                 }
             }
             return obj
         } catch (e: InstantiationException) {
-            throw QMLRuntimeException(
-                e, "%s unable to be instantiated",
-                kClass.qualifiedName
-            )
+            throw QMLRuntimeException(e, "$type unable to be instantiated")
         } catch (e: IllegalAccessException) {
-            throw QMLRuntimeException(
-                e, "%s constructor not implemented",
-                kClass.qualifiedName
-            )
+            throw QMLRuntimeException(e, "$type constructor not implemented")
         } catch (e: ClassCastException) {
-            throw QMLRuntimeException(
-                e, "%s does not implement %s",
-                kClass.qualifiedName,
-                QMLObject::class.qualifiedName
-            )
-        } catch (e: NoSuchMethodException) {
-            throw QMLRuntimeException(
-                e, "%s does not implement mandatory constructor %s(QMLObject parent);",
-                kClass.qualifiedName,
-                kClass.qualifiedName
-            )
+            throw QMLRuntimeException(e, "$type does not implement $type")
         } catch (e: InvocationTargetException) {
             e.printStackTrace()
         }
