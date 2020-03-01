@@ -14,8 +14,8 @@ data class PineType(val typeName: String, val type: Int) {
 }
 
 interface PineSignal {
+    val emitter: PineSignal?
     val slots: MutableList<() -> Unit>
-
     /**
      * Execute all Slots.
      */
@@ -39,14 +39,25 @@ interface PineSignal {
 }
 
 class BasicPineSignal : PineSignal {
+    override val emitter: PineSignal? = null
     override val slots: MutableList<() -> Unit> = mutableListOf()
 }
 
 class PineProp<T>(val type: PineType, val kProp: KProperty<T>, initialValue: T) : PineSignal,
     ObservableProperty<T>(initialValue) {
 
+    private val emitLambda = { emit() }
+    override var emitter: PineProp<*>? = null
+    set(value) {
+        field?.disconnect(emitLambda)
+        field = value
+        field?.connect(emitLambda)
+        if (field != null)
+            setValue(emitter!!.asType<T>(type).getValue())
+    }
     override val slots: MutableList<() -> Unit> = mutableListOf()
     override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = slots.forEach { it() }
+
 
     fun getValue(): T = getValue(this, kProp)
     fun setValue(value: T) = setValue(this, kProp, value)
@@ -62,7 +73,6 @@ class PineProp<T>(val type: PineType, val kProp: KProperty<T>, initialValue: T) 
         }
         return this as PineProp<X>
     }
-
 }
 
 
@@ -74,9 +84,24 @@ open class PineObject(val id: Long = -1) {
 
     val childrenChanged = BasicPineSignal()
 
+    fun connect(propName: String, slot: () -> Unit) {
+        val prop = nameProps[propName]?: throw PineScriptException("prop $propName not found")
+        prop.connect(slot)
+    }
+
+    fun connect(kProp: KProperty<*>, slot: () -> Unit) {
+        val prop = kProps[kProp]?: throw PineScriptException("prop ${kProp.name} not found")
+            prop.connect(slot)
+    }
+
+    fun disconnect(kProp: KProperty<*>, slot: () -> Unit) {
+        val prop = kProps[kProp]?: throw PineScriptException("prop ${kProp.name} not found")
+        prop.disconnect(slot)
+    }
+
     fun getChildrenAt(pos: Int): PineObject = children[pos]
     fun getProp(kProp: KProperty<*>): PineProp<*> =
-        kProps[kProp] ?: throw PineScriptException("Prop ${kProp.name} not found")
+        kProps[kProp] ?: throw PineScriptException("prop ${kProp.name} not found")
 
     fun getProp(name: String): PineProp<*>? = nameProps[name]
     fun dumpObjectTree(): String? = null

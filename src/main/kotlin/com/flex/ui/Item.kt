@@ -1,4 +1,9 @@
-package com.flex.ast
+package com.flex.ui
+
+import com.flex.core.PineObject
+import java.awt.Color
+import javax.swing.JPanel
+
 
 /*
 BSD License
@@ -32,35 +37,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.ast.expression.PrimaryExpressionVisitor
-import com.flex.core.*
-import com.flex.parser.PineScriptParser
-
-class PropertyVisitor(engine: PineEngine, var rootContext: PineContext, var owner: PineObject) :
-    PineScriptVisitor<Unit>(engine) {
-
-    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
-        val propName = ctx!!.Identifier().text
-        val prop =
-            owner.getProp(propName) ?: throw PineScriptParseException(ctx.Identifier(), "prop $propName not found")
-        PrimaryExpressionVisitor(prop).visit(ctx.primaryExpression())
-    }
-
-    override fun visitPropertyBinding(ctx: PineScriptParser.PropertyBindingContext?) {
-        val propName = ctx!!.Identifier().text
-        val prop =
-            owner.getProp(propName) ?: throw PineScriptParseException(ctx.Identifier(), "prop $propName not found")
-
-        val otherObjectId = ctx.objectProperty().Identifier(0).text
-        val otherObject = rootContext.find(otherObjectId) ?: throw PineScriptParseException(
-            ctx.Identifier(),
-            "object with identifier $otherObjectId not found"
-        )
-        val otherPropId = ctx.objectProperty().Identifier(1).text
-        val otherProp = otherObject.getProp(otherPropId) ?: throw PineScriptParseException(
-            ctx.Identifier(),
-            "prop $otherPropId with identifier $otherObjectId not found"
-        )
-        prop.emitter = otherProp
-    }
+abstract class Item : PineObject() {
+    var x: Int by intProp(::x, initialValue = 1)
+    var y: Int by intProp(::y, initialValue = 1)
+    var width: Int by intProp(::width, initialValue = 50)
+    var height: Int by intProp(::height, initialValue = 50)
 }

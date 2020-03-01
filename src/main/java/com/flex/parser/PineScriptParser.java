@@ -27,11 +27,12 @@ public class PineScriptParser extends Parser {
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
 		RULE_objectIdentifier = 4, RULE_objectMember = 5, RULE_propertyAssignement = 6, 
-		RULE_primaryExpression = 7;
+		RULE_propertyBinding = 7, RULE_objectProperty = 8, RULE_primaryExpression = 9;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"program", "rootMember", "objectDefinition", "objectInitializer", "objectIdentifier", 
-			"objectMember", "propertyAssignement", "primaryExpression"
+			"objectMember", "propertyAssignement", "propertyBinding", "objectProperty", 
+			"primaryExpression"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -133,7 +134,7 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(16);
+			setState(20);
 			rootMember();
 			}
 		}
@@ -177,7 +178,7 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(18);
+			setState(22);
 			objectDefinition();
 			}
 		}
@@ -224,16 +225,16 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(20);
+			setState(24);
 			match(ObjectDeclaration);
-			setState(21);
+			setState(25);
 			objectInitializer();
-			setState(23);
+			setState(27);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(22);
+				setState(26);
 				match(SEMICOLON);
 				}
 			}
@@ -289,33 +290,33 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(25);
+			setState(29);
 			match(LBRACE);
-			setState(27);
+			setState(31);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(26);
+				setState(30);
 				objectIdentifier();
 				}
 			}
 
-			setState(32);
+			setState(36);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==Identifier || _la==ObjectDeclaration) {
 				{
 				{
-				setState(29);
+				setState(33);
 				objectMember();
 				}
 				}
-				setState(34);
+				setState(38);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(35);
+			setState(39);
 			match(RBRACE);
 			}
 		}
@@ -361,18 +362,18 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(37);
-			match(ID);
-			setState(38);
-			match(COLON);
-			setState(39);
-			match(Identifier);
 			setState(41);
+			match(ID);
+			setState(42);
+			match(COLON);
+			setState(43);
+			match(Identifier);
+			setState(45);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(40);
+				setState(44);
 				match(SEMICOLON);
 				}
 			}
@@ -397,6 +398,9 @@ public class PineScriptParser extends Parser {
 		public PropertyAssignementContext propertyAssignement() {
 			return getRuleContext(PropertyAssignementContext.class,0);
 		}
+		public PropertyBindingContext propertyBinding() {
+			return getRuleContext(PropertyBindingContext.class,0);
+		}
 		public ObjectMemberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -420,25 +424,30 @@ public class PineScriptParser extends Parser {
 		ObjectMemberContext _localctx = new ObjectMemberContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_objectMember);
 		try {
-			setState(45);
+			setState(50);
 			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case ObjectDeclaration:
+			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(43);
+				setState(47);
 				objectDefinition();
 				}
 				break;
-			case Identifier:
+			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(44);
+				setState(48);
 				propertyAssignement();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(49);
+				propertyBinding();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -485,22 +494,134 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(47);
+			setState(52);
 			match(Identifier);
-			setState(48);
+			setState(53);
 			match(COLON);
-			setState(49);
+			setState(54);
 			primaryExpression();
-			setState(51);
+			setState(56);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(50);
+				setState(55);
 				match(SEMICOLON);
 				}
 			}
 
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class PropertyBindingContext extends ParserRuleContext {
+		public TerminalNode Identifier() { return getToken(PineScriptParser.Identifier, 0); }
+		public TerminalNode COLON() { return getToken(PineScriptParser.COLON, 0); }
+		public ObjectPropertyContext objectProperty() {
+			return getRuleContext(ObjectPropertyContext.class,0);
+		}
+		public TerminalNode SEMICOLON() { return getToken(PineScriptParser.SEMICOLON, 0); }
+		public PropertyBindingContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_propertyBinding; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterPropertyBinding(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitPropertyBinding(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitPropertyBinding(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final PropertyBindingContext propertyBinding() throws RecognitionException {
+		PropertyBindingContext _localctx = new PropertyBindingContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_propertyBinding);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(58);
+			match(Identifier);
+			setState(59);
+			match(COLON);
+			setState(60);
+			objectProperty();
+			setState(62);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==SEMICOLON) {
+				{
+				setState(61);
+				match(SEMICOLON);
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ObjectPropertyContext extends ParserRuleContext {
+		public List<TerminalNode> Identifier() { return getTokens(PineScriptParser.Identifier); }
+		public TerminalNode Identifier(int i) {
+			return getToken(PineScriptParser.Identifier, i);
+		}
+		public TerminalNode DOT() { return getToken(PineScriptParser.DOT, 0); }
+		public ObjectPropertyContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_objectProperty; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterObjectProperty(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitObjectProperty(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitObjectProperty(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final ObjectPropertyContext objectProperty() throws RecognitionException {
+		ObjectPropertyContext _localctx = new ObjectPropertyContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_objectProperty);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(64);
+			match(Identifier);
+			setState(65);
+			match(DOT);
+			setState(66);
+			match(Identifier);
 			}
 		}
 		catch (RecognitionException re) {
@@ -541,12 +662,12 @@ public class PineScriptParser extends Parser {
 
 	public final PrimaryExpressionContext primaryExpression() throws RecognitionException {
 		PrimaryExpressionContext _localctx = new PrimaryExpressionContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_primaryExpression);
+		enterRule(_localctx, 18, RULE_primaryExpression);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(68);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TRUE) | (1L << FALSE) | (1L << IntegerLiteral) | (1L << FloatLiteral) | (1L << StringLiteral))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -570,21 +691,24 @@ public class PineScriptParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\37:\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\3\3\3\3\4"+
-		"\3\4\3\4\5\4\32\n\4\3\5\3\5\5\5\36\n\5\3\5\7\5!\n\5\f\5\16\5$\13\5\3\5"+
-		"\3\5\3\6\3\6\3\6\3\6\5\6,\n\6\3\7\3\7\5\7\60\n\7\3\b\3\b\3\b\3\b\5\b\66"+
-		"\n\b\3\t\3\t\3\t\2\2\n\2\4\6\b\n\f\16\20\2\3\4\2\t\n\31\33\2\67\2\22\3"+
-		"\2\2\2\4\24\3\2\2\2\6\26\3\2\2\2\b\33\3\2\2\2\n\'\3\2\2\2\f/\3\2\2\2\16"+
-		"\61\3\2\2\2\20\67\3\2\2\2\22\23\5\4\3\2\23\3\3\2\2\2\24\25\5\6\4\2\25"+
-		"\5\3\2\2\2\26\27\7\30\2\2\27\31\5\b\5\2\30\32\7\21\2\2\31\30\3\2\2\2\31"+
-		"\32\3\2\2\2\32\7\3\2\2\2\33\35\7\23\2\2\34\36\5\n\6\2\35\34\3\2\2\2\35"+
-		"\36\3\2\2\2\36\"\3\2\2\2\37!\5\f\7\2 \37\3\2\2\2!$\3\2\2\2\" \3\2\2\2"+
-		"\"#\3\2\2\2#%\3\2\2\2$\"\3\2\2\2%&\7\24\2\2&\t\3\2\2\2\'(\7\3\2\2()\7"+
-		"\22\2\2)+\7\27\2\2*,\7\21\2\2+*\3\2\2\2+,\3\2\2\2,\13\3\2\2\2-\60\5\6"+
-		"\4\2.\60\5\16\b\2/-\3\2\2\2/.\3\2\2\2\60\r\3\2\2\2\61\62\7\27\2\2\62\63"+
-		"\7\22\2\2\63\65\5\20\t\2\64\66\7\21\2\2\65\64\3\2\2\2\65\66\3\2\2\2\66"+
-		"\17\3\2\2\2\678\t\2\2\28\21\3\2\2\2\b\31\35\"+/\65";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\37I\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
+		"\2\3\2\3\3\3\3\3\4\3\4\3\4\5\4\36\n\4\3\5\3\5\5\5\"\n\5\3\5\7\5%\n\5\f"+
+		"\5\16\5(\13\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6\60\n\6\3\7\3\7\3\7\5\7\65\n"+
+		"\7\3\b\3\b\3\b\3\b\5\b;\n\b\3\t\3\t\3\t\3\t\5\tA\n\t\3\n\3\n\3\n\3\n\3"+
+		"\13\3\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\3\4\2\t\n\31\33\2F\2\26"+
+		"\3\2\2\2\4\30\3\2\2\2\6\32\3\2\2\2\b\37\3\2\2\2\n+\3\2\2\2\f\64\3\2\2"+
+		"\2\16\66\3\2\2\2\20<\3\2\2\2\22B\3\2\2\2\24F\3\2\2\2\26\27\5\4\3\2\27"+
+		"\3\3\2\2\2\30\31\5\6\4\2\31\5\3\2\2\2\32\33\7\30\2\2\33\35\5\b\5\2\34"+
+		"\36\7\21\2\2\35\34\3\2\2\2\35\36\3\2\2\2\36\7\3\2\2\2\37!\7\23\2\2 \""+
+		"\5\n\6\2! \3\2\2\2!\"\3\2\2\2\"&\3\2\2\2#%\5\f\7\2$#\3\2\2\2%(\3\2\2\2"+
+		"&$\3\2\2\2&\'\3\2\2\2\')\3\2\2\2(&\3\2\2\2)*\7\24\2\2*\t\3\2\2\2+,\7\3"+
+		"\2\2,-\7\22\2\2-/\7\27\2\2.\60\7\21\2\2/.\3\2\2\2/\60\3\2\2\2\60\13\3"+
+		"\2\2\2\61\65\5\6\4\2\62\65\5\16\b\2\63\65\5\20\t\2\64\61\3\2\2\2\64\62"+
+		"\3\2\2\2\64\63\3\2\2\2\65\r\3\2\2\2\66\67\7\27\2\2\678\7\22\2\28:\5\24"+
+		"\13\29;\7\21\2\2:9\3\2\2\2:;\3\2\2\2;\17\3\2\2\2<=\7\27\2\2=>\7\22\2\2"+
+		">@\5\22\n\2?A\7\21\2\2@?\3\2\2\2@A\3\2\2\2A\21\3\2\2\2BC\7\27\2\2CD\7"+
+		"\4\2\2DE\7\27\2\2E\23\3\2\2\2FG\t\2\2\2G\25\3\2\2\2\t\35!&/\64:@";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

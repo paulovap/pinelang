@@ -62,12 +62,20 @@ objectIdentifier
 objectMember
     : objectDefinition
     | propertyAssignement
+    | propertyBinding
     ;
 
 propertyAssignement
     : Identifier COLON primaryExpression SEMICOLON?
     ;
 
+propertyBinding
+    : Identifier COLON objectProperty SEMICOLON?
+    ;
+
+objectProperty
+    : Identifier DOT Identifier
+    ;
 primaryExpression
     : TRUE
     | FALSE

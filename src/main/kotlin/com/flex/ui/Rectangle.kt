@@ -40,19 +40,21 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Rectangle : PineObject() {
+class Rectangle : Item() {
     val panel = JPanel(null)
 
-    var x: Int by intProp(::x, initialValue = 1) { resizeSlot() }
-    var y: Int by intProp(::y, initialValue = 1) { resizeSlot() }
-    var width: Int by intProp(::width, initialValue = 50) { resizeSlot() }
-    var height: Int by intProp(::height, initialValue = 50) { resizeSlot() }
     var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
-    val color: String by stringProp(::color, initialValue = "#000000") { panel.background = Color.decode(color) }
+    val color: String by stringProp(::color, initialValue = "#ffffff") { panel.background = Color.decode(color) }
 
     init {
+
+        connect((this as Item)::x) { resizeSlot() }
+        connect((this as Item)::y) { resizeSlot() }
+        connect((this as Item)::width) { resizeSlot() }
+        connect((this as Item)::height) { resizeSlot() }
+
         panel.background = Color.decode(color)
-        resizeSlot()
+
 
         childrenChanged.connect {
             panel.removeAll()
@@ -60,8 +62,12 @@ class Rectangle : PineObject() {
                 if (child is Rectangle) {
                     panel.add(child.panel)
                 }
+                if (child is Label) {
+                    panel.add(child.label)
+                }
             }
         }
+        resizeSlot()
     }
 
     private fun resizeSlot() {

@@ -102,6 +102,30 @@ public class PineScriptBaseListener implements PineScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPropertyBinding(PineScriptParser.PropertyBindingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropertyBinding(PineScriptParser.PropertyBindingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterObjectProperty(PineScriptParser.ObjectPropertyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitObjectProperty(PineScriptParser.ObjectPropertyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}

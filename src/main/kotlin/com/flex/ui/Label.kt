@@ -1,4 +1,12 @@
-package com.flex.ast
+package com.flex.ui
+
+import com.flex.core.PineObject
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Panel
+import javax.swing.JLabel
+import javax.swing.JPanel
+
 
 /*
 BSD License
@@ -32,35 +40,37 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.ast.expression.PrimaryExpressionVisitor
-import com.flex.core.*
-import com.flex.parser.PineScriptParser
+class Label : Item() {
+    val label = JLabel("oh my god")
 
-class PropertyVisitor(engine: PineEngine, var rootContext: PineContext, var owner: PineObject) :
-    PineScriptVisitor<Unit>(engine) {
+    var text: String by stringProp(::text, initialValue = "") { resizeSlot() }
+    var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
+    val color: String by stringProp(::color, initialValue = "#000000") { label.foreground = Color.decode(color) }
 
-    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
-        val propName = ctx!!.Identifier().text
-        val prop =
-            owner.getProp(propName) ?: throw PineScriptParseException(ctx.Identifier(), "prop $propName not found")
-        PrimaryExpressionVisitor(prop).visit(ctx.primaryExpression())
+    init {
+        connect((this as Item)::x) { resizeSlot() }
+        connect((this as Item)::y) { resizeSlot() }
+        connect((this as Item)::width) { resizeSlot() }
+        connect((this as Item)::height) { resizeSlot() }
+
+        resizeSlot()
+
+        childrenChanged.connect {
+            label.removeAll()
+            for (child in children) {
+                if (child is Rectangle) {
+                    label.add(child.panel)
+                }
+            }
+        }
     }
 
-    override fun visitPropertyBinding(ctx: PineScriptParser.PropertyBindingContext?) {
-        val propName = ctx!!.Identifier().text
-        val prop =
-            owner.getProp(propName) ?: throw PineScriptParseException(ctx.Identifier(), "prop $propName not found")
-
-        val otherObjectId = ctx.objectProperty().Identifier(0).text
-        val otherObject = rootContext.find(otherObjectId) ?: throw PineScriptParseException(
-            ctx.Identifier(),
-            "object with identifier $otherObjectId not found"
-        )
-        val otherPropId = ctx.objectProperty().Identifier(1).text
-        val otherProp = otherObject.getProp(otherPropId) ?: throw PineScriptParseException(
-            ctx.Identifier(),
-            "prop $otherPropId with identifier $otherObjectId not found"
-        )
-        prop.emitter = otherProp
+    private fun resizeSlot() {
+        label.foreground = Color.decode(color)
+        label.text = text
+        label.size = Dimension(width, height)
+//        label.size = label.preferredSize
+        label.setLocation(x, y)
+        label.isVisible = visible
     }
 }

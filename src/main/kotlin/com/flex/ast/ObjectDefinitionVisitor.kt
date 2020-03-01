@@ -54,7 +54,7 @@ class ObjectDefinitionVisitor(engine: PineEngine, val rootContext: PineContext) 
                 throw PineScriptParseException(identifier, e)
             }
         }
-        // add getChildren
+
         for (memberCtx in ctx.objectInitializer().objectMember()) {
 
             /* getChildren parsing */
@@ -65,7 +65,12 @@ class ObjectDefinitionVisitor(engine: PineEngine, val rootContext: PineContext) 
 
             /* assigning script to a declared property */
             if (memberCtx.propertyAssignement() != null) {
-                PropertyVisitor(engine, obj).visit(memberCtx.propertyAssignement())
+                PropertyVisitor(engine, rootContext, obj).visit(memberCtx.propertyAssignement())
+            }
+
+            /* assigning script to a binded property */
+            if (memberCtx.propertyBinding() != null) {
+                PropertyVisitor(engine, rootContext, obj).visit(memberCtx.propertyBinding())
             }
         }
         return obj

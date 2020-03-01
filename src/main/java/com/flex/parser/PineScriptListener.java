@@ -80,6 +80,26 @@ public interface PineScriptListener extends ParseTreeListener {
 	 */
 	void exitPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PineScriptParser#propertyBinding}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropertyBinding(PineScriptParser.PropertyBindingContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PineScriptParser#propertyBinding}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropertyBinding(PineScriptParser.PropertyBindingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PineScriptParser#objectProperty}.
+	 * @param ctx the parse tree
+	 */
+	void enterObjectProperty(PineScriptParser.ObjectPropertyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PineScriptParser#objectProperty}.
+	 * @param ctx the parse tree
+	 */
+	void exitObjectProperty(PineScriptParser.ObjectPropertyContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PineScriptParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 */
