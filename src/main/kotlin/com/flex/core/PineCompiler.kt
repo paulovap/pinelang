@@ -41,7 +41,7 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-class QMLCompiler internal constructor(private val engine: QMLEngine) {
+class PineCompiler internal constructor(private val engine: PineEngine) {
 
     private val baseErrorListener = object: BaseErrorListener() {
         override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
@@ -49,8 +49,6 @@ class QMLCompiler internal constructor(private val engine: QMLEngine) {
             throw ParseCancellationException("line $line:$charPositionInLine $msg")
         }
     }
-
-    private val rootContext = QMLContext()
 
     fun compile(unit: String): PineObject {
         return loadAst(unit)
@@ -72,10 +70,10 @@ class QMLCompiler internal constructor(private val engine: QMLEngine) {
 
             val tree = parser.program()
 
-            val programVisitor = ProgramVisitor(engine, rootContext)
+            val programVisitor = ProgramVisitor(engine)
             return programVisitor.visit(tree)
         } catch (e: IOException) {
-            throw QMLRuntimeException(e, "unable to load unit")
+            throw PineScriptException(e, "unable to load unit")
         }
 
     }

@@ -37,17 +37,16 @@ import java.util.HashMap
 typealias ObjectAllocator = (Long) -> PineObject
 
 
-class QMLEngine private constructor(private var types: HashMap<String, ObjectAllocator>) {
+class PineEngine private constructor(private var types: HashMap<String, ObjectAllocator>) {
 
-    private var compiler: QMLCompiler = QMLCompiler(this)
-    val rootContext = QMLContext(null)
+    private var compiler: PineCompiler = PineCompiler(this)
 
     fun load(script: String): PineObject {
         return compiler.compile(script)
     }
 
     fun getAllocator(qmlType: String): ObjectAllocator {
-        return types[qmlType]?: throw QMLRuntimeException("Allocator of type $qmlType not found")
+        return types[qmlType]?: throw PineScriptException("Allocator of type $qmlType not found")
     }
 
 
@@ -71,8 +70,8 @@ class QMLEngine private constructor(private var types: HashMap<String, ObjectAll
             return this
         }
 
-        fun build(): QMLEngine {
-            return QMLEngine(types)
+        fun build(): PineEngine {
+            return PineEngine(types)
         }
     }
 }

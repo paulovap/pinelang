@@ -32,11 +32,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.flex.core.expression
 
-import com.flex.core.QMLContext
 import com.flex.core.PineObject
 
-class QMLPrimaryExpression(context: QMLContext, owner: PineObject, private val value: Any?) :
-    QMLExpression(context, owner) {
+class QMLPrimaryExpression(owner: PineObject, private val value: Any?) : QMLExpression(owner) {
 
     override fun evaluate(): Any? {
         return value

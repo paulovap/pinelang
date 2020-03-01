@@ -37,8 +37,8 @@ import com.flex.parser.PineScriptParser
 
 import java.lang.reflect.InvocationTargetException
 
-class ObjectDefinitionVisitor(engine: QMLEngine, parentContext: QMLContext?) :
-    PineScriptVisitor<PineObject>(engine, parentContext) {
+class ObjectDefinitionVisitor(engine: PineEngine) :
+    PineScriptVisitor<PineObject>(engine) {
 
     override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): PineObject? {
 
@@ -53,22 +53,22 @@ class ObjectDefinitionVisitor(engine: QMLEngine, parentContext: QMLContext?) :
 
                 /* getChildren parsing */
                 if (memberCtx.objectDefinition() != null) {
-                    obj.addChild(ObjectDefinitionVisitor(engine, context).visit(memberCtx.objectDefinition()))
+                    obj.addChild(ObjectDefinitionVisitor(engine).visit(memberCtx.objectDefinition()))
                 }
 
 
                 /* assigning script to a declared property */
                 if (memberCtx.propertyAssignement() != null) {
-                    PropertyVisitor(engine, context, obj).visit(memberCtx.propertyAssignement())
+                    PropertyVisitor(engine, obj).visit(memberCtx.propertyAssignement())
                 }
             }
             return obj
         } catch (e: InstantiationException) {
-            throw QMLRuntimeException(e, "$type unable to be instantiated")
+            throw PineScriptException(e, "$type unable to be instantiated")
         } catch (e: IllegalAccessException) {
-            throw QMLRuntimeException(e, "$type constructor not implemented")
+            throw PineScriptException(e, "$type constructor not implemented")
         } catch (e: ClassCastException) {
-            throw QMLRuntimeException(e, "$type does not implement $type")
+            throw PineScriptException(e, "$type does not implement $type")
         } catch (e: InvocationTargetException) {
             e.printStackTrace()
         }

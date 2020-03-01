@@ -36,18 +36,12 @@ import com.flex.ast.expression.PrimaryExpressionVisitor
 import com.flex.core.*
 import com.flex.parser.PineScriptParser
 
-class PropertyVisitor(engine: QMLEngine, parentContext: QMLContext?, var owner: PineObject) :
-    PineScriptVisitor<Unit>(engine, parentContext) {
-
-    //    override fun visitDeclaredPropertyScriptStatement(ctx: PineScriptParser.DeclaredPropertyScriptStatementContext?) {
-//        //TODO: how do we know if the binding result can be casted to the property?
-
-//
-//    }
+class PropertyVisitor(engine: PineEngine, var owner: PineObject) :
+    PineScriptVisitor<Unit>(engine) {
 
     override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
         val propName = ctx!!.JsIdentifier().text
-        val prop = owner.getProp(propName)?: throw QMLRuntimeException("Prop $propName not found")
+        val prop = owner.getProp(propName)?: throw PineScriptException("Prop $propName not found")
         PrimaryExpressionVisitor(prop).visit(ctx.primaryExpression())
     }
 }

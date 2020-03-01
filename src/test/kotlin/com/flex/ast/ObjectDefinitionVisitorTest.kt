@@ -33,8 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.flex.ast
 
 import com.flex.core.PineObject
-import com.flex.core.QMLContext
-import com.flex.core.QMLEngine
+import com.flex.core.PineEngine
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -47,7 +46,7 @@ import org.junit.Assert.assertNotNull
 
 class ObjectDefinitionVisitorTest {
 
-    private var engine: QMLEngine? = null
+    private var engine: PineEngine? = null
 
     class TestObject : PineObject(-1) {
         val myInt: Int by intProp(::myInt, "int")
@@ -59,7 +58,7 @@ class ObjectDefinitionVisitorTest {
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        engine = QMLEngine.Builder()
+        engine = PineEngine.Builder()
             .registerQMLType("TestObject") { id: Long -> TestObject() }
             .build()
     }
@@ -100,25 +99,25 @@ class ObjectDefinitionVisitorTest {
             bool: true;
         }"""
         ).objectDefinition()
-        val v = ObjectDefinitionVisitor(engine!!, QMLContext())
+        val v = ObjectDefinitionVisitor(engine!!)
         val obj = v.visit(tree) as TestObject
 
         assertNotNull(obj)
 
         val propDouble = obj.getProp("double")
-        assertEquals(10.1, propDouble.getValue())
+        assertEquals(10.1, propDouble?.getValue())
         assertEquals(10.1, obj.myDouble, 0.01)
 
         val propString = obj.getProp("string")
-        assertEquals("oh my", propString.getValue())
+        assertEquals("oh my", propString?.getValue())
         assertEquals("oh my", obj.myString)
 
         val propInt = obj.getProp("int")
-        assertEquals(20, propInt.getValue())
+        assertEquals(20, propInt?.getValue())
         assertEquals(20, obj.myInt)
 
         val propBool = obj.getProp("bool")
-        assertEquals(true, propBool.getValue())
+        assertEquals(true, propBool?.getValue())
         assertEquals(true, obj.myBool)
 
     }

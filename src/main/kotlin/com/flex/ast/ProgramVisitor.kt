@@ -32,18 +32,17 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.core.QMLContext
-import com.flex.core.QMLEngine
+import com.flex.core.PineEngine
 import com.flex.core.PineObject
 import com.flex.parser.PineScriptParser
 
 import java.util.ArrayList
 
-class ProgramVisitor(engine: QMLEngine, parentContext: QMLContext?) : PineScriptVisitor<PineObject>(engine, parentContext) {
+class ProgramVisitor(engine: PineEngine) : PineScriptVisitor<PineObject>(engine) {
 
     override fun visitProgram(ctx: PineScriptParser.ProgramContext): PineObject {
 
-        val objectVisitor = ObjectDefinitionVisitor(engine, context)
+        val objectVisitor = ObjectDefinitionVisitor(engine)
 
         return objectVisitor.visit(ctx.rootMember().objectDefinition())
     }

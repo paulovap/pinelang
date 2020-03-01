@@ -32,9 +32,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.flex.core.QMLContext
 import com.flex.core.PineObject
 
-abstract class QMLExpression(protected val context: QMLContext, protected val owner: PineObject) {
+abstract class QMLExpression(protected val owner: PineObject) {
     abstract fun evaluate(): Any?
 }

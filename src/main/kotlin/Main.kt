@@ -1,5 +1,5 @@
 import com.flex.core.PineObject
-import com.flex.core.QMLEngine
+import com.flex.core.PineEngine
 import com.flex.ui.Rectangle
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
@@ -52,7 +52,7 @@ class MainWindow : JFrame() {
     var root: PineObject? = null
     var textArea = RSyntaxTextArea(20, 40)
     var outputPanel  = JPanel(null)
-    var scriptEngine = QMLEngine.Builder()
+    var scriptEngine = PineEngine.Builder()
         .registerQMLType( "Rectangle") { Rectangle() }
         .build()
 
