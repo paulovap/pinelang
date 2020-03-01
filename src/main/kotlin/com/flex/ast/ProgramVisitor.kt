@@ -32,30 +32,17 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.flex.core.PineContext
 import com.flex.core.PineEngine
 import com.flex.core.PineObject
 import com.flex.parser.PineScriptParser
 
-import java.util.ArrayList
-
-class ProgramVisitor(engine: PineEngine) : PineScriptVisitor<PineObject>(engine) {
+class ProgramVisitor(engine: PineEngine, val rootContext: PineContext) : PineScriptVisitor<PineObject>(engine) {
 
     override fun visitProgram(ctx: PineScriptParser.ProgramContext): PineObject {
 
-        val objectVisitor = ObjectDefinitionVisitor(engine)
+        val objectVisitor = ObjectDefinitionVisitor(engine, rootContext)
 
         return objectVisitor.visit(ctx.rootMember().objectDefinition())
-    }
-
-    /* @TODO: implement imports */
-    internal fun loadImports(ctx: PineScriptParser.ProgramContext): List<ImportNode> {
-
-        val importVisitor = ImportVisitor()
-        val imports = ArrayList<ImportNode>()
-
-        for (importCtx in ctx.import_()) {
-            imports.add(importVisitor.visit(importCtx))
-        }
-        return imports
     }
 }

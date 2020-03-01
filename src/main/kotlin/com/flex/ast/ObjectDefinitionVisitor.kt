@@ -37,42 +37,37 @@ import com.flex.parser.PineScriptParser
 
 import java.lang.reflect.InvocationTargetException
 
-class ObjectDefinitionVisitor(engine: PineEngine) :
+class ObjectDefinitionVisitor(engine: PineEngine, val rootContext: PineContext) :
     PineScriptVisitor<PineObject>(engine) {
 
     override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): PineObject? {
 
-        val type = ctx.JsIdentifier().text
+        val type = ctx.ObjectDeclaration().text
 
-        val alloc = engine.getAllocator(type)
+        val obj = engine.getAllocator(type)(-1)
 
-        try {
-            val obj = alloc(-1)
-            // add getChildren
-            for (memberCtx in ctx.objectInitializer().objectMember()) {
-
-                /* getChildren parsing */
-                if (memberCtx.objectDefinition() != null) {
-                    obj.addChild(ObjectDefinitionVisitor(engine).visit(memberCtx.objectDefinition()))
-                }
-
-
-                /* assigning script to a declared property */
-                if (memberCtx.propertyAssignement() != null) {
-                    PropertyVisitor(engine, obj).visit(memberCtx.propertyAssignement())
-                }
+        if (ctx.objectInitializer().objectIdentifier() != null) {
+            val identifier = ctx.objectInitializer().objectIdentifier().Identifier()
+            try {
+                rootContext.registerObject(identifier.text, obj)
+            } catch (e: PineScriptException) {
+                throw PineScriptParseException(identifier, e)
             }
-            return obj
-        } catch (e: InstantiationException) {
-            throw PineScriptException(e, "$type unable to be instantiated")
-        } catch (e: IllegalAccessException) {
-            throw PineScriptException(e, "$type constructor not implemented")
-        } catch (e: ClassCastException) {
-            throw PineScriptException(e, "$type does not implement $type")
-        } catch (e: InvocationTargetException) {
-            e.printStackTrace()
         }
+        // add getChildren
+        for (memberCtx in ctx.objectInitializer().objectMember()) {
 
-        return null
+            /* getChildren parsing */
+            if (memberCtx.objectDefinition() != null) {
+                obj.addChild(ObjectDefinitionVisitor(engine, rootContext).visit(memberCtx.objectDefinition()))
+            }
+
+
+            /* assigning script to a declared property */
+            if (memberCtx.propertyAssignement() != null) {
+                PropertyVisitor(engine, obj).visit(memberCtx.propertyAssignement())
+            }
+        }
+        return obj
     }
 }

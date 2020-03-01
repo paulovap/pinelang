@@ -40,8 +40,8 @@ class PropertyVisitor(engine: PineEngine, var owner: PineObject) :
     PineScriptVisitor<Unit>(engine) {
 
     override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
-        val propName = ctx!!.JsIdentifier().text
-        val prop = owner.getProp(propName)?: throw PineScriptException("Prop $propName not found")
+        val propName = ctx!!.Identifier().text
+        val prop = owner.getProp(propName)?: throw PineScriptParseException(ctx.Identifier(), "Prop $propName not found")
         PrimaryExpressionVisitor(prop).visit(ctx.primaryExpression())
     }
 }

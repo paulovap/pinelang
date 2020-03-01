@@ -36,17 +36,30 @@ import com.flex.ast.ProgramVisitor
 import com.flex.parser.PineScriptLexer
 import com.flex.parser.PineScriptParser
 import org.antlr.v4.runtime.*
-import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import java.util.*
+
+class PineContext {
+
+    private val refs: HashMap<String, PineObject> = hashMapOf()
+
+    fun registerObject(text: String, obj: PineObject) {
+        if (refs.containsKey(text))
+            throw PineScriptException("object with id $text already defined: ${refs[text].toString()}!")
+        refs[text] = obj
+    }
+
+    fun find(id: String) = refs[id]
+}
 
 class PineCompiler internal constructor(private val engine: PineEngine) {
 
     private val baseErrorListener = object: BaseErrorListener() {
         override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
                                  charPositionInLine: Int, msg: String, e: RecognitionException?) {
-            throw ParseCancellationException("line $line:$charPositionInLine $msg")
+            throw PineScriptParseException("syntax error: line $line:$charPositionInLine $msg")
         }
     }
 
@@ -56,6 +69,8 @@ class PineCompiler internal constructor(private val engine: PineEngine) {
 
     private fun loadAst(unit: String): PineObject {
         try {
+            val context = PineContext()
+
             val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
             val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
 
@@ -70,10 +85,10 @@ class PineCompiler internal constructor(private val engine: PineEngine) {
 
             val tree = parser.program()
 
-            val programVisitor = ProgramVisitor(engine)
+            val programVisitor = ProgramVisitor(engine, context)
             return programVisitor.visit(tree)
         } catch (e: IOException) {
-            throw PineScriptException(e, "unable to load unit")
+            throw PineScriptException("unable to load unit", e)
         }
 
     }

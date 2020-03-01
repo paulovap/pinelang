@@ -5,12 +5,10 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
 import java.lang.Exception
-import javax.swing.JFrame
-import javax.swing.JPanel
-import javax.swing.JSplitPane
-import javax.swing.SwingUtilities
+import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -51,38 +49,56 @@ class MainWindow : JFrame() {
 
     var root: PineObject? = null
     var textArea = RSyntaxTextArea(20, 40)
-    var outputPanel  = JPanel(null)
+    var outputPanel = JPanel(null)
     var scriptEngine = PineEngine.Builder()
-        .registerQMLType( "Rectangle") { Rectangle() }
+        .registerQMLType("Rectangle") { Rectangle() }
         .build()
 
     init {
         title = "Pine Script Live"
         defaultCloseOperation = EXIT_ON_CLOSE
         setLocationRelativeTo(null)
-        minimumSize = Dimension(1000, 500)
-        bounds = java.awt.Rectangle(10, 10 ,1000, 500)
+        minimumSize = Dimension(1200, 500)
+        bounds = java.awt.Rectangle(10, 10, 1000, 500)
         contentPane.layout = BorderLayout()
         contentPane.add(JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, createTextEditor(), outputPanel))
 
-        textArea.document.addDocumentListener( object: DocumentListener {
-            override fun changedUpdate(e: DocumentEvent?) = runScript(textArea.text)
-            override fun insertUpdate(e: DocumentEvent?) = runScript(textArea.text)
-            override fun removeUpdate(e: DocumentEvent?) = runScript(textArea.text)
+        textArea.document.addDocumentListener(object : DocumentListener {
+            override fun changedUpdate(e: DocumentEvent?) = runScript()
+            override fun insertUpdate(e: DocumentEvent?) = runScript()
+            override fun removeUpdate(e: DocumentEvent?) = runScript()
         })
         pack()
     }
 
-    private fun runScript(script: String) {
+    private fun runScript() {
         try {
             root?.getProp("visible")?.asBool()?.setValue(false)
             root = scriptEngine.load(textArea.text)
             outputPanel.removeAll()
             outputPanel.add((root as Rectangle).panel)
-        } catch(e: Exception) {
+            outputPanel.repaint()
+        } catch (e: Exception) {
             root = null
+            outputPanel.removeAll()
+            outputPanel.add(errorLabel(e))
+            outputPanel.repaint()
             println(e.message)
         }
+    }
+
+    private fun errorLabel(e: Exception): JLabel {
+        val label = JLabel(e.stackTrace.joinToString(
+            separator = "<br>",
+            prefix = "<html> <b>${e.message}</b><br><br>",
+            postfix = "</html>",
+            limit = 5
+        ) { it.toString() })
+
+        label.size = label.preferredSize
+        label.setLocation(10, 10)
+        label.isVisible = true
+        return label
     }
 
     private fun createTextEditor(): JPanel {
@@ -102,25 +118,5 @@ class MainWindow : JFrame() {
 }
 
 fun main(argv: Array<String>) {
-
     SwingUtilities.invokeLater { MainWindow().isVisible = true }
-//    val root = engine.load("""
-//       import QtQuick 1.0;
-//       Page {
-//            visible: true
-//            title: "This"
-//            Page {
-//              title: "is"
-//              visible: true
-//            }
-//            Page {
-//              title: "test"
-//              visible: true
-//            }
-//       }
-//        """.trimIndent()) as Window
-//
-//    root.getProp(root::visible).connect { println("Hello world") }
-//    root.visible = true
-    //root.show(root.getProperty("visible")!!.get() as Boolean)
 }

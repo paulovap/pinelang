@@ -1,5 +1,8 @@
 package com.flex.core
 
+import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.tree.TerminalNode
+
 /*
 BSD License
 
@@ -32,9 +35,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class PineScriptException : RuntimeException {
-
-    constructor(format: String, vararg args: Any?) : super(String.format(format, *args))
-
-    constructor(cause: Throwable?, format: String, vararg args: Any?) : super(String.format(format, *args), cause)
+class PineScriptParseException(msg: String, cause: Throwable? = null) : java.lang.RuntimeException(msg, cause) {
+    constructor(node : TerminalNode, message: String = "", cause: Throwable? = null) :
+            this("\n$message at line: ${node.symbol.line} col:${node.symbol.charPositionInLine}", cause)
+    constructor(node : TerminalNode, cause: Throwable) :
+            this("\n${cause.message} at line: ${node.symbol.line} col:${node.symbol.charPositionInLine}", cause)
 }
+
+class PineScriptException(msg: String, cause: Throwable? = null) :
+    RuntimeException(msg, cause)

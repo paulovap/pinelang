@@ -36,7 +36,6 @@ import java.util.HashMap
 // id, parent, children, properties
 typealias ObjectAllocator = (Long) -> PineObject
 
-
 class PineEngine private constructor(private var types: HashMap<String, ObjectAllocator>) {
 
     private var compiler: PineCompiler = PineCompiler(this)

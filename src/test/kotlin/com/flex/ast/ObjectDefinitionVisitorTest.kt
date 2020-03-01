@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.flex.ast
 
+import com.flex.core.PineContext
 import com.flex.core.PineObject
 import com.flex.core.PineEngine
 import org.junit.After
@@ -99,7 +100,7 @@ class ObjectDefinitionVisitorTest {
             bool: true;
         }"""
         ).objectDefinition()
-        val v = ObjectDefinitionVisitor(engine!!)
+        val v = ObjectDefinitionVisitor(engine!!, PineContext())
         val obj = v.visit(tree) as TestObject
 
         assertNotNull(obj)

@@ -30,40 +30,33 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
-//based on
-// https://www.kdab.com/wp-content/uploads/stories/ast-big.png
 grammar PineScript;
+
 @header {
     package com.flex.parser;
 }
 
+///////////////////////////
+// Parser rules
+///////////////////////////
+
 program
-    : import_* rootMember
-    ;
-
-//pragma
-//    : PRAGMA Identifier;
-
-import_
-    : IMPORT importIdentifier NumericLiteral SEMICOLON
-    ;
-
-importIdentifier
-    : JsIdentifier
-    | StringLiteral
+    : rootMember
     ;
 
 rootMember
     : objectDefinition;
 
 objectDefinition
-    : JsIdentifier objectInitializer SEMICOLON?;
-
-//qualifiedId : memberExpression;
+    : ObjectDeclaration objectInitializer SEMICOLON?
+    ;
 
 objectInitializer
-    : LBRACE objectMember* RBRACE
+    : LBRACE objectIdentifier? objectMember* RBRACE
+    ;
+
+objectIdentifier
+    : ID COLON Identifier SEMICOLON?
     ;
 
 objectMember
@@ -72,402 +65,35 @@ objectMember
     ;
 
 propertyAssignement
-    : JsIdentifier COLON primaryExpression SEMICOLON?
+    : Identifier COLON primaryExpression SEMICOLON?
     ;
-
-
-
-statement
-    : block
-    | variableStatement
-    | emptyStatement
-    | expression SEMICOLON?
-    | ifStatement
-    | iterationStatement
-    | continueStatement
-    | breakStatement
-    | returnStatement
-    | withStatement
-    | labelledStatement
-    | switchStatement
-    | throwStatement
-    | tryStatement
-    | debuggerStatement
-    ;
-
-variableStatement
-    : variableDeclarationKind variableDeclarationList SEMICOLON?
-    ;
-
-variableDeclarationKind
-    : LET
-    | CONST
-    | VAR
-    ;
-
-variableDeclarationList
-    : variableDeclaration
-    | variableDeclarationList COMMA variableDeclaration
-    ;
-
-variableDeclaration
-    : JsIdentifier initialiser*
-    ;
-
-initialiser
-    : EQ expression
-    ;
-
-debuggerStatement
-    : DEBUGGER SEMICOLON?
-    ;
-throwStatement
-    : THROW expression SEMICOLON?
-    ;
-
-continueStatement
-    : CONTINUE SEMICOLON?
-    | CONTINUE JsIdentifier SEMICOLON?
-    ;
-
-iterationStatement
-    : DO statement WHILE LPAREN expression RPAREN SEMICOLON?
-    | WHILE LPAREN expression RPAREN statement
-//@TODO:    | FOR LPAREN expressionNotIn SEMICOLON expression* SEMICOLON expression* RPAREN statement
-//@TODO: Turn this back DISABLED FOR NOW    | FOR LPAREN VAR variableDeclarationListNotIn SEMICOLON expression* SEMICOLON expression* RPAREN statement
-    | FOR LPAREN leftHandSideExpression IN expression RPAREN statement
-//@TODO    | FOR LPAREN VAR variableDeclarationNotIn IN expression RPAREN statement
-    ;
-
-
-
-assignmentOperator
-    : EQ
-    | STAR_EQ
-    | DIVIDE_EQ
-    | REMAINDER_EQ
-    | PLUS_EQ
-    | MINUS_EQ
-    | LLEQ
-    | GGEQ
-    | GGGEQ
-    | AND_EQ
-    | XOR_EQ
-    | OR_EQ
-    ;
-
-labelledStatement
-    : JsIdentifier COLON statement
-    ;
-
-breakStatement
-    : BREAK SEMICOLON?
-    ;
-
-returnStatement
-    : RETURN expression* SEMICOLON?
-    ;
-
-tryStatement
-    : TRY block catch_
-    | TRY block finally_
-    | TRY block catch_ finally_
-    ;
-
-catch_
-    : CATCH LPAREN JsIdentifier RPAREN block
-    ;
-
-finally_
-    : FINALLY block ;
-block
-    : LBRACE statementListOpt RBRACE
-    ;
-
-caseBlock
-    : LBRACE caseClause* RBRACE
-    | LBRACE caseClause* defaultClause caseClause* RBRACE ;
-
-caseClause : CASE expression COLON statementListOpt ;
-
-defaultClause : DEFAULT COLON statementListOpt ;
-
-switchStatement
-    : SWITCH LPAREN expression RPAREN caseBlock ;
-withStatement
-    : WITH LPAREN expression RPAREN statement
-    ;
-
-ifStatement
-    : IF LPAREN expression RPAREN statement ELSE statement
-    | IF LPAREN expression RPAREN statement
-    ;
-
-statementListOpt
-    : statementList*
-    ;
-
-statementList: statement+;
-
-emptyStatement : SEMICOLON ;
-
-expression
-    : binaryExpression
-    | ternaryExpression
-    | leftHandSideExpression assignmentOperator expression
-    ;
-
-leftHandSideExpression
-    : newExpression
-    | callExpression
-    ;
-
-callExpression
-    : memberExpression LPAREN argumentList* RPAREN
-    | callExpression LPAREN argumentList* RPAREN
-    | callExpression LBRACKET expression RBRACKET
-    | callExpression DOT propertyIdentifier
-    ;
-
-newExpression
-    : memberExpression
-    | NEW newExpression
-    ;
-
-memberExpression
-    : primaryExpression
-    | functionExpression
-    | memberExpression LBRACKET expression RBRACKET
-    | memberExpression DOT propertyIdentifier
-    | NEW memberExpression LPAREN argumentList* RPAREN
-    ;
-
-argumentList
-    : expression
-    | argumentList COMMA expression
-    ;
-
-propertyIdentifier
-    : JsIdentifier
-    | reservedIdentifier
-    ;
-
-functionExpression
-    : FUNCTION JsIdentifier LPAREN formalParameterList* RPAREN LBRACE functionBody* RBRACE
-    | FUNCTION LPAREN formalParameterList* RPAREN LBRACE functionBody* RBRACE
-    ;
-
-
-formalParameterList
-    : JsIdentifier
-    | formalParameterList COMMA JsIdentifier
-    ;
-
-functionBody : sourceElement+ ;
-
-sourceElement
-    : statement
-    | functionDeclaration
-    ;
-
-functionDeclaration : FUNCTION JsIdentifier LPAREN formalParameterList* RPAREN LBRACE functionBody* RBRACE ;
 
 primaryExpression
-//    : THIS
-//    | JsIdentifier
-//    | NULL
     : TRUE
     | FALSE
     | IntegerLiteral
     | FloatLiteral
     | StringLiteral
-//    | DIVIDE_
-//    | DIVIDE_EQ
-//    | LBRACKET RBRACKET
-//    | LBRACKET elision RBRACKET // why elision exists?
-//    | LBRACKET elementList RBRACKET
-//    | LBRACKET elementList COMMA RBRACKET
-//   | LBRACKET elementList COMMA elision RBRACKET
-//    | LBRACE popertyAssignmentList* RBRACE
-//    | LBRACE propertyAssignmentList COMMA RBRACE
-//    | LPAREN expression RPAREN
     ;
 
-//popertyAssignmentList
-//    : propertyAssignment
-//    | propertyAssignmentList COMMA propertyAssignment
-//    ;
+///////////////////////////
+// Lexer Rules
+///////////////////////////
 
-//propertyAssignmentList
-//    : propertyAssignment
-//    | propertyAssignmentList COMMA propertyAssignment
-//    ;
-
-//propertyAssignment
-//    : propertyName COLON assignmentExpression
-//    | GET propertyName LPAREN RPAREN LBRACE functionBody* RBRACE
-//    | SET propertyName LPAREN formalParameterList* RPAREN LBRACE functionBody* RBRACE ;
-
-//propertyName: JsIdentifier ; //TODO: PropertyName: JsIdentifier %prec SHIFT_THERE ;
-
-//elementList
-//    : elision assignmentExpression
-//    | elementList COMMA assignmentExpression
-//    | elementList COMMA elision assignmentExpression
-//    ;
-
-//elision: COMMA+ ;
-ternaryExpression
-    : binaryExpression QUESTION expression COLON expression
-    ;
-
-binaryExpression
-    : unaryExpression
-    | binaryExpression binaryOp unaryExpression
-    ;
-
-binaryOp
-    : STAR
-    | DIVIDE_
-    | REMAINDER
-    | PLUS
-    | MINUS
-    | LT_LT
-    | GT_GT
-    | GT_GT_GT
-    | LT
-    | GT
-    | LE
-    | GE
-    | INSTANCEOF
-    | IN
-    | EQ_EQ
-    | NOT_EQ
-    | EQ_EQ_EQ
-    | NOT_EQ_EQ
-    | AND
-    | XOR
-    | OR
-    | AND_AND
-    | OR_OR
-    ;
-
-unaryExpression
-    : primaryExpression
-    ;
-
-reservedIdentifier
-    : BREAK
-    | CASE
-    | CATCH
-    | CONTINUE
-    | DEFAULT
-    | DELETE
-    | DO
-    | ELSE
-    | ENUM
-    | FALSE
-    | FINALLY
-    | FOR
-    | FUNCTION
-    | IF
-    | IN
-    | INSTANCEOF
-    | NEW
-    | NULL
-    | RETURN
-    | SWITCH
-    | THIS
-    | THROW
-    | TRUE
-    | TRY
-    | TYPEOF
-    | VAR
-    | VOID
-    | WHILE
-    | CONST
-    | LET
-    | DEBUGGER
-    | WITH
-    ;
-
-ENUM : 'enum';
-PROPERTY : 'property';
-READONLY : 'readonly';
+// Something to keep in mind
+// Lexer always pattern matching the rule in order
+// so first rule will always match
+ID : 'id';
 DOT : '.';
-SIGNAL : 'signal';
-DEBUGGER : 'debbuger';
-THROW : 'throw';
-CONTINUE : 'continue';
-INSTANCEOF : 'instanceof';
-ON : 'on';
-LET : 'let';
-CONST : 'const';
-DO : 'do';
-WHILE : 'while';
-FOR : 'for';
-BREAK : 'break';
-TRY : 'try';
-CATCH : 'catch';
-FINALLY : 'finally';
-CASE : 'case';
-DEFAULT : 'default';
-SWITCH: 'switch';
-WITH : 'with';
-IF : 'if';
-ELSE : 'else';
-GET : 'get';
-SET : 'set';
-FUNCTION : 'function';
 LPAREN : '(';
 RPAREN : ')';
 COMMA : ',';
-DELETE: 'delete';
-VOID: 'void';
-TYPEOF: 'typeof';
-PLUS_PLUS: '++';
-MINUS_MINUS: '--';
-TILDE : '~';
-NOT : '!';
-STAR : '*';
-REMAINDER : '%';
-REMAINDER_EQ : '%=';
-PLUS : '+';
-PLUS_EQ : '+=';
-MINUS_EQ : '-=';
-MINUS : '-';
-IN : 'in';
-LT : '<';
-LT_LT : '<<';
-GT : '>';
-GT_GT : '>>';
-GT_GT_GT : '>>>';
-LE : '<=';
-GE : '>=';
-LLEQ : '<<=';
-GGEQ : '>>=';
-GGGEQ : '>>>=';
-AND_EQ :'&=';
-XOR_EQ : '^=';
-OR_EQ  : '|=';
-EQ_EQ : '==';
-EQ_EQ_EQ : '===';
-STAR_EQ : '*=';
-NOT_EQ : '!=';
-NOT_EQ_EQ : '!==';
-THIS : 'this';
 NULL : 'null';
 TRUE : 'true';
 FALSE : 'false';
 EQ : '=';
-DIVIDE_ : '/';
-DIVIDE_EQ : '/=';
 LBRACKET : '[';
 RBRACKET : ']';
-NEW : 'new';
-XOR : '^';
-AND : '&';
-OR : '|';
 AND_AND : '&&';
 OR_OR : '||';
 QUESTION : '?';
@@ -476,41 +102,12 @@ COLON  : ':' ;
 LBRACE : '{' ;
 RBRACE : '}' ;
 RETURN : 'return';
-
-// KEYWORDS
 IMPORT : 'import' ;
-PRAGMA : 'pragma' ;
-AS : 'as' ;
 
-JsIdentifier
-    : PROPERTY
-    | Identifier
-    | VAR
-    | SIGNAL
-    | READONLY
-    | ON
-    | GET
-    | SET
-    ;
+Identifier: [a-z][a-zA-Z_0-9]*;
 
-Identifier : IdentifierStart IdentifierPart*;
+ObjectDeclaration: [A-Z][a-zA-Z_]*;
 
-VAR : 'var';
-
-fragment IdentifierStart
-    : UnicodeLetter
-    | [$_]
-    | '\\' UnicodeEscapeSequence
-    ;
-fragment IdentifierPart
-    : IdentifierStart
-    | '.'
-    | UnicodeCombiningMark
-    | UnicodeDigit
-    | UnicodeConnectorPunctuation
-    | ZWNJ
-    | ZWJ
-    ;
 fragment UnicodeConnectorPunctuation
     : [\u005F]
     | [\u203F-\u2040]
@@ -992,16 +589,9 @@ fragment LineTerminatorSequence
     | LineTerminator
     ;
 
+// chars that need to be skipped
+WS : [ \t\r\n;] -> skip;
+COMMENT : '/*' .*? '*/' -> skip;
+LINE_COMMENT :   '//' ~[\r\n]* -> skip;
+
 LineTerminator: [\r\n\u2028\u2029] -> channel(HIDDEN);
-
-
-WS
-    : [ \t\r\n;] -> skip
-    ;
-COMMENT
-    :   '/*' .*? '*/' -> skip
-    ;
-
-LINE_COMMENT
-    :   '//' ~[\r\n]* -> skip
-    ;
