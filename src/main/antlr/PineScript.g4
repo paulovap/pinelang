@@ -62,21 +62,20 @@ objectIdentifier
 objectMember
     : objectDefinition
     | propertyAssignement
-    | propertyBinding
     ;
 
 propertyAssignement
-    : Identifier COLON primaryExpression SEMICOLON?
+    : Identifier COLON assignExpression SEMICOLON?
     ;
 
-propertyBinding
-    : Identifier COLON objectProperty SEMICOLON?
+assignExpression
+    : primitiveExpression
+    | objectPropertyExpression
     ;
-
-objectProperty
-    : Identifier DOT Identifier
+objectPropertyExpression
+    : Identifier (DOT Identifier)?
     ;
-primaryExpression
+primitiveExpression
     : TRUE
     | FALSE
     | IntegerLiteral
@@ -91,6 +90,8 @@ primaryExpression
 // Something to keep in mind
 // Lexer always pattern matching the rule in order
 // so first rule will always match
+SUFFIX_DP: 'dp';
+SUFFIX_PX: 'px';
 ID : 'id';
 DOT : '.';
 LPAREN : '(';

@@ -55,21 +55,21 @@ public interface PineScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PineScriptParser#propertyBinding}.
+	 * Visit a parse tree produced by {@link PineScriptParser#assignExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPropertyBinding(PineScriptParser.PropertyBindingContext ctx);
+	T visitAssignExpression(PineScriptParser.AssignExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PineScriptParser#objectProperty}.
+	 * Visit a parse tree produced by {@link PineScriptParser#objectPropertyExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitObjectProperty(PineScriptParser.ObjectPropertyContext ctx);
+	T visitObjectPropertyExpression(PineScriptParser.ObjectPropertyExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PineScriptParser#primaryExpression}.
+	 * Visit a parse tree produced by {@link PineScriptParser#primitiveExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx);
+	T visitPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx);
 }

@@ -48,10 +48,10 @@ class Rectangle : Item() {
 
     init {
 
-        connect((this as Item)::x) { resizeSlot() }
-        connect((this as Item)::y) { resizeSlot() }
-        connect((this as Item)::width) { resizeSlot() }
-        connect((this as Item)::height) { resizeSlot() }
+        connect("x") { resizeSlot() }
+        connect("y") { resizeSlot() }
+        connect("width") { resizeSlot() }
+        connect("height") { resizeSlot() }
 
         panel.background = Color.decode(color)
 

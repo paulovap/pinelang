@@ -68,19 +68,19 @@ public class PineScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPropertyBinding(PineScriptParser.PropertyBindingContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAssignExpression(PineScriptParser.AssignExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitObjectProperty(PineScriptParser.ObjectPropertyContext ctx) { return visitChildren(ctx); }
+	@Override public T visitObjectPropertyExpression(PineScriptParser.ObjectPropertyExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx) { return visitChildren(ctx); }
 }

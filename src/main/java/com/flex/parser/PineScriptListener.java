@@ -80,33 +80,33 @@ public interface PineScriptListener extends ParseTreeListener {
 	 */
 	void exitPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PineScriptParser#propertyBinding}.
+	 * Enter a parse tree produced by {@link PineScriptParser#assignExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterPropertyBinding(PineScriptParser.PropertyBindingContext ctx);
+	void enterAssignExpression(PineScriptParser.AssignExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PineScriptParser#propertyBinding}.
+	 * Exit a parse tree produced by {@link PineScriptParser#assignExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitPropertyBinding(PineScriptParser.PropertyBindingContext ctx);
+	void exitAssignExpression(PineScriptParser.AssignExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PineScriptParser#objectProperty}.
+	 * Enter a parse tree produced by {@link PineScriptParser#objectPropertyExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterObjectProperty(PineScriptParser.ObjectPropertyContext ctx);
+	void enterObjectPropertyExpression(PineScriptParser.ObjectPropertyExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PineScriptParser#objectProperty}.
+	 * Exit a parse tree produced by {@link PineScriptParser#objectPropertyExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitObjectProperty(PineScriptParser.ObjectPropertyContext ctx);
+	void exitObjectPropertyExpression(PineScriptParser.ObjectPropertyExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PineScriptParser#primaryExpression}.
+	 * Enter a parse tree produced by {@link PineScriptParser#primitiveExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx);
+	void enterPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PineScriptParser#primaryExpression}.
+	 * Exit a parse tree produced by {@link PineScriptParser#primitiveExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx);
+	void exitPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx);
 }

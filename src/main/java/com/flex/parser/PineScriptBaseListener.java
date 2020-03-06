@@ -102,37 +102,37 @@ public class PineScriptBaseListener implements PineScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPropertyBinding(PineScriptParser.PropertyBindingContext ctx) { }
+	@Override public void enterAssignExpression(PineScriptParser.AssignExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPropertyBinding(PineScriptParser.PropertyBindingContext ctx) { }
+	@Override public void exitAssignExpression(PineScriptParser.AssignExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterObjectProperty(PineScriptParser.ObjectPropertyContext ctx) { }
+	@Override public void enterObjectPropertyExpression(PineScriptParser.ObjectPropertyExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitObjectProperty(PineScriptParser.ObjectPropertyContext ctx) { }
+	@Override public void exitObjectPropertyExpression(PineScriptParser.ObjectPropertyExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx) { }
+	@Override public void enterPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrimaryExpression(PineScriptParser.PrimaryExpressionContext ctx) { }
+	@Override public void exitPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

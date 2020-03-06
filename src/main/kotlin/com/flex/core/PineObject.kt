@@ -79,7 +79,6 @@ class PineProp<T>(val type: PineType, val kProp: KProperty<T>, initialValue: T) 
 open class PineObject(val id: Long = -1) {
 
     val children: MutableList<PineObject> = mutableListOf()
-    val kProps = mutableMapOf<KProperty<*>, PineProp<*>>()
     val nameProps = mutableMapOf<String, PineProp<*>>()
 
     val childrenChanged = BasicPineSignal()
@@ -89,19 +88,7 @@ open class PineObject(val id: Long = -1) {
         prop.connect(slot)
     }
 
-    fun connect(kProp: KProperty<*>, slot: () -> Unit) {
-        val prop = kProps[kProp]?: throw PineScriptException("prop ${kProp.name} not found")
-            prop.connect(slot)
-    }
-
-    fun disconnect(kProp: KProperty<*>, slot: () -> Unit) {
-        val prop = kProps[kProp]?: throw PineScriptException("prop ${kProp.name} not found")
-        prop.disconnect(slot)
-    }
-
     fun getChildrenAt(pos: Int): PineObject = children[pos]
-    fun getProp(kProp: KProperty<*>): PineProp<*> =
-        kProps[kProp] ?: throw PineScriptException("prop ${kProp.name} not found")
 
     fun getProp(name: String): PineProp<*>? = nameProps[name]
     fun dumpObjectTree(): String? = null
@@ -158,7 +145,6 @@ open class PineObject(val id: Long = -1) {
         return PineProp(type, kProp, initialValue).also { sig ->
             slot?.let { sig.connect(it) }
             nameProps[scriptName] = sig
-            kProps[kProp] = sig
         }
     }
 

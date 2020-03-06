@@ -13,6 +13,7 @@ import java.lang.Exception
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
+import kotlin.system.measureTimeMillis
 
 
 /*
@@ -77,7 +78,8 @@ class MainWindow : JFrame() {
     private fun runScript() {
         try {
             root?.getProp("visible")?.asBool()?.setValue(false)
-            root = scriptEngine.load(textArea.text)
+            val loadTime = measureTimeMillis { root = scriptEngine.load(textArea.text) }
+            println("Script Parser in $loadTime ms")
             outputPanel.removeAll()
             outputPanel.add((root as Rectangle).panel)
             outputPanel.repaint()

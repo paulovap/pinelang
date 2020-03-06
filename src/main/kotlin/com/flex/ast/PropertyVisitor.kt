@@ -35,32 +35,43 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import com.flex.ast.expression.PrimaryExpressionVisitor
 import com.flex.core.*
 import com.flex.parser.PineScriptParser
+import org.antlr.v4.runtime.tree.TerminalNode
 
 class PropertyVisitor(engine: PineEngine, var rootContext: PineContext, var owner: PineObject) :
     PineScriptVisitor<Unit>(engine) {
 
     override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
-        val propName = ctx!!.Identifier().text
+        val leftSidePropName = ctx!!.Identifier().text
         val prop =
-            owner.getProp(propName) ?: throw PineScriptParseException(ctx.Identifier(), "prop $propName not found")
-        PrimaryExpressionVisitor(prop).visit(ctx.primaryExpression())
+            owner.getProp(leftSidePropName) ?: ctx.Identifier().throwPropNotFound(leftSidePropName, "this")
+
+        ctx.assignExpression()?.also {
+            it.primitiveExpression()?.also { primitiveExp -> PrimaryExpressionVisitor(prop).visit(primitiveExp) }
+
+            it.objectPropertyExpression()?.also { propExp ->
+                val ids = propExp.Identifier()
+                if (ids.size == 1) {
+                    // this means we are referring a local property
+                    val rightSidePropName = ids[0].text
+                    prop.emitter =
+                        owner.getProp(rightSidePropName) ?: ids[0].throwPropNotFound(rightSidePropName, "this")
+                } else {
+                    val rightSideObjName = ids[0].text
+                    val rightSizePropName = ids[1].text
+                    val otherObject =
+                        rootContext.find(rightSideObjName) ?: ctx.Identifier().throwObjNotFound(rightSideObjName)
+                    prop.emitter = otherObject.getProp(rightSizePropName) ?: ctx.Identifier()
+                        .throwPropNotFound(rightSizePropName, rightSideObjName)
+                }
+            }
+        }
     }
 
-    override fun visitPropertyBinding(ctx: PineScriptParser.PropertyBindingContext?) {
-        val propName = ctx!!.Identifier().text
-        val prop =
-            owner.getProp(propName) ?: throw PineScriptParseException(ctx.Identifier(), "prop $propName not found")
+    private fun TerminalNode.throwPropNotFound(propName: String, objName: String): Nothing {
+        throw PineScriptParseException(this, "prop $propName on object $objName not found")
+    }
 
-        val otherObjectId = ctx.objectProperty().Identifier(0).text
-        val otherObject = rootContext.find(otherObjectId) ?: throw PineScriptParseException(
-            ctx.Identifier(),
-            "object with identifier $otherObjectId not found"
-        )
-        val otherPropId = ctx.objectProperty().Identifier(1).text
-        val otherProp = otherObject.getProp(otherPropId) ?: throw PineScriptParseException(
-            ctx.Identifier(),
-            "prop $otherPropId with identifier $otherObjectId not found"
-        )
-        prop.emitter = otherProp
+    private fun TerminalNode.throwObjNotFound(objName: String): Nothing {
+        throw PineScriptParseException(this, "object with identifier $objName not found")
     }
 }

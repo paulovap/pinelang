@@ -19,39 +19,39 @@ public class PineScriptParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		ID=1, DOT=2, LPAREN=3, RPAREN=4, COMMA=5, NULL=6, TRUE=7, FALSE=8, EQ=9, 
-		LBRACKET=10, RBRACKET=11, AND_AND=12, OR_OR=13, QUESTION=14, SEMICOLON=15, 
-		COLON=16, LBRACE=17, RBRACE=18, RETURN=19, IMPORT=20, Identifier=21, ObjectDeclaration=22, 
-		IntegerLiteral=23, FloatLiteral=24, StringLiteral=25, WS=26, COMMENT=27, 
-		LINE_COMMENT=28, LineTerminator=29;
+		SUFFIX_DP=1, SUFFIX_PX=2, ID=3, DOT=4, LPAREN=5, RPAREN=6, COMMA=7, NULL=8, 
+		TRUE=9, FALSE=10, EQ=11, LBRACKET=12, RBRACKET=13, AND_AND=14, OR_OR=15, 
+		QUESTION=16, SEMICOLON=17, COLON=18, LBRACE=19, RBRACE=20, RETURN=21, 
+		IMPORT=22, Identifier=23, ObjectDeclaration=24, IntegerLiteral=25, FloatLiteral=26, 
+		StringLiteral=27, WS=28, COMMENT=29, LINE_COMMENT=30, LineTerminator=31;
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
 		RULE_objectIdentifier = 4, RULE_objectMember = 5, RULE_propertyAssignement = 6, 
-		RULE_propertyBinding = 7, RULE_objectProperty = 8, RULE_primaryExpression = 9;
+		RULE_assignExpression = 7, RULE_objectPropertyExpression = 8, RULE_primitiveExpression = 9;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"program", "rootMember", "objectDefinition", "objectInitializer", "objectIdentifier", 
-			"objectMember", "propertyAssignement", "propertyBinding", "objectProperty", 
-			"primaryExpression"
+			"objectMember", "propertyAssignement", "assignExpression", "objectPropertyExpression", 
+			"primitiveExpression"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'id'", "'.'", "'('", "')'", "','", "'null'", "'true'", "'false'", 
-			"'='", "'['", "']'", "'&&'", "'||'", "'?'", "';'", "':'", "'{'", "'}'", 
-			"'return'", "'import'"
+			null, "'dp'", "'px'", "'id'", "'.'", "'('", "')'", "','", "'null'", "'true'", 
+			"'false'", "'='", "'['", "']'", "'&&'", "'||'", "'?'", "';'", "':'", 
+			"'{'", "'}'", "'return'", "'import'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "ID", "DOT", "LPAREN", "RPAREN", "COMMA", "NULL", "TRUE", "FALSE", 
-			"EQ", "LBRACKET", "RBRACKET", "AND_AND", "OR_OR", "QUESTION", "SEMICOLON", 
-			"COLON", "LBRACE", "RBRACE", "RETURN", "IMPORT", "Identifier", "ObjectDeclaration", 
-			"IntegerLiteral", "FloatLiteral", "StringLiteral", "WS", "COMMENT", "LINE_COMMENT", 
-			"LineTerminator"
+			null, "SUFFIX_DP", "SUFFIX_PX", "ID", "DOT", "LPAREN", "RPAREN", "COMMA", 
+			"NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", "OR_OR", 
+			"QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", "IMPORT", 
+			"Identifier", "ObjectDeclaration", "IntegerLiteral", "FloatLiteral", 
+			"StringLiteral", "WS", "COMMENT", "LINE_COMMENT", "LineTerminator"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -398,9 +398,6 @@ public class PineScriptParser extends Parser {
 		public PropertyAssignementContext propertyAssignement() {
 			return getRuleContext(PropertyAssignementContext.class,0);
 		}
-		public PropertyBindingContext propertyBinding() {
-			return getRuleContext(PropertyBindingContext.class,0);
-		}
 		public ObjectMemberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -424,30 +421,25 @@ public class PineScriptParser extends Parser {
 		ObjectMemberContext _localctx = new ObjectMemberContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_objectMember);
 		try {
-			setState(50);
+			setState(49);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case ObjectDeclaration:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(47);
 				objectDefinition();
 				}
 				break;
-			case 2:
+			case Identifier:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(48);
 				propertyAssignement();
 				}
 				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(49);
-				propertyBinding();
-				}
-				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -464,8 +456,8 @@ public class PineScriptParser extends Parser {
 	public static class PropertyAssignementContext extends ParserRuleContext {
 		public TerminalNode Identifier() { return getToken(PineScriptParser.Identifier, 0); }
 		public TerminalNode COLON() { return getToken(PineScriptParser.COLON, 0); }
-		public PrimaryExpressionContext primaryExpression() {
-			return getRuleContext(PrimaryExpressionContext.class,0);
+		public AssignExpressionContext assignExpression() {
+			return getRuleContext(AssignExpressionContext.class,0);
 		}
 		public TerminalNode SEMICOLON() { return getToken(PineScriptParser.SEMICOLON, 0); }
 		public PropertyAssignementContext(ParserRuleContext parent, int invokingState) {
@@ -494,18 +486,18 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(51);
 			match(Identifier);
-			setState(53);
+			setState(52);
 			match(COLON);
-			setState(54);
-			primaryExpression();
-			setState(56);
+			setState(53);
+			assignExpression();
+			setState(55);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(55);
+				setState(54);
 				match(SEMICOLON);
 				}
 			}
@@ -523,55 +515,59 @@ public class PineScriptParser extends Parser {
 		return _localctx;
 	}
 
-	public static class PropertyBindingContext extends ParserRuleContext {
-		public TerminalNode Identifier() { return getToken(PineScriptParser.Identifier, 0); }
-		public TerminalNode COLON() { return getToken(PineScriptParser.COLON, 0); }
-		public ObjectPropertyContext objectProperty() {
-			return getRuleContext(ObjectPropertyContext.class,0);
+	public static class AssignExpressionContext extends ParserRuleContext {
+		public PrimitiveExpressionContext primitiveExpression() {
+			return getRuleContext(PrimitiveExpressionContext.class,0);
 		}
-		public TerminalNode SEMICOLON() { return getToken(PineScriptParser.SEMICOLON, 0); }
-		public PropertyBindingContext(ParserRuleContext parent, int invokingState) {
+		public ObjectPropertyExpressionContext objectPropertyExpression() {
+			return getRuleContext(ObjectPropertyExpressionContext.class,0);
+		}
+		public AssignExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_propertyBinding; }
+		@Override public int getRuleIndex() { return RULE_assignExpression; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterPropertyBinding(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterAssignExpression(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitPropertyBinding(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitAssignExpression(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitPropertyBinding(this);
+			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitAssignExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final PropertyBindingContext propertyBinding() throws RecognitionException {
-		PropertyBindingContext _localctx = new PropertyBindingContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_propertyBinding);
-		int _la;
+	public final AssignExpressionContext assignExpression() throws RecognitionException {
+		AssignExpressionContext _localctx = new AssignExpressionContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_assignExpression);
 		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(58);
-			match(Identifier);
 			setState(59);
-			match(COLON);
-			setState(60);
-			objectProperty();
-			setState(62);
 			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==SEMICOLON) {
+			switch (_input.LA(1)) {
+			case TRUE:
+			case FALSE:
+			case IntegerLiteral:
+			case FloatLiteral:
+			case StringLiteral:
+				enterOuterAlt(_localctx, 1);
 				{
-				setState(61);
-				match(SEMICOLON);
+				setState(57);
+				primitiveExpression();
 				}
-			}
-
+				break;
+			case Identifier:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(58);
+				objectPropertyExpression();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -585,43 +581,52 @@ public class PineScriptParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ObjectPropertyContext extends ParserRuleContext {
+	public static class ObjectPropertyExpressionContext extends ParserRuleContext {
 		public List<TerminalNode> Identifier() { return getTokens(PineScriptParser.Identifier); }
 		public TerminalNode Identifier(int i) {
 			return getToken(PineScriptParser.Identifier, i);
 		}
 		public TerminalNode DOT() { return getToken(PineScriptParser.DOT, 0); }
-		public ObjectPropertyContext(ParserRuleContext parent, int invokingState) {
+		public ObjectPropertyExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_objectProperty; }
+		@Override public int getRuleIndex() { return RULE_objectPropertyExpression; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterObjectProperty(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterObjectPropertyExpression(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitObjectProperty(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitObjectPropertyExpression(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitObjectProperty(this);
+			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitObjectPropertyExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ObjectPropertyContext objectProperty() throws RecognitionException {
-		ObjectPropertyContext _localctx = new ObjectPropertyContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_objectProperty);
+	public final ObjectPropertyExpressionContext objectPropertyExpression() throws RecognitionException {
+		ObjectPropertyExpressionContext _localctx = new ObjectPropertyExpressionContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_objectPropertyExpression);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(61);
+			match(Identifier);
 			setState(64);
-			match(Identifier);
-			setState(65);
-			match(DOT);
-			setState(66);
-			match(Identifier);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==DOT) {
+				{
+				setState(62);
+				match(DOT);
+				setState(63);
+				match(Identifier);
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -635,39 +640,39 @@ public class PineScriptParser extends Parser {
 		return _localctx;
 	}
 
-	public static class PrimaryExpressionContext extends ParserRuleContext {
+	public static class PrimitiveExpressionContext extends ParserRuleContext {
 		public TerminalNode TRUE() { return getToken(PineScriptParser.TRUE, 0); }
 		public TerminalNode FALSE() { return getToken(PineScriptParser.FALSE, 0); }
 		public TerminalNode IntegerLiteral() { return getToken(PineScriptParser.IntegerLiteral, 0); }
 		public TerminalNode FloatLiteral() { return getToken(PineScriptParser.FloatLiteral, 0); }
 		public TerminalNode StringLiteral() { return getToken(PineScriptParser.StringLiteral, 0); }
-		public PrimaryExpressionContext(ParserRuleContext parent, int invokingState) {
+		public PrimitiveExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_primaryExpression; }
+		@Override public int getRuleIndex() { return RULE_primitiveExpression; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterPrimaryExpression(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterPrimitiveExpression(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitPrimaryExpression(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitPrimitiveExpression(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitPrimaryExpression(this);
+			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitPrimitiveExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final PrimaryExpressionContext primaryExpression() throws RecognitionException {
-		PrimaryExpressionContext _localctx = new PrimaryExpressionContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_primaryExpression);
+	public final PrimitiveExpressionContext primitiveExpression() throws RecognitionException {
+		PrimitiveExpressionContext _localctx = new PrimitiveExpressionContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_primitiveExpression);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(68);
+			setState(66);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TRUE) | (1L << FALSE) | (1L << IntegerLiteral) | (1L << FloatLiteral) | (1L << StringLiteral))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -691,24 +696,24 @@ public class PineScriptParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\37I\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
-		"\2\3\2\3\3\3\3\3\4\3\4\3\4\5\4\36\n\4\3\5\3\5\5\5\"\n\5\3\5\7\5%\n\5\f"+
-		"\5\16\5(\13\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6\60\n\6\3\7\3\7\3\7\5\7\65\n"+
-		"\7\3\b\3\b\3\b\3\b\5\b;\n\b\3\t\3\t\3\t\3\t\5\tA\n\t\3\n\3\n\3\n\3\n\3"+
-		"\13\3\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\3\4\2\t\n\31\33\2F\2\26"+
-		"\3\2\2\2\4\30\3\2\2\2\6\32\3\2\2\2\b\37\3\2\2\2\n+\3\2\2\2\f\64\3\2\2"+
-		"\2\16\66\3\2\2\2\20<\3\2\2\2\22B\3\2\2\2\24F\3\2\2\2\26\27\5\4\3\2\27"+
-		"\3\3\2\2\2\30\31\5\6\4\2\31\5\3\2\2\2\32\33\7\30\2\2\33\35\5\b\5\2\34"+
-		"\36\7\21\2\2\35\34\3\2\2\2\35\36\3\2\2\2\36\7\3\2\2\2\37!\7\23\2\2 \""+
-		"\5\n\6\2! \3\2\2\2!\"\3\2\2\2\"&\3\2\2\2#%\5\f\7\2$#\3\2\2\2%(\3\2\2\2"+
-		"&$\3\2\2\2&\'\3\2\2\2\')\3\2\2\2(&\3\2\2\2)*\7\24\2\2*\t\3\2\2\2+,\7\3"+
-		"\2\2,-\7\22\2\2-/\7\27\2\2.\60\7\21\2\2/.\3\2\2\2/\60\3\2\2\2\60\13\3"+
-		"\2\2\2\61\65\5\6\4\2\62\65\5\16\b\2\63\65\5\20\t\2\64\61\3\2\2\2\64\62"+
-		"\3\2\2\2\64\63\3\2\2\2\65\r\3\2\2\2\66\67\7\27\2\2\678\7\22\2\28:\5\24"+
-		"\13\29;\7\21\2\2:9\3\2\2\2:;\3\2\2\2;\17\3\2\2\2<=\7\27\2\2=>\7\22\2\2"+
-		">@\5\22\n\2?A\7\21\2\2@?\3\2\2\2@A\3\2\2\2A\21\3\2\2\2BC\7\27\2\2CD\7"+
-		"\4\2\2DE\7\27\2\2E\23\3\2\2\2FG\t\2\2\2G\25\3\2\2\2\t\35!&/\64:@";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3!G\4\2\t\2\4\3\t\3"+
+		"\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3\2"+
+		"\3\2\3\3\3\3\3\4\3\4\3\4\5\4\36\n\4\3\5\3\5\5\5\"\n\5\3\5\7\5%\n\5\f\5"+
+		"\16\5(\13\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6\60\n\6\3\7\3\7\5\7\64\n\7\3\b"+
+		"\3\b\3\b\3\b\5\b:\n\b\3\t\3\t\5\t>\n\t\3\n\3\n\3\n\5\nC\n\n\3\13\3\13"+
+		"\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\3\4\2\13\f\33\35\2D\2\26\3\2\2\2"+
+		"\4\30\3\2\2\2\6\32\3\2\2\2\b\37\3\2\2\2\n+\3\2\2\2\f\63\3\2\2\2\16\65"+
+		"\3\2\2\2\20=\3\2\2\2\22?\3\2\2\2\24D\3\2\2\2\26\27\5\4\3\2\27\3\3\2\2"+
+		"\2\30\31\5\6\4\2\31\5\3\2\2\2\32\33\7\32\2\2\33\35\5\b\5\2\34\36\7\23"+
+		"\2\2\35\34\3\2\2\2\35\36\3\2\2\2\36\7\3\2\2\2\37!\7\25\2\2 \"\5\n\6\2"+
+		"! \3\2\2\2!\"\3\2\2\2\"&\3\2\2\2#%\5\f\7\2$#\3\2\2\2%(\3\2\2\2&$\3\2\2"+
+		"\2&\'\3\2\2\2\')\3\2\2\2(&\3\2\2\2)*\7\26\2\2*\t\3\2\2\2+,\7\5\2\2,-\7"+
+		"\24\2\2-/\7\31\2\2.\60\7\23\2\2/.\3\2\2\2/\60\3\2\2\2\60\13\3\2\2\2\61"+
+		"\64\5\6\4\2\62\64\5\16\b\2\63\61\3\2\2\2\63\62\3\2\2\2\64\r\3\2\2\2\65"+
+		"\66\7\31\2\2\66\67\7\24\2\2\679\5\20\t\28:\7\23\2\298\3\2\2\29:\3\2\2"+
+		"\2:\17\3\2\2\2;>\5\24\13\2<>\5\22\n\2=;\3\2\2\2=<\3\2\2\2>\21\3\2\2\2"+
+		"?B\7\31\2\2@A\7\6\2\2AC\7\31\2\2B@\3\2\2\2BC\3\2\2\2C\23\3\2\2\2DE\t\2"+
+		"\2\2E\25\3\2\2\2\n\35!&/\639=B";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

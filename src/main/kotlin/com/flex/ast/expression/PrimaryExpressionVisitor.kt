@@ -38,9 +38,9 @@ import com.flex.parser.PineScriptParser
 
 class PrimaryExpressionVisitor(private val prop: PineProp<*>): PineScriptBaseVisitor<Unit>() {
 
-    override fun visitPrimaryExpression(ctx: PineScriptParser.PrimaryExpressionContext) {
+    override fun visitPrimitiveExpression(ctx: PineScriptParser.PrimitiveExpressionContext?) {
         when {
-            ctx.TRUE() != null -> prop.setBoolean(true)
+            ctx!!.TRUE() != null -> prop.setBoolean(true)
             ctx.FALSE() != null -> prop.setBoolean(false)
             ctx.StringLiteral() != null -> prop.setString(ctx.StringLiteral().text.substring(1, ctx.StringLiteral().text.length - 1))
             ctx.IntegerLiteral() != null -> prop.setInt(Integer.parseInt(ctx.IntegerLiteral().text))

@@ -48,10 +48,10 @@ class Label : Item() {
     val color: String by stringProp(::color, initialValue = "#000000") { label.foreground = Color.decode(color) }
 
     init {
-        connect((this as Item)::x) { resizeSlot() }
-        connect((this as Item)::y) { resizeSlot() }
-        connect((this as Item)::width) { resizeSlot() }
-        connect((this as Item)::height) { resizeSlot() }
+        connect("x") { resizeSlot() }
+        connect("y") { resizeSlot() }
+        connect("width") { resizeSlot() }
+        connect("height") { resizeSlot() }
 
         resizeSlot()
 

@@ -67,11 +67,6 @@ class ObjectDefinitionVisitor(engine: PineEngine, val rootContext: PineContext) 
             if (memberCtx.propertyAssignement() != null) {
                 PropertyVisitor(engine, rootContext, obj).visit(memberCtx.propertyAssignement())
             }
-
-            /* assigning script to a binded property */
-            if (memberCtx.propertyBinding() != null) {
-                PropertyVisitor(engine, rootContext, obj).visit(memberCtx.propertyBinding())
-            }
         }
         return obj
     }
