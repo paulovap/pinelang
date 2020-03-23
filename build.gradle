@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-test-junit5"
     //implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile "org.antlr:antlr4-runtime:4.8"
     antlr "org.antlr:antlr4:4.8-1"
@@ -30,11 +31,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile group: 'com.google.flatbuffers', name: 'flatbuffers-java', version: '1.11.1'
     implementation 'net.sf.squirrel-sql.thirdparty-non-maven:com-fifesoft-rsyntaxtextarea:1.0.0'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
 }

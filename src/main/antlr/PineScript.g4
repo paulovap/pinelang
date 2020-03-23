@@ -51,6 +51,7 @@ objectDefinition
     : ObjectDeclaration objectInitializer SEMICOLON?
     ;
 
+// { ... }
 objectInitializer
     : LBRACE objectIdentifier? objectMember* RBRACE
     ;
@@ -64,23 +65,47 @@ objectMember
     | propertyAssignement
     ;
 
+// prop: ... ;
 propertyAssignement
-    : Identifier COLON assignExpression SEMICOLON?
+    : Identifier COLON expression SEMICOLON?
     ;
 
-assignExpression
+expression
     : primitiveExpression
     | objectPropertyExpression
+    | expression binaryOperation expression
     ;
+
+binaryOperation
+    : PLUS
+    | MINUS
+    | MULTI
+    | DIV
+    | REMAINDER
+    ;
+// height: width;
+// height: otherObject.width;
 objectPropertyExpression
     : Identifier (DOT Identifier)?
     ;
+
+// visible: true
+// width: 100
+// text: "Asdf"
 primitiveExpression
     : TRUE
     | FALSE
     | IntegerLiteral
     | FloatLiteral
     | StringLiteral
+    ;
+
+functionExpression
+    : LBRACE arguments? RBRACE
+    ;
+
+arguments
+    : expression ( ',' expression )*
     ;
 
 ///////////////////////////
@@ -112,6 +137,11 @@ LBRACE : '{' ;
 RBRACE : '}' ;
 RETURN : 'return';
 IMPORT : 'import' ;
+PLUS: '+';
+MINUS: '-';
+MULTI: '*';
+DIV: '/';
+REMAINDER: '%';
 
 Identifier: [a-z][a-zA-Z_0-9]*;
 

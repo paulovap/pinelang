@@ -80,15 +80,25 @@ public interface PineScriptListener extends ParseTreeListener {
 	 */
 	void exitPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PineScriptParser#assignExpression}.
+	 * Enter a parse tree produced by {@link PineScriptParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignExpression(PineScriptParser.AssignExpressionContext ctx);
+	void enterExpression(PineScriptParser.ExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PineScriptParser#assignExpression}.
+	 * Exit a parse tree produced by {@link PineScriptParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignExpression(PineScriptParser.AssignExpressionContext ctx);
+	void exitExpression(PineScriptParser.ExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PineScriptParser#binaryOperation}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryOperation(PineScriptParser.BinaryOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PineScriptParser#binaryOperation}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryOperation(PineScriptParser.BinaryOperationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PineScriptParser#objectPropertyExpression}.
 	 * @param ctx the parse tree
@@ -109,4 +119,24 @@ public interface PineScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PineScriptParser#functionExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionExpression(PineScriptParser.FunctionExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PineScriptParser#functionExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionExpression(PineScriptParser.FunctionExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PineScriptParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterArguments(PineScriptParser.ArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PineScriptParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitArguments(PineScriptParser.ArgumentsContext ctx);
 }

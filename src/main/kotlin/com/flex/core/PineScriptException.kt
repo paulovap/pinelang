@@ -1,6 +1,7 @@
 package com.flex.core
 
 import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.TerminalNode
 
 /*
@@ -36,6 +37,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 class PineScriptParseException(msg: String, cause: Throwable? = null) : java.lang.RuntimeException(msg, cause) {
+    constructor(node : Token, message: String = "", cause: Throwable? = null) :
+            this("\n$message at line: ${node.line} col:${node.charPositionInLine}", cause)
     constructor(node : TerminalNode, message: String = "", cause: Throwable? = null) :
             this("\n$message at line: ${node.symbol.line} col:${node.symbol.charPositionInLine}", cause)
     constructor(node : TerminalNode, cause: Throwable) :

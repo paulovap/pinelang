@@ -32,6 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.flex.ast.expression.FunctionExpressionVisitor
 import com.flex.ast.expression.PrimaryExpressionVisitor
 import com.flex.core.*
 import com.flex.parser.PineScriptParser
@@ -45,24 +46,32 @@ class PropertyVisitor(engine: PineEngine, var rootContext: PineContext, var owne
         val prop =
             owner.getProp(leftSidePropName) ?: ctx.Identifier().throwPropNotFound(leftSidePropName, "this")
 
-        ctx.assignExpression()?.also {
-            it.primitiveExpression()?.also { primitiveExp -> PrimaryExpressionVisitor(prop).visit(primitiveExp) }
+        ctx.expression()?.also {
+
+            it.primitiveExpression()?.also { primitiveExp -> prop.setPineValue(PrimaryExpressionVisitor().visit(primitiveExp)) }
 
             it.objectPropertyExpression()?.also { propExp ->
                 val ids = propExp.Identifier()
                 if (ids.size == 1) {
                     // this means we are referring a local property
                     val rightSidePropName = ids[0].text
-                    prop.emitter =
-                        owner.getProp(rightSidePropName) ?: ids[0].throwPropNotFound(rightSidePropName, "this")
+                    val rightProp = owner.getProp(rightSidePropName) ?: ids[0].throwPropNotFound(rightSidePropName, "this")
+                    prop.checkType(ctx.Identifier(), rightProp)
+                    prop.bind(rightProp)
                 } else {
                     val rightSideObjName = ids[0].text
                     val rightSizePropName = ids[1].text
                     val otherObject =
                         rootContext.find(rightSideObjName) ?: ctx.Identifier().throwObjNotFound(rightSideObjName)
-                    prop.emitter = otherObject.getProp(rightSizePropName) ?: ctx.Identifier()
-                        .throwPropNotFound(rightSizePropName, rightSideObjName)
+                    val rightProp = otherObject.getProp(rightSizePropName) ?: ctx.Identifier().throwPropNotFound(rightSizePropName, rightSideObjName)
+                    prop.checkType(ctx.Identifier(), rightProp)
+                    prop.bind(rightProp)
                 }
+            }
+
+            it.binaryOperation()?.also { fCtx ->
+                //prop.checkType(fCtx, leftExp)
+                prop.setPineValue(ExpressionVisitor(engine,rootContext, owner, prop).visit(it))
             }
         }
     }
@@ -73,5 +82,10 @@ class PropertyVisitor(engine: PineEngine, var rootContext: PineContext, var owne
 
     private fun TerminalNode.throwObjNotFound(objName: String): Nothing {
         throw PineScriptParseException(this, "object with identifier $objName not found")
+    }
+
+    private fun PineProp<*>.checkType(node: TerminalNode, other: PineProp<*>) {
+        if (other.pineType != this.pineType)
+            throw PineScriptParseException(node, "unable to cast type ${other.pineType} to ${this.pineType}")
     }
 }

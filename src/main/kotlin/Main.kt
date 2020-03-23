@@ -1,5 +1,6 @@
 import com.flex.core.PineObject
 import com.flex.core.PineEngine
+import com.flex.core.PineValue
 import com.flex.ui.Item
 import com.flex.ui.Label
 import com.flex.ui.Rectangle
@@ -77,7 +78,7 @@ class MainWindow : JFrame() {
 
     private fun runScript() {
         try {
-            root?.getProp("visible")?.asBool()?.setValue(false)
+            root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
             val loadTime = measureTimeMillis { root = scriptEngine.load(textArea.text) }
             println("Script Parser in $loadTime ms")
             outputPanel.removeAll()
@@ -88,6 +89,7 @@ class MainWindow : JFrame() {
             outputPanel.removeAll()
             outputPanel.add(errorLabel(e))
             outputPanel.repaint()
+            e.printStackTrace()
             println(e.message)
         }
     }

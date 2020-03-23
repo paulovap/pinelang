@@ -1,6 +1,6 @@
 package com.flex.ui
 
-import com.flex.core.PineObject
+import com.flex.core.*
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.JFrame
@@ -47,7 +47,6 @@ class Rectangle : Item() {
     val color: String by stringProp(::color, initialValue = "#ffffff") { panel.background = Color.decode(color) }
 
     init {
-
         connect("x") { resizeSlot() }
         connect("y") { resizeSlot() }
         connect("width") { resizeSlot() }
@@ -56,7 +55,7 @@ class Rectangle : Item() {
         panel.background = Color.decode(color)
 
 
-        childrenChanged.connect {
+        children.connect {
             panel.removeAll()
             for (child in children) {
                 if (child is Rectangle) {

@@ -1,6 +1,8 @@
 package com.flex.ui
 
 import com.flex.core.PineObject
+import com.flex.core.boolProp
+import com.flex.core.stringProp
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Panel
@@ -55,7 +57,7 @@ class Label : Item() {
 
         resizeSlot()
 
-        childrenChanged.connect {
+        children.connect {
             label.removeAll()
             for (child in children) {
                 if (child is Rectangle) {

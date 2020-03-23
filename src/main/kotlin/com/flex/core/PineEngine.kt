@@ -50,7 +50,7 @@ class PineEngine private constructor(private var types: HashMap<String, ObjectAl
 
 
     class QtObject(id: Long) : PineObject(id) {
-        val a: Float by makePineProp(PineType.DOUBLE, ::a, "a", 0.2f)
+        val a: Double by doubleProp(::a)
     }
 
     class Builder {

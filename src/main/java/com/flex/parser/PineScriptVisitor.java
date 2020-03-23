@@ -55,11 +55,17 @@ public interface PineScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PineScriptParser#assignExpression}.
+	 * Visit a parse tree produced by {@link PineScriptParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignExpression(PineScriptParser.AssignExpressionContext ctx);
+	T visitExpression(PineScriptParser.ExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PineScriptParser#binaryOperation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryOperation(PineScriptParser.BinaryOperationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PineScriptParser#objectPropertyExpression}.
 	 * @param ctx the parse tree
@@ -72,4 +78,16 @@ public interface PineScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrimitiveExpression(PineScriptParser.PrimitiveExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PineScriptParser#functionExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionExpression(PineScriptParser.FunctionExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PineScriptParser#arguments}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArguments(PineScriptParser.ArgumentsContext ctx);
 }

@@ -1,6 +1,7 @@
 package com.flex.ui
 
 import com.flex.core.PineObject
+import com.flex.core.intProp
 import java.awt.Color
 import javax.swing.JPanel
 

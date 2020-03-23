@@ -33,24 +33,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.flex.ast.expression
 
 import com.flex.core.PineProp
+import com.flex.core.PineScriptException
+import com.flex.core.PineScriptParseException
+import com.flex.core.PineValue
 import com.flex.parser.PineScriptBaseVisitor
 import com.flex.parser.PineScriptParser
 
-class PrimaryExpressionVisitor(private val prop: PineProp<*>): PineScriptBaseVisitor<Unit>() {
+class PrimaryExpressionVisitor : PineScriptBaseVisitor<PineValue<*>>() {
 
-    override fun visitPrimitiveExpression(ctx: PineScriptParser.PrimitiveExpressionContext?) {
-        when {
-            ctx!!.TRUE() != null -> prop.setBoolean(true)
-            ctx.FALSE() != null -> prop.setBoolean(false)
-            ctx.StringLiteral() != null -> prop.setString(ctx.StringLiteral().text.substring(1, ctx.StringLiteral().text.length - 1))
-            ctx.IntegerLiteral() != null -> prop.setInt(Integer.parseInt(ctx.IntegerLiteral().text))
-            ctx.FloatLiteral() != null -> prop.setFloat(ctx.FloatLiteral().text.toDouble())
+    override fun visitPrimitiveExpression(ctx: PineScriptParser.PrimitiveExpressionContext?): PineValue<*> {
+        return when {
+            ctx!!.TRUE() != null -> PineValue.of(true)
+            ctx.FALSE() != null -> PineValue.of(false)
+            ctx.StringLiteral() != null -> PineValue.of((ctx.StringLiteral().text.substring(1, ctx.StringLiteral().text.length - 1)))
+            ctx.IntegerLiteral() != null -> PineValue.of(Integer.parseInt(ctx.IntegerLiteral().text))
+            ctx.FloatLiteral() != null -> PineValue.of(ctx.FloatLiteral().text.toDouble())
+            else -> throw PineScriptParseException(ctx.start, "failed to parse primitive expression")
         }
     }
-
-    private fun PineProp<*>.setBoolean(value: Boolean) = asBool().setValue(value)
-    private fun PineProp<*>.setString(value: String) = asString().setValue(value)
-    private fun PineProp<*>.setFloat(value: Double) = asDouble().setValue(value)
-    private fun PineProp<*>.setInt(value: Int) = asInt().setValue(value)
 
 }

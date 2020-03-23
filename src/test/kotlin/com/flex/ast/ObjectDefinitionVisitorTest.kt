@@ -32,9 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.flex.ast
 
-import com.flex.core.PineContext
-import com.flex.core.PineObject
-import com.flex.core.PineEngine
+import com.flex.core.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -50,10 +48,10 @@ class ObjectDefinitionVisitorTest {
     private var engine: PineEngine? = null
 
     class TestObject : PineObject(-1) {
-        val myInt: Int by intProp(::myInt, "int")
-        var myDouble: Double by doubleProp(::myDouble, "double")
-        val myString: String by stringProp(::myString, "string")
-        val myBool: Boolean by boolProp(::myBool, "bool")
+        val myInt: Int by intProp(::myInt)
+        var myDouble: Double by doubleProp(::myDouble)
+        val myString: String by stringProp(::myString)
+        val myBool: Boolean by boolProp(::myBool)
     }
 
     @Before
@@ -106,19 +104,19 @@ class ObjectDefinitionVisitorTest {
         assertNotNull(obj)
 
         val propDouble = obj.getProp("double")
-        assertEquals(10.1, propDouble?.getValue())
+        assertEquals(10.1, propDouble?.value)
         assertEquals(10.1, obj.myDouble, 0.01)
 
         val propString = obj.getProp("string")
-        assertEquals("oh my", propString?.getValue())
+        assertEquals("oh my", propString?.value)
         assertEquals("oh my", obj.myString)
 
         val propInt = obj.getProp("int")
-        assertEquals(20, propInt?.getValue())
+        assertEquals(20, propInt?.value)
         assertEquals(20, obj.myInt)
 
         val propBool = obj.getProp("bool")
-        assertEquals(true, propBool?.getValue())
+        assertEquals(true, propBool?.value)
         assertEquals(true, obj.myBool)
 
     }

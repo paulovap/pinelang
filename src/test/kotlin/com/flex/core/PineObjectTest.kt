@@ -1,3 +1,11 @@
+package com.flex.core
+
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+
+import org.junit.Assert.*
+
 /*
 BSD License
 
@@ -29,15 +37,46 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+class PineObjectTest {
 
-package com.flex.core.expression
+    @Before
+    @Throws(Exception::class)
+    fun setUp() {
+    }
 
-import com.flex.core.PineObject
+    @After
+    @Throws(Exception::class)
+    fun tearDown() {
+    }
 
-class QMLPrimaryExpression(owner: PineObject, private val value: Any?) : QMLExpression(owner) {
+    @Test
+    fun createDynamicProperty() {
+    }
 
-    override fun evaluate(): Any? {
-        return value
+    @Test
+    fun parentInsertionTree() {
+
+        val obj = PineObject(1)
+        val left = PineObject(2)
+        val right = PineObject(3)
+//
+//        PineObject(5, left)
+//        PineObject(6, right)
+//
+//
+//        assertNotNull(obj)
+//        assertEquals(2, obj.children.size)
+//
+//        assertEquals(2, obj.getChildrenAt(0).id)
+//        assertEquals(3, obj.getChildrenAt(1).id)
+//
+//        assertEquals(2, obj.getChildrenAt(0).children.size)
+//        assertEquals(4, left.getChildrenAt(0).id)
+//        assertEquals(5, left.getChildrenAt(1).id)
+//
+//
+//        assertEquals(1, obj.getChildrenAt(1).children.size)
+//        assertEquals(6, right.getChildrenAt(0).id)
     }
 
 }

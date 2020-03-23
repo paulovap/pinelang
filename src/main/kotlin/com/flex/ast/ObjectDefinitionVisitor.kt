@@ -59,7 +59,7 @@ class ObjectDefinitionVisitor(engine: PineEngine, val rootContext: PineContext) 
 
             /* getChildren parsing */
             if (memberCtx.objectDefinition() != null) {
-                obj.addChild(ObjectDefinitionVisitor(engine, rootContext).visit(memberCtx.objectDefinition()))
+                obj.children.add(ObjectDefinitionVisitor(engine, rootContext).visit(memberCtx.objectDefinition()))
             }
 
 
