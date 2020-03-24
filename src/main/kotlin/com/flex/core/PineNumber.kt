@@ -1,7 +1,9 @@
 package com.flex.core
 
-enum class MathOperations {
-    PLUS, MINUS, MULTI, DIV, REMAINDER
+enum class BinaryOperations {
+    PLUS, MINUS, MULTI, DIV, REMAINDER, AND, OR;
+    fun isNumberOp() = this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
+    fun isBooleanOp() = this == AND || this == OR
 }
 
 interface PineNumber<T> {

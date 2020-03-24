@@ -22,9 +22,9 @@ public class PineScriptParser extends Parser {
 		SUFFIX_DP=1, SUFFIX_PX=2, ID=3, DOT=4, LPAREN=5, RPAREN=6, COMMA=7, NULL=8, 
 		TRUE=9, FALSE=10, EQ=11, LBRACKET=12, RBRACKET=13, AND_AND=14, OR_OR=15, 
 		QUESTION=16, SEMICOLON=17, COLON=18, LBRACE=19, RBRACE=20, RETURN=21, 
-		IMPORT=22, PLUS=23, MINUS=24, MULTI=25, DIV=26, REMAINDER=27, Identifier=28, 
-		ObjectDeclaration=29, IntegerLiteral=30, FloatLiteral=31, StringLiteral=32, 
-		WS=33, COMMENT=34, LINE_COMMENT=35, LineTerminator=36;
+		IMPORT=22, PLUS=23, MINUS=24, MULTI=25, DIV=26, REMAINDER=27, AND=28, 
+		OR=29, Identifier=30, ObjectDeclaration=31, IntegerLiteral=32, FloatLiteral=33, 
+		StringLiteral=34, WS=35, COMMENT=36, LINE_COMMENT=37, LineTerminator=38;
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
 		RULE_objectIdentifier = 4, RULE_objectMember = 5, RULE_propertyAssignement = 6, 
@@ -44,7 +44,8 @@ public class PineScriptParser extends Parser {
 		return new String[] {
 			null, "'dp'", "'px'", "'id'", "'.'", "'('", "')'", "','", "'null'", "'true'", 
 			"'false'", "'='", "'['", "']'", "'&&'", "'||'", "'?'", "';'", "':'", 
-			"'{'", "'}'", "'return'", "'import'", "'+'", "'-'", "'*'", "'/'", "'%'"
+			"'{'", "'}'", "'return'", "'import'", "'+'", "'-'", "'*'", "'/'", "'%'", 
+			"'and'", "'or'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -53,9 +54,9 @@ public class PineScriptParser extends Parser {
 			null, "SUFFIX_DP", "SUFFIX_PX", "ID", "DOT", "LPAREN", "RPAREN", "COMMA", 
 			"NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", "OR_OR", 
 			"QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", "IMPORT", 
-			"PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "Identifier", "ObjectDeclaration", 
-			"IntegerLiteral", "FloatLiteral", "StringLiteral", "WS", "COMMENT", "LINE_COMMENT", 
-			"LineTerminator"
+			"PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR", "Identifier", 
+			"ObjectDeclaration", "IntegerLiteral", "FloatLiteral", "StringLiteral", 
+			"WS", "COMMENT", "LINE_COMMENT", "LineTerminator"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -635,6 +636,8 @@ public class PineScriptParser extends Parser {
 		public TerminalNode MULTI() { return getToken(PineScriptParser.MULTI, 0); }
 		public TerminalNode DIV() { return getToken(PineScriptParser.DIV, 0); }
 		public TerminalNode REMAINDER() { return getToken(PineScriptParser.REMAINDER, 0); }
+		public TerminalNode AND() { return getToken(PineScriptParser.AND, 0); }
+		public TerminalNode OR() { return getToken(PineScriptParser.OR, 0); }
 		public BinaryOperationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -663,7 +666,7 @@ public class PineScriptParser extends Parser {
 			{
 			setState(77);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << MULTI) | (1L << DIV) | (1L << REMAINDER))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << MULTI) | (1L << DIV) | (1L << REMAINDER) | (1L << AND) | (1L << OR))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -940,31 +943,31 @@ public class PineScriptParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3&g\4\2\t\2\4\3\t\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3(g\4\2\t\2\4\3\t\3"+
 		"\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f"+
 		"\t\f\4\r\t\r\4\16\t\16\3\2\3\2\3\3\3\3\3\4\3\4\3\4\5\4$\n\4\3\5\3\5\5"+
 		"\5(\n\5\3\5\7\5+\n\5\f\5\16\5.\13\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6\66\n\6"+
 		"\3\7\3\7\5\7:\n\7\3\b\3\b\3\b\3\b\5\b@\n\b\3\t\3\t\3\t\5\tE\n\t\3\t\3"+
 		"\t\3\t\3\t\7\tK\n\t\f\t\16\tN\13\t\3\n\3\n\3\13\3\13\3\13\5\13U\n\13\3"+
 		"\f\3\f\3\r\3\r\5\r[\n\r\3\r\3\r\3\16\3\16\3\16\7\16b\n\16\f\16\16\16e"+
-		"\13\16\3\16\2\3\20\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\4\3\2\31\35\4"+
-		"\2\13\f \"\2d\2\34\3\2\2\2\4\36\3\2\2\2\6 \3\2\2\2\b%\3\2\2\2\n\61\3\2"+
+		"\13\16\3\16\2\3\20\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\4\3\2\31\37\4"+
+		"\2\13\f\"$\2d\2\34\3\2\2\2\4\36\3\2\2\2\6 \3\2\2\2\b%\3\2\2\2\n\61\3\2"+
 		"\2\2\f9\3\2\2\2\16;\3\2\2\2\20D\3\2\2\2\22O\3\2\2\2\24Q\3\2\2\2\26V\3"+
 		"\2\2\2\30X\3\2\2\2\32^\3\2\2\2\34\35\5\4\3\2\35\3\3\2\2\2\36\37\5\6\4"+
-		"\2\37\5\3\2\2\2 !\7\37\2\2!#\5\b\5\2\"$\7\23\2\2#\"\3\2\2\2#$\3\2\2\2"+
-		"$\7\3\2\2\2%\'\7\25\2\2&(\5\n\6\2\'&\3\2\2\2\'(\3\2\2\2(,\3\2\2\2)+\5"+
-		"\f\7\2*)\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-/\3\2\2\2.,\3\2\2\2/\60"+
-		"\7\26\2\2\60\t\3\2\2\2\61\62\7\5\2\2\62\63\7\24\2\2\63\65\7\36\2\2\64"+
-		"\66\7\23\2\2\65\64\3\2\2\2\65\66\3\2\2\2\66\13\3\2\2\2\67:\5\6\4\28:\5"+
-		"\16\b\29\67\3\2\2\298\3\2\2\2:\r\3\2\2\2;<\7\36\2\2<=\7\24\2\2=?\5\20"+
-		"\t\2>@\7\23\2\2?>\3\2\2\2?@\3\2\2\2@\17\3\2\2\2AB\b\t\1\2BE\5\26\f\2C"+
-		"E\5\24\13\2DA\3\2\2\2DC\3\2\2\2EL\3\2\2\2FG\f\3\2\2GH\5\22\n\2HI\5\20"+
-		"\t\4IK\3\2\2\2JF\3\2\2\2KN\3\2\2\2LJ\3\2\2\2LM\3\2\2\2M\21\3\2\2\2NL\3"+
-		"\2\2\2OP\t\2\2\2P\23\3\2\2\2QT\7\36\2\2RS\7\6\2\2SU\7\36\2\2TR\3\2\2\2"+
-		"TU\3\2\2\2U\25\3\2\2\2VW\t\3\2\2W\27\3\2\2\2XZ\7\25\2\2Y[\5\32\16\2ZY"+
-		"\3\2\2\2Z[\3\2\2\2[\\\3\2\2\2\\]\7\26\2\2]\31\3\2\2\2^c\5\20\t\2_`\7\t"+
-		"\2\2`b\5\20\t\2a_\3\2\2\2be\3\2\2\2ca\3\2\2\2cd\3\2\2\2d\33\3\2\2\2ec"+
-		"\3\2\2\2\r#\',\659?DLTZc";
+		"\2\37\5\3\2\2\2 !\7!\2\2!#\5\b\5\2\"$\7\23\2\2#\"\3\2\2\2#$\3\2\2\2$\7"+
+		"\3\2\2\2%\'\7\25\2\2&(\5\n\6\2\'&\3\2\2\2\'(\3\2\2\2(,\3\2\2\2)+\5\f\7"+
+		"\2*)\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-/\3\2\2\2.,\3\2\2\2/\60\7\26"+
+		"\2\2\60\t\3\2\2\2\61\62\7\5\2\2\62\63\7\24\2\2\63\65\7 \2\2\64\66\7\23"+
+		"\2\2\65\64\3\2\2\2\65\66\3\2\2\2\66\13\3\2\2\2\67:\5\6\4\28:\5\16\b\2"+
+		"9\67\3\2\2\298\3\2\2\2:\r\3\2\2\2;<\7 \2\2<=\7\24\2\2=?\5\20\t\2>@\7\23"+
+		"\2\2?>\3\2\2\2?@\3\2\2\2@\17\3\2\2\2AB\b\t\1\2BE\5\26\f\2CE\5\24\13\2"+
+		"DA\3\2\2\2DC\3\2\2\2EL\3\2\2\2FG\f\3\2\2GH\5\22\n\2HI\5\20\t\4IK\3\2\2"+
+		"\2JF\3\2\2\2KN\3\2\2\2LJ\3\2\2\2LM\3\2\2\2M\21\3\2\2\2NL\3\2\2\2OP\t\2"+
+		"\2\2P\23\3\2\2\2QT\7 \2\2RS\7\6\2\2SU\7 \2\2TR\3\2\2\2TU\3\2\2\2U\25\3"+
+		"\2\2\2VW\t\3\2\2W\27\3\2\2\2XZ\7\25\2\2Y[\5\32\16\2ZY\3\2\2\2Z[\3\2\2"+
+		"\2[\\\3\2\2\2\\]\7\26\2\2]\31\3\2\2\2^c\5\20\t\2_`\7\t\2\2`b\5\20\t\2"+
+		"a_\3\2\2\2be\3\2\2\2ca\3\2\2\2cd\3\2\2\2d\33\3\2\2\2ec\3\2\2\2\r#\',\65"+
+		"9?DLTZc";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

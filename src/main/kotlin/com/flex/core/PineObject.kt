@@ -87,6 +87,9 @@ abstract class PineValue<T> {
 class PineBoolean(val value: Boolean) : PineValue<Boolean>() {
     override fun getPineType(): PineType = PineType.BOOL
     override fun getValue(): Boolean = value
+
+    fun and(other: PineBoolean) = of(value && other.value)
+    fun or(other: PineBoolean) = of(value || other.value)
 }
 
 class PineString(private val value: String) : PineValue<String>() {
@@ -94,25 +97,38 @@ class PineString(private val value: String) : PineValue<String>() {
     override fun getValue() = value
 }
 
-class PineBinaryArithmeticValue<T>(val op: MathOperations,
-                                   val leftHandValue: PineValue<T>,
-                                   val rightHandValue: PineValue<*>) : PineValue<T>() {
+class PineBinaryOperationExpressionValue<T>(val op: BinaryOperations,
+                                            val leftHandValue: PineValue<T>,
+                                            val rightHandValue: PineValue<*>) : PineValue<T>() {
 
     override fun getPineType(): PineType = PineType.FUNCTION
 
     override fun getValue(): T {
-        assert(rightHandValue.isNumber())
-        assert(leftHandValue.isNumber())
-        val left = leftHandValue as PineNumber<T>
-        return when(op) {
-            MathOperations.PLUS -> (left + rightHandValue).getValue()
-            MathOperations.MINUS -> (left - rightHandValue).getValue()
-            MathOperations.MULTI -> (left * rightHandValue).getValue()
-            MathOperations.DIV -> (left / rightHandValue).getValue()
-            MathOperations.REMAINDER -> (left % rightHandValue).getValue()
+
+        if (op.isNumberOp()) {
+            assert(rightHandValue.isNumber())
+            assert(leftHandValue.isNumber())
+            val left = leftHandValue as PineNumber<T>
+            return when(op) {
+                BinaryOperations.PLUS -> (left + rightHandValue).getValue()
+                BinaryOperations.MINUS -> (left - rightHandValue).getValue()
+                BinaryOperations.MULTI -> (left * rightHandValue).getValue()
+                BinaryOperations.DIV -> (left / rightHandValue).getValue()
+                BinaryOperations.REMAINDER -> (left % rightHandValue).getValue()
+                else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+            }
+        } else {
+            val left = leftHandValue as PineBoolean
+            val right = rightHandValue as PineBoolean
+            return when(op) {
+                BinaryOperations.AND -> (left.and(right) as PineValue<T>).getValue()
+                BinaryOperations.OR -> (left.or(right) as PineValue<T>).getValue()
+                else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+            }
         }
     }
 }
+
 
 class PineProp<T>(val pineType: PineType, val kProp: KProperty<*>, initialValue: PineValue<T>, slot: Slot?): PineSignal, ReadWriteProperty<PineObject, T> {
     override val slots = mutableListOf<Slot>()

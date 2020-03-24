@@ -5,6 +5,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class TestValue {
     @Before
@@ -37,6 +38,12 @@ class TestValue {
         assertEquals(data / data, (a / a).getValue())
         // remainder
         assertEquals(data % (data -1), (a % (a + of(-1))).getValue())
+
+        assertFailsWith(PineScriptException::class) {a + of("test")}
+        assertFailsWith(PineScriptException::class) {a - of("test")}
+        assertFailsWith(PineScriptException::class) {a * of("test")}
+        assertFailsWith(PineScriptException::class) {a / of("test")}
+        assertFailsWith(PineScriptException::class) {a % of("test")}
     }
 
     @Test fun testDoubleValue(){
@@ -57,6 +64,12 @@ class TestValue {
         assertEquals(data / data, (a / a).getValue())
         // remainder
         assertEquals(data % (data -1), (a % (a + of(-1))).getValue())
+
+        assertFailsWith(PineScriptException::class) {a + of("test")}
+        assertFailsWith(PineScriptException::class) {a - of("test")}
+        assertFailsWith(PineScriptException::class) {a * of("test")}
+        assertFailsWith(PineScriptException::class) {a / of("test")}
+        assertFailsWith(PineScriptException::class) {a % of("test")}
     }
 
     @Test fun testNumberOperators() {
@@ -73,6 +86,6 @@ class TestValue {
         // div
         assertEquals(2.0, (doubleVal / intVal).getValue())
         // remainder
-        assertEquals(10, (intVal % doubleVal).getValue())
+        assertEquals(0.0, (doubleVal % intVal).getValue())
     }
 }

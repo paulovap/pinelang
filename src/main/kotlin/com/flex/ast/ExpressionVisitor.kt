@@ -13,7 +13,7 @@ class ExpressionVisitor(engine: PineEngine, var rootContext: PineContext, var ow
         if (ctx?.binaryOperation() != null) {
             val leftExp:PineValue<*> = visit(ctx.expression(0))
             val rightExp:PineValue<*> = visit(ctx.expression(1))
-            return PineBinaryArithmeticValue(ctx.binaryOperation().getOp(), leftExp, rightExp)
+            return PineBinaryOperationExpressionValue(ctx.binaryOperation().getOp(), leftExp, rightExp)
         }
 
         if (ctx?.objectPropertyExpression() != null) {
@@ -38,12 +38,14 @@ class ExpressionVisitor(engine: PineEngine, var rootContext: PineContext, var ow
 
 
 
-    private fun PineScriptParser.BinaryOperationContext.getOp(): MathOperations {
-        if (this.PLUS() != null) return MathOperations.PLUS
-        if (this.MINUS() != null) return MathOperations.MINUS
-        if (this.MULTI() != null) return MathOperations.MULTI
-        if (this.DIV() != null) return MathOperations.DIV
-        if (this.REMAINDER() != null) return MathOperations.REMAINDER
+    private fun PineScriptParser.BinaryOperationContext.getOp(): BinaryOperations {
+        if (this.PLUS() != null) return BinaryOperations.PLUS
+        if (this.MINUS() != null) return BinaryOperations.MINUS
+        if (this.MULTI() != null) return BinaryOperations.MULTI
+        if (this.DIV() != null) return BinaryOperations.DIV
+        if (this.REMAINDER() != null) return BinaryOperations.REMAINDER
+        if (this.AND() != null) return BinaryOperations.AND
+        if (this.OR() != null) return BinaryOperations.OR
         throw PineScriptException("operator $this not recognized")
     }
 

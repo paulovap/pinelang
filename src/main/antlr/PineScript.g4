@@ -77,11 +77,13 @@ expression
     ;
 
 binaryOperation
-    : PLUS
+    : PLUS       // start number values only
     | MINUS
     | MULTI
     | DIV
-    | REMAINDER
+    | REMAINDER  // end number values only
+    | AND        // start boolean values only
+    | OR         // end boolean values only
     ;
 // height: width;
 // height: otherObject.width;
@@ -142,6 +144,8 @@ MINUS: '-';
 MULTI: '*';
 DIV: '/';
 REMAINDER: '%';
+AND: 'and';
+OR: 'or';
 
 Identifier: [a-z][a-zA-Z_0-9]*;
 
