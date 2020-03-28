@@ -53,8 +53,8 @@ class MainWindow : JFrame() {
     var textArea = RSyntaxTextArea(20, 40)
     var outputPanel = JPanel(null)
     var scriptEngine = PineEngine.Builder()
-        .registerQMLType("Rectangle") { Rectangle() }
-        .registerQMLType("Text") { Label() }
+        .registerPineType("Rectangle") { Rectangle() }
+        .registerPineType("Text") { Label() }
         .build()
 
     init {

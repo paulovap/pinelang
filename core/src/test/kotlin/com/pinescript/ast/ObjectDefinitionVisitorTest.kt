@@ -58,7 +58,7 @@ class ObjectDefinitionVisitorTest {
     @Throws(Exception::class)
     fun setUp() {
         engine = PineEngine.Builder()
-            .registerQMLType("TestObject") { TestObject() }
+            .registerPineType("TestObject") { TestObject() }
             .build()
     }
 

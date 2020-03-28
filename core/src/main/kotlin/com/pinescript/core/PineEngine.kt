@@ -62,7 +62,7 @@ class PineEngine private constructor(
             types["Object"] = { id -> PineObject(id)}
         }
 
-        fun registerQMLType(typeName: String, allocator: ObjectAllocator): Builder {
+        fun registerPineType(typeName: String, allocator: ObjectAllocator): Builder {
             types[typeName] = allocator
             return this
         }

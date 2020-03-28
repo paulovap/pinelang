@@ -36,5 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @KtorExperimentalAPI
 fun main(argv: Array<String>) {
-    println("hello world")
+    while (true) {
+        println(readLine())
+    }
 }
