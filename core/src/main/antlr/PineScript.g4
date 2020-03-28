@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 grammar PineScript;
 
 @header {
-    package com.flex.parser;
+    package com.pinescript.parser;
 }
 
 ///////////////////////////

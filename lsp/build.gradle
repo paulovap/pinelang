@@ -5,14 +5,13 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'antlr'
     id 'org.jetbrains.kotlin.jvm'
 }
 
-generateGrammarSource {
-    outputDirectory = file("src/main/java/com/pinescript/parser")
-    arguments += ["-visitor", "-long-messages"]
-}
+
+
+group 'com.pinescript'
+version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -48,9 +47,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-test-junit5"
     //implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testCompile "org.antlr:antlr4-runtime:4.8"
-    antlr "org.antlr:antlr4:4.8-1"
-    compile "org.antlr:antlr4-runtime:4.8"
     testCompile 'junit:junit:4.12'
     compile group: 'com.google.flatbuffers', name: 'flatbuffers-java', version: '1.11.1'
     implementation 'net.sf.squirrel-sql.thirdparty-non-maven:com-fifesoft-rsyntaxtextarea:1.0.0'

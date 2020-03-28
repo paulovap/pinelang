@@ -9,6 +9,10 @@ plugins {
 
 apply plugin: 'antlr'
 
+group 'com.flexscript'
+version '1.0-SNAPSHOT'
+
+
 repositories {
     mavenLocal()
     mavenCentral()

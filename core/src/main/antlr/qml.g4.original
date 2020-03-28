@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // http://code.qt.io/cgit/qt/qtdeclarative.git/tree/src/qml/parser/qqmljs.g
 grammar QML;
 @header {
-    package com.com.flex.parser;
+    package com.com.pinescript.parser;
 }
 
 program

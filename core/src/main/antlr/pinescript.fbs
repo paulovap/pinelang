@@ -1,7 +1,7 @@
 
 // example IDL file
 
-namespace com.flex.ast.fbs;
+namespace com.pinescript.ast.fbs;
 
 
 enum PropertyType : int16 {
