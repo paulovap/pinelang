@@ -1,0 +1,38 @@
+
+// example IDL file
+
+namespace com.flex.ast.fbs;
+
+
+enum PropertyType : int16 {
+    Bool = 0,
+    Int,
+    Double,
+    String,
+    Object
+}
+
+table PrimitiveValue {
+  intValue: int64;
+  doubleValue: float64;
+  stringValue: string;
+  boolValue: int8;
+}
+
+table IntProperty {
+  name: string;
+  type: PropertyType = 0;
+  value: PrimitiveValue;
+}
+
+table Object {
+  typeName: string;
+  children: [Object];
+  properties: [Property];
+}
+
+table Program {
+    rootObject: Object;
+}
+
+root_type Program;
