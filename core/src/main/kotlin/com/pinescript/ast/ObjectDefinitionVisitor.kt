@@ -40,7 +40,7 @@ class ObjectDefinitionVisitor(engine: PineEngine, rootContext: PineContext) :
 
     override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): PineObject? {
 
-        val type = ctx.ObjectDeclaration().text
+        val type = ctx.ObjectType().text
 
         val obj = engine.getAllocator(type)(-1)
 

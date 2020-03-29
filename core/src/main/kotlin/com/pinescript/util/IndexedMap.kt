@@ -1,0 +1,35 @@
+package com.pinescript.util
+
+import com.pinescript.core.PineObject
+import com.pinescript.core.PineScriptException
+
+public fun <V> indexedMapOf(vararg pairs: Pair<String, V>): IndexedMap<V> =
+    IndexedMap<V>(pairs.size).apply { pairs.forEach { this[it.first] = it.second } }
+
+class IndexedMap<V>(initialCapacity: Int = 10,
+                    private val indexes: MutableMap<String, Int> = HashMap(initialCapacity),
+                    private val props: MutableList<V> = ArrayList(initialCapacity)) {
+
+    val size: Int
+        get() = props.size
+
+    fun getIndex(key: String): Int = getIndexOrNull(key)!!
+    fun getIndexOrNull(key: String): Int? = indexes[key]
+
+    fun getValue(key: String): V = this[key]!!
+    fun getValue(index: Int): V = props[index]
+
+    operator fun get(key: String): V? = getIndexOrNull(key)?.let { getValue(it) }
+
+    operator fun set(key: String, value: V): IndexedMap<V> {
+        if (indexes.containsKey(key))
+            throw PineScriptException("key $key already exists")
+        synchronized(props) {
+            props.add(value)
+            indexes[key] = props.size - 1
+        }
+        return this
+    }
+
+    operator fun contains(key: String): Boolean = getIndexOrNull(key) != null
+}

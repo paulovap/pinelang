@@ -48,7 +48,7 @@ rootMember
     : objectDefinition;
 
 objectDefinition
-    : ObjectDeclaration objectInitializer SEMICOLON?
+    : ObjectType objectInitializer SEMICOLON?
     ;
 
 // { ... }
@@ -112,7 +112,8 @@ integerSuffix
     ;
 
 callableExpression
-    : Identifier LPAREN arguments? RPAREN
+//    : Identifier LPAREN arguments? RPAREN
+    : Identifier LPAREN RPAREN
     ;
 
 arguments
@@ -159,7 +160,7 @@ OR: 'or';
 
 Identifier: [a-z][a-zA-Z_0-9]*;
 
-ObjectDeclaration: [A-Z][a-zA-Z_]*;
+ObjectType: [A-Z][a-zA-Z_]*;
 
 fragment UnicodeConnectorPunctuation
     : [\u005F]

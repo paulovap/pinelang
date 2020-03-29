@@ -1,0 +1,76 @@
+namespace com.pinescript.fbs.ast;
+
+enum PropType : byte {
+    Int = 0,
+    Double,
+    String,
+    Boolean,
+    ObjectProperty,
+    Expression
+}
+
+table CallableExpr {
+    objId: int64;
+    callIdx: byte;
+}
+
+enum BinaryOp : byte {
+    PLUS = 0,
+    MINUS,
+    MULTI,
+    DIV,
+    REMAINDER,
+    AND,
+    OR
+}
+table BinaryExpr {
+    op: int64;
+    callIdx: byte;
+}
+
+enum PrimitiveType : byte {
+    Int = 0,
+    Double,
+    String,
+    Boolean,
+    ObjectProperty
+}
+
+table PrimitiveExpr {
+    type: PrimitiveType;
+    boolValue:     byte;
+    intValue:      int32;
+    doubleValue:   float64;
+    stringValue:   string;
+}
+
+union Expr {CallableExpr, BinaryExpr, PrimitiveExpr}
+
+table Prop {
+    idx:           byte;
+    type:          PropType;
+    boolValue:     byte;
+    intValue:      int32;
+    doubleValue:   float64;
+    stringValue:   string;
+    exprValue:     Expr;
+}
+
+table SignalAssignment {
+    id: byte;
+    expr: CallableExpr;
+}
+
+table ObjectDefinition {
+    objectType:    string;
+    id:            int64;
+    children:     [ObjectDefinition];
+    signals:      [SignalAssignment];
+    props:        [Prop];
+}
+
+table Program {
+  pos: int32;
+}
+
+root_type Program;

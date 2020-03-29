@@ -2,8 +2,14 @@ package com.pinescript.core
 
 import com.pinescript.core.PineValue.Companion.of
 
-enum class BinaryOp {
-    PLUS, MINUS, MULTI, DIV, REMAINDER, AND, OR;
+enum class BinaryOp(val value: Int) {
+    PLUS(1),
+    MINUS(2),
+    MULTI(3),
+    DIV(4),
+    REMAINDER(5),
+    AND(6),
+    OR(7);
 
     fun isNumberOp() = this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
     fun isBooleanOp() = this == AND || this == OR

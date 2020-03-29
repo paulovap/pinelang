@@ -1,5 +1,7 @@
 package com.pinescript.core
 
+import com.pinescript.util.IndexedMap
+import com.pinescript.util.indexedMapOf
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -130,16 +132,16 @@ open class PineObject(val id: Long = -1) {
     val children: ListPineProp<PineObject> = ListPineProp("children")
 
     // All Object properties accessible to the script
-    val nameProps = mutableMapOf<String, PineProp<*>>()
+    val props = IndexedMap<PineProp<*>>()
 
     // All "events" that can be fired by an object to a script
-    val signals = mutableMapOf(
+    val signals = indexedMapOf(
         makeSignal(SIG_MOUNT),
         makeSignal(SIG_UNMOUNT)
     )
 
     // All functions that can be called from script
-    val callables = mutableMapOf(
+    val callables = indexedMapOf(
         makeCallable("printHello") { println("Hello world") },
         makeCallable("helloText")  { "Hello world" }
     )
@@ -160,12 +162,11 @@ open class PineObject(val id: Long = -1) {
         signals[SIG_UNMOUNT]?.emit()
     }
 
-    fun connect(propName: String, slot: Slot) {
-        val prop = nameProps[propName] ?: throw PineScriptException("prop $propName not found")
-        prop.connect(slot)
-    }
+    fun connect(propName: String, slot: Slot) = getProp(propName).connect(slot)
 
-    fun getProp(name: String): PineProp<*>? = nameProps[name]
+    fun getPropOrNull(name: String): PineProp<*>? = props[name]
+
+    fun getProp(name: String): PineProp<*> = getPropOrNull(name) ?: throw PineScriptException("prop $name not found")
 
     fun dispose() {
         emitUnmount()
@@ -206,8 +207,8 @@ fun PineObject.doubleProp(
 ) = registerProp(PineProp(kProp.name, PineType.DOUBLE, kProp, PineValue.of(initialValue), slot))
 
 fun <T> PineObject.registerProp(prop: PineProp<T>): PineProp<T> {
-    if (nameProps.containsKey(prop.getScriptName()))
+    if (prop.getScriptName() in props)
         throw PineScriptException("Property of name ${prop.getScriptName()} already exists for type ${PineObject::javaClass::name}")
-    nameProps[prop.getScriptName()] = prop
+    props[prop.getScriptName()] = prop
     return prop
 }

@@ -9,6 +9,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.util.zip.CRC32
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -125,5 +126,6 @@ class MainWindow : JFrame() {
 
 @KtorExperimentalAPI
 fun main(argv: Array<String>) {
+    CRC32()
     SwingUtilities.invokeLater { MainWindow().isVisible = true }
 }

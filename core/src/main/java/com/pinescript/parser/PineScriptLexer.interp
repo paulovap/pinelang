@@ -73,7 +73,7 @@ REMAINDER
 AND
 OR
 Identifier
-ObjectDeclaration
+ObjectType
 IntegerLiteral
 FloatLiteral
 StringLiteral
@@ -114,7 +114,7 @@ REMAINDER
 AND
 OR
 Identifier
-ObjectDeclaration
+ObjectType
 UnicodeConnectorPunctuation
 ZWNJ
 ZWJ

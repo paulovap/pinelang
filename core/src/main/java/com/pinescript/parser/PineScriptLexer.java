@@ -23,7 +23,7 @@ public class PineScriptLexer extends Lexer {
 		NULL=9, TRUE=10, FALSE=11, EQ=12, LBRACKET=13, RBRACKET=14, AND_AND=15, 
 		OR_OR=16, QUESTION=17, SEMICOLON=18, COLON=19, LBRACE=20, RBRACE=21, RETURN=22, 
 		IMPORT=23, PLUS=24, MINUS=25, MULTI=26, DIV=27, REMAINDER=28, AND=29, 
-		OR=30, Identifier=31, ObjectDeclaration=32, IntegerLiteral=33, FloatLiteral=34, 
+		OR=30, Identifier=31, ObjectType=32, IntegerLiteral=33, FloatLiteral=34, 
 		StringLiteral=35, WS=36, COMMENT=37, LINE_COMMENT=38, LineTerminator=39;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
@@ -39,7 +39,7 @@ public class PineScriptLexer extends Lexer {
 			"NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", "OR_OR", 
 			"QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", "IMPORT", 
 			"PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR", "Identifier", 
-			"ObjectDeclaration", "UnicodeConnectorPunctuation", "ZWNJ", "ZWJ", "UnicodeDigit", 
+			"ObjectType", "UnicodeConnectorPunctuation", "ZWNJ", "ZWJ", "UnicodeDigit", 
 			"UnicodeCombiningMark", "UnicodeLetter", "IntegerLiteral", "FloatLiteral", 
 			"DecimalIntegerLiteral", "ExponentPart", "StringLiteral", "DoubleStringCharacter", 
 			"SingleStringCharacter", "EscapeSequence", "CharacterEscapeSequence", 
@@ -66,8 +66,8 @@ public class PineScriptLexer extends Lexer {
 			"COMMA", "NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", 
 			"OR_OR", "QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", 
 			"IMPORT", "PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR", 
-			"Identifier", "ObjectDeclaration", "IntegerLiteral", "FloatLiteral", 
-			"StringLiteral", "WS", "COMMENT", "LINE_COMMENT", "LineTerminator"
+			"Identifier", "ObjectType", "IntegerLiteral", "FloatLiteral", "StringLiteral", 
+			"WS", "COMMENT", "LINE_COMMENT", "LineTerminator"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();

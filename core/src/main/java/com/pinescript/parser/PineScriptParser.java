@@ -23,7 +23,7 @@ public class PineScriptParser extends Parser {
 		NULL=9, TRUE=10, FALSE=11, EQ=12, LBRACKET=13, RBRACKET=14, AND_AND=15, 
 		OR_OR=16, QUESTION=17, SEMICOLON=18, COLON=19, LBRACE=20, RBRACE=21, RETURN=22, 
 		IMPORT=23, PLUS=24, MINUS=25, MULTI=26, DIV=27, REMAINDER=28, AND=29, 
-		OR=30, Identifier=31, ObjectDeclaration=32, IntegerLiteral=33, FloatLiteral=34, 
+		OR=30, Identifier=31, ObjectType=32, IntegerLiteral=33, FloatLiteral=34, 
 		StringLiteral=35, WS=36, COMMENT=37, LINE_COMMENT=38, LineTerminator=39;
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
@@ -56,8 +56,8 @@ public class PineScriptParser extends Parser {
 			"COMMA", "NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", 
 			"OR_OR", "QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", 
 			"IMPORT", "PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR", 
-			"Identifier", "ObjectDeclaration", "IntegerLiteral", "FloatLiteral", 
-			"StringLiteral", "WS", "COMMENT", "LINE_COMMENT", "LineTerminator"
+			"Identifier", "ObjectType", "IntegerLiteral", "FloatLiteral", "StringLiteral", 
+			"WS", "COMMENT", "LINE_COMMENT", "LineTerminator"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -200,7 +200,7 @@ public class PineScriptParser extends Parser {
 	}
 
 	public static class ObjectDefinitionContext extends ParserRuleContext {
-		public TerminalNode ObjectDeclaration() { return getToken(PineScriptParser.ObjectDeclaration, 0); }
+		public TerminalNode ObjectType() { return getToken(PineScriptParser.ObjectType, 0); }
 		public ObjectInitializerContext objectInitializer() {
 			return getRuleContext(ObjectInitializerContext.class,0);
 		}
@@ -232,7 +232,7 @@ public class PineScriptParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(34);
-			match(ObjectDeclaration);
+			match(ObjectType);
 			setState(35);
 			objectInitializer();
 			setState(37);
@@ -311,7 +311,7 @@ public class PineScriptParser extends Parser {
 			setState(46);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ON) | (1L << Identifier) | (1L << ObjectDeclaration))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ON) | (1L << Identifier) | (1L << ObjectType))) != 0)) {
 				{
 				{
 				setState(43);
@@ -433,7 +433,7 @@ public class PineScriptParser extends Parser {
 			setState(60);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case ObjectDeclaration:
+			case ObjectType:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(57);
@@ -975,9 +975,6 @@ public class PineScriptParser extends Parser {
 		public TerminalNode Identifier() { return getToken(PineScriptParser.Identifier, 0); }
 		public TerminalNode LPAREN() { return getToken(PineScriptParser.LPAREN, 0); }
 		public TerminalNode RPAREN() { return getToken(PineScriptParser.RPAREN, 0); }
-		public ArgumentsContext arguments() {
-			return getRuleContext(ArgumentsContext.class,0);
-		}
 		public CallableExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1000,7 +997,6 @@ public class PineScriptParser extends Parser {
 	public final CallableExpressionContext callableExpression() throws RecognitionException {
 		CallableExpressionContext _localctx = new CallableExpressionContext(_ctx, getState());
 		enterRule(_localctx, 26, RULE_callableExpression);
-		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1008,17 +1004,7 @@ public class PineScriptParser extends Parser {
 			match(Identifier);
 			setState(110);
 			match(LPAREN);
-			setState(112);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TRUE) | (1L << FALSE) | (1L << Identifier) | (1L << IntegerLiteral) | (1L << FloatLiteral) | (1L << StringLiteral))) != 0)) {
-				{
-				setState(111);
-				arguments();
-				}
-			}
-
-			setState(114);
+			setState(111);
 			match(RPAREN);
 			}
 		}
@@ -1070,21 +1056,21 @@ public class PineScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(116);
+			setState(113);
 			expression(0);
-			setState(121);
+			setState(118);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(117);
+				setState(114);
 				match(COMMA);
-				setState(118);
+				setState(115);
 				expression(0);
 				}
 				}
-				setState(123);
+				setState(120);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1117,37 +1103,36 @@ public class PineScriptParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3)\177\4\2\t\2\4\3"+
-		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13"+
-		"\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\3\3\3\3\4\3\4"+
-		"\3\4\5\4(\n\4\3\5\3\5\5\5,\n\5\3\5\7\5/\n\5\f\5\16\5\62\13\5\3\5\3\5\3"+
-		"\6\3\6\3\6\3\6\5\6:\n\6\3\7\3\7\3\7\5\7?\n\7\3\b\3\b\3\b\3\b\3\b\5\bF"+
-		"\n\b\3\t\3\t\3\t\3\t\5\tL\n\t\3\n\3\n\3\n\3\n\5\nR\n\n\3\n\3\n\3\n\3\n"+
-		"\7\nX\n\n\f\n\16\n[\13\n\3\13\3\13\3\f\3\f\3\f\5\fb\n\f\3\r\3\r\3\r\3"+
-		"\r\5\rh\n\r\3\r\3\r\5\rl\n\r\3\16\3\16\3\17\3\17\3\17\5\17s\n\17\3\17"+
-		"\3\17\3\20\3\20\3\20\7\20z\n\20\f\20\16\20}\13\20\3\20\2\3\22\21\2\4\6"+
-		"\b\n\f\16\20\22\24\26\30\32\34\36\2\4\3\2\32 \3\2\4\5\2\u0082\2 \3\2\2"+
-		"\2\4\"\3\2\2\2\6$\3\2\2\2\b)\3\2\2\2\n\65\3\2\2\2\f>\3\2\2\2\16@\3\2\2"+
-		"\2\20G\3\2\2\2\22Q\3\2\2\2\24\\\3\2\2\2\26^\3\2\2\2\30k\3\2\2\2\32m\3"+
-		"\2\2\2\34o\3\2\2\2\36v\3\2\2\2 !\5\4\3\2!\3\3\2\2\2\"#\5\6\4\2#\5\3\2"+
-		"\2\2$%\7\"\2\2%\'\5\b\5\2&(\7\24\2\2\'&\3\2\2\2\'(\3\2\2\2(\7\3\2\2\2"+
-		")+\7\26\2\2*,\5\n\6\2+*\3\2\2\2+,\3\2\2\2,\60\3\2\2\2-/\5\f\7\2.-\3\2"+
-		"\2\2/\62\3\2\2\2\60.\3\2\2\2\60\61\3\2\2\2\61\63\3\2\2\2\62\60\3\2\2\2"+
-		"\63\64\7\27\2\2\64\t\3\2\2\2\65\66\7\6\2\2\66\67\7\25\2\2\679\7!\2\28"+
-		":\7\24\2\298\3\2\2\29:\3\2\2\2:\13\3\2\2\2;?\5\6\4\2<?\5\16\b\2=?\5\20"+
-		"\t\2>;\3\2\2\2><\3\2\2\2>=\3\2\2\2?\r\3\2\2\2@A\7\3\2\2AB\7!\2\2BC\7\25"+
-		"\2\2CE\5\34\17\2DF\7\24\2\2ED\3\2\2\2EF\3\2\2\2F\17\3\2\2\2GH\7!\2\2H"+
-		"I\7\25\2\2IK\5\22\n\2JL\7\24\2\2KJ\3\2\2\2KL\3\2\2\2L\21\3\2\2\2MN\b\n"+
-		"\1\2NR\5\30\r\2OR\5\26\f\2PR\5\34\17\2QM\3\2\2\2QO\3\2\2\2QP\3\2\2\2R"+
-		"Y\3\2\2\2ST\f\4\2\2TU\5\24\13\2UV\5\22\n\5VX\3\2\2\2WS\3\2\2\2X[\3\2\2"+
-		"\2YW\3\2\2\2YZ\3\2\2\2Z\23\3\2\2\2[Y\3\2\2\2\\]\t\2\2\2]\25\3\2\2\2^a"+
-		"\7!\2\2_`\7\7\2\2`b\7!\2\2a_\3\2\2\2ab\3\2\2\2b\27\3\2\2\2cl\7\f\2\2d"+
-		"l\7\r\2\2eg\7#\2\2fh\5\32\16\2gf\3\2\2\2gh\3\2\2\2hl\3\2\2\2il\7$\2\2"+
-		"jl\7%\2\2kc\3\2\2\2kd\3\2\2\2ke\3\2\2\2ki\3\2\2\2kj\3\2\2\2l\31\3\2\2"+
-		"\2mn\t\3\2\2n\33\3\2\2\2op\7!\2\2pr\7\b\2\2qs\5\36\20\2rq\3\2\2\2rs\3"+
-		"\2\2\2st\3\2\2\2tu\7\t\2\2u\35\3\2\2\2v{\5\22\n\2wx\7\n\2\2xz\5\22\n\2"+
-		"yw\3\2\2\2z}\3\2\2\2{y\3\2\2\2{|\3\2\2\2|\37\3\2\2\2}{\3\2\2\2\20\'+\60"+
-		"9>EKQYagkr{";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3)|\4\2\t\2\4\3\t\3"+
+		"\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f"+
+		"\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\3\3\3\3\4\3\4\3\4"+
+		"\5\4(\n\4\3\5\3\5\5\5,\n\5\3\5\7\5/\n\5\f\5\16\5\62\13\5\3\5\3\5\3\6\3"+
+		"\6\3\6\3\6\5\6:\n\6\3\7\3\7\3\7\5\7?\n\7\3\b\3\b\3\b\3\b\3\b\5\bF\n\b"+
+		"\3\t\3\t\3\t\3\t\5\tL\n\t\3\n\3\n\3\n\3\n\5\nR\n\n\3\n\3\n\3\n\3\n\7\n"+
+		"X\n\n\f\n\16\n[\13\n\3\13\3\13\3\f\3\f\3\f\5\fb\n\f\3\r\3\r\3\r\3\r\5"+
+		"\rh\n\r\3\r\3\r\5\rl\n\r\3\16\3\16\3\17\3\17\3\17\3\17\3\20\3\20\3\20"+
+		"\7\20w\n\20\f\20\16\20z\13\20\3\20\2\3\22\21\2\4\6\b\n\f\16\20\22\24\26"+
+		"\30\32\34\36\2\4\3\2\32 \3\2\4\5\2~\2 \3\2\2\2\4\"\3\2\2\2\6$\3\2\2\2"+
+		"\b)\3\2\2\2\n\65\3\2\2\2\f>\3\2\2\2\16@\3\2\2\2\20G\3\2\2\2\22Q\3\2\2"+
+		"\2\24\\\3\2\2\2\26^\3\2\2\2\30k\3\2\2\2\32m\3\2\2\2\34o\3\2\2\2\36s\3"+
+		"\2\2\2 !\5\4\3\2!\3\3\2\2\2\"#\5\6\4\2#\5\3\2\2\2$%\7\"\2\2%\'\5\b\5\2"+
+		"&(\7\24\2\2\'&\3\2\2\2\'(\3\2\2\2(\7\3\2\2\2)+\7\26\2\2*,\5\n\6\2+*\3"+
+		"\2\2\2+,\3\2\2\2,\60\3\2\2\2-/\5\f\7\2.-\3\2\2\2/\62\3\2\2\2\60.\3\2\2"+
+		"\2\60\61\3\2\2\2\61\63\3\2\2\2\62\60\3\2\2\2\63\64\7\27\2\2\64\t\3\2\2"+
+		"\2\65\66\7\6\2\2\66\67\7\25\2\2\679\7!\2\28:\7\24\2\298\3\2\2\29:\3\2"+
+		"\2\2:\13\3\2\2\2;?\5\6\4\2<?\5\16\b\2=?\5\20\t\2>;\3\2\2\2><\3\2\2\2>"+
+		"=\3\2\2\2?\r\3\2\2\2@A\7\3\2\2AB\7!\2\2BC\7\25\2\2CE\5\34\17\2DF\7\24"+
+		"\2\2ED\3\2\2\2EF\3\2\2\2F\17\3\2\2\2GH\7!\2\2HI\7\25\2\2IK\5\22\n\2JL"+
+		"\7\24\2\2KJ\3\2\2\2KL\3\2\2\2L\21\3\2\2\2MN\b\n\1\2NR\5\30\r\2OR\5\26"+
+		"\f\2PR\5\34\17\2QM\3\2\2\2QO\3\2\2\2QP\3\2\2\2RY\3\2\2\2ST\f\4\2\2TU\5"+
+		"\24\13\2UV\5\22\n\5VX\3\2\2\2WS\3\2\2\2X[\3\2\2\2YW\3\2\2\2YZ\3\2\2\2"+
+		"Z\23\3\2\2\2[Y\3\2\2\2\\]\t\2\2\2]\25\3\2\2\2^a\7!\2\2_`\7\7\2\2`b\7!"+
+		"\2\2a_\3\2\2\2ab\3\2\2\2b\27\3\2\2\2cl\7\f\2\2dl\7\r\2\2eg\7#\2\2fh\5"+
+		"\32\16\2gf\3\2\2\2gh\3\2\2\2hl\3\2\2\2il\7$\2\2jl\7%\2\2kc\3\2\2\2kd\3"+
+		"\2\2\2ke\3\2\2\2ki\3\2\2\2kj\3\2\2\2l\31\3\2\2\2mn\t\3\2\2n\33\3\2\2\2"+
+		"op\7!\2\2pq\7\b\2\2qr\7\t\2\2r\35\3\2\2\2sx\5\22\n\2tu\7\n\2\2uw\5\22"+
+		"\n\2vt\3\2\2\2wz\3\2\2\2xv\3\2\2\2xy\3\2\2\2y\37\3\2\2\2zx\3\2\2\2\17"+
+		"\'+\609>EKQYagkx";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

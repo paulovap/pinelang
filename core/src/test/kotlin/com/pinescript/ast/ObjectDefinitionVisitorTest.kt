@@ -104,19 +104,19 @@ class ObjectDefinitionVisitorTest {
         assertNotNull(obj)
 
         val propDouble = obj.getProp("double")
-        assertEquals(10.1, propDouble?.value)
+        assertEquals(10.1, propDouble.value)
         assertEquals(10.1, obj.myDouble, 0.01)
 
         val propString = obj.getProp("string")
-        assertEquals("oh my", propString?.value)
+        assertEquals("oh my", propString.value)
         assertEquals("oh my", obj.myString)
 
         val propInt = obj.getProp("int")
-        assertEquals(20, propInt?.value)
+        assertEquals(20, propInt.value)
         assertEquals(20, obj.myInt)
 
         val propBool = obj.getProp("bool")
-        assertEquals(true, propBool?.value)
+        assertEquals(true, propBool.value)
         assertEquals(true, obj.myBool)
 
     }
