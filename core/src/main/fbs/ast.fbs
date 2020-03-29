@@ -1,6 +1,6 @@
-namespace com.pinescript.fbs.ast;
+namespace com.pinescript.ast.fbs;
 
-enum PropType : byte {
+enum PropType : ubyte {
     Int = 0,
     Double,
     String,
@@ -9,12 +9,14 @@ enum PropType : byte {
     Expression
 }
 
+union Expr {CallableExpr, BinaryExpr, PrimitiveExpr, PropExpr}
+
 table CallableExpr {
     objId: int64;
-    callIdx: byte;
+    callIdx: ubyte;
 }
 
-enum BinaryOp : byte {
+enum BinaryOp : ubyte {
     PLUS = 0,
     MINUS,
     MULTI,
@@ -23,12 +25,14 @@ enum BinaryOp : byte {
     AND,
     OR
 }
+
 table BinaryExpr {
-    op: int64;
-    callIdx: byte;
+    op: BinaryOp;
+    left: Expr;
+    right: Expr;
 }
 
-enum PrimitiveType : byte {
+enum PrimitiveType : ubyte {
     Int = 0,
     Double,
     String,
@@ -38,39 +42,42 @@ enum PrimitiveType : byte {
 
 table PrimitiveExpr {
     type: PrimitiveType;
-    boolValue:     byte;
+    boolValue:     ubyte;
     intValue:      int32;
     doubleValue:   float64;
     stringValue:   string;
 }
 
-union Expr {CallableExpr, BinaryExpr, PrimitiveExpr}
+table PropExpr {
+    objId: int64;
+    propIdx: ubyte;
+}
 
 table Prop {
-    idx:           byte;
-    type:          PropType;
-    boolValue:     byte;
-    intValue:      int32;
-    doubleValue:   float64;
-    stringValue:   string;
-    exprValue:     Expr;
+    debugName: string;
+    idx:       ubyte;
+    type:      PropType;
+    value:     Expr;
 }
 
-table SignalAssignment {
-    id: byte;
-    expr: CallableExpr;
+table SignalExpr {
+    debugName:     string;
+    id:            ubyte;
+    expr:          CallableExpr;
 }
 
 table ObjectDefinition {
-    objectType:    string;
-    id:            int64;
-    children:     [ObjectDefinition];
-    signals:      [SignalAssignment];
-    props:        [Prop];
+    debugType: string;
+    type:      int32;
+    debugName: string;
+    id:        int64;
+    children:  [ObjectDefinition];
+    signals:   [SignalExpr];
+    props:     [Prop];
 }
 
 table Program {
-  pos: int32;
+  root: ObjectDefinition;
 }
 
 root_type Program;

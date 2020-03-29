@@ -1,5 +1,19 @@
-package com.pinescript.lsp
+import com.pinescript.core.PineEngine
+import com.pinescript.core.PineObject
+import com.pinescript.core.PineValue
+import com.pinescript.lsp.ui.Label
+import com.pinescript.lsp.ui.Rectangle
 import io.ktor.util.KtorExperimentalAPI
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants
+import org.fife.ui.rtextarea.RTextScrollPane
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.util.zip.CRC32
+import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
+import kotlin.system.measureTimeMillis
 
 
 /*
@@ -34,9 +48,84 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+class MainWindow : JFrame() {
+
+    var root: PineObject? = null
+    var textArea = RSyntaxTextArea(20, 40)
+    var outputPanel = JPanel(null)
+    var scriptEngine = PineEngine.Builder()
+        .registerPineType(Rectangle.meta)
+        .registerPineType(Label.meta)
+        .build()
+
+    init {
+        title = "Pine Script Live"
+        defaultCloseOperation = EXIT_ON_CLOSE
+        setLocationRelativeTo(null)
+        minimumSize = Dimension(1200, 500)
+        bounds = java.awt.Rectangle(10, 10, 1000, 500)
+        contentPane.layout = BorderLayout()
+        contentPane.add(JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, createTextEditor(), outputPanel))
+
+        textArea.document.addDocumentListener(object : DocumentListener {
+            override fun changedUpdate(e: DocumentEvent?) = runScript()
+            override fun insertUpdate(e: DocumentEvent?) = runScript()
+            override fun removeUpdate(e: DocumentEvent?) = runScript()
+        })
+        pack()
+    }
+
+    private fun runScript() {
+        try {
+            root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
+            root?.dispose()
+            val loadTime = measureTimeMillis { root = scriptEngine.load(textArea.text) }
+            println("Script Parser in $loadTime ms")
+            outputPanel.removeAll()
+            outputPanel.add((root as Rectangle).panel)
+            outputPanel.repaint()
+        } catch (e: Exception) {
+            root = null
+            outputPanel.removeAll()
+            outputPanel.add(errorLabel(e))
+            outputPanel.repaint()
+            e.printStackTrace()
+            println(e.message)
+        }
+    }
+
+    private fun errorLabel(e: Exception): JLabel {
+        val label = JLabel(e.stackTrace.joinToString(
+            separator = "<br>",
+            prefix = "<html> <b>${e.message}</b><br><br>",
+            postfix = "</html>",
+            limit = 5
+        ) { it.toString() })
+
+        label.size = label.preferredSize
+        label.setLocation(10, 10)
+        label.isVisible = true
+        return label
+    }
+
+    private fun createTextEditor(): JPanel {
+        val cp = JPanel(BorderLayout())
+        cp.minimumSize = Dimension(500, 500)
+        textArea.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_CSS
+        textArea.isAutoIndentEnabled = true
+        textArea.isBracketMatchingEnabled = true
+        textArea.closeCurlyBraces = true
+        textArea.markOccurrences = true
+        textArea.tabSize = 2
+        textArea.tabsEmulated = true
+        val sp = RTextScrollPane(textArea)
+        cp.add(sp)
+        return cp
+    }
+}
+
 @KtorExperimentalAPI
 fun main(argv: Array<String>) {
-    while (true) {
-        println(readLine())
-    }
+    CRC32()
+    SwingUtilities.invokeLater { MainWindow().isVisible = true }
 }

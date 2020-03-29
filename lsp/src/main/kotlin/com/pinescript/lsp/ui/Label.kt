@@ -1,7 +1,11 @@
-package com.pinescript.ui
+package com.pinescript.lsp.ui
 
-import com.pinescript.core.PineObject
-import com.pinescript.core.intProp
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.boolProp
+import com.pinescript.core.stringProp
+import java.awt.Color
+import java.awt.Dimension
+import javax.swing.JLabel
 
 
 /*
@@ -36,9 +40,42 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-abstract class Item : PineObject() {
-    var x: Int by intProp(::x, initialValue = 1)
-    var y: Int by intProp(::y, initialValue = 1)
-    var width: Int by intProp(::width, initialValue = 50)
-    var height: Int by intProp(::height, initialValue = 50)
+class Label(id: Long) : Item(id) {
+
+    companion object {
+        val meta = PineMetaObject("Label") { Label(it) }
+    }
+
+    val label = JLabel("oh my god")
+
+    var text: String by stringProp(::text, initialValue = "") { resizeSlot() }
+    var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
+    val color: String by stringProp(::color, initialValue = "#000000") { label.foreground = Color.decode(color) }
+
+    init {
+        connect("x") { resizeSlot() }
+        connect("y") { resizeSlot() }
+        connect("width") { resizeSlot() }
+        connect("height") { resizeSlot() }
+
+        resizeSlot()
+
+        children.connect {
+            label.removeAll()
+            for (child in children) {
+                if (child is Rectangle) {
+                    label.add(child.panel)
+                }
+            }
+        }
+    }
+
+    private fun resizeSlot() {
+        label.foreground = Color.decode(color)
+        label.text = text
+        label.size = Dimension(width, height)
+//        label.size = label.preferredSize
+        label.setLocation(x, y)
+        label.isVisible = visible
+    }
 }

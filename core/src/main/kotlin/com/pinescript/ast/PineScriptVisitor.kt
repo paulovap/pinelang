@@ -32,14 +32,15 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.core.*
 import com.pinescript.parser.PineScriptBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNode
 
-open class PineScriptVisitor<T>(protected val engine: PineEngine, protected val rootContext: PineContext) : PineScriptBaseVisitor<T>() {
+open class PineScriptVisitor<T>(protected val engine: PineEngine) : PineScriptBaseVisitor<T>() {
 
     fun findProp(owner: PineObject, name: List<TerminalNode>): PineProp<*> {
-        val obj = if (name.size == 1) owner else rootContext.find(name[0].text) ?: name[0].throwObjNotFound(name[0].text)
+        val obj = if (name.size == 1) owner else engine.rootContext.find(name[0].text) ?: name[0].throwObjNotFound(name[0].text)
         val idx = if (name.isNotEmpty()) 1 else 0
         return obj.getProp(name[idx].text) ?: name[idx].throwPropNotFound(name[0].text, obj.toString())
     }
@@ -48,8 +49,16 @@ open class PineScriptVisitor<T>(protected val engine: PineEngine, protected val 
         throw PineScriptParseException(this, "prop $propName on object $objName not found")
     }
 
+    fun TerminalNode.throwCallableNotFound(callableName: String, objName: String): Nothing {
+        throw PineScriptParseException(this, "callable $callableName on object $objName not found")
+    }
+
     fun TerminalNode.throwObjNotFound(objName: String): Nothing {
         throw PineScriptParseException(this, "object with identifier $objName not found")
+    }
+
+    fun TerminalNode.throwParseException(msg: String): Nothing {
+        throw PineScriptParseException(this, msg)
     }
 
 }

@@ -1,8 +1,8 @@
-package com.pinescript.ui
+package com.pinescript.lsp.ui
 
-import com.pinescript.core.*
-import java.awt.Color
-import javax.swing.JPanel
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.PineObject
+import com.pinescript.core.intProp
 
 
 /*
@@ -37,37 +37,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Rectangle : Item() {
-    val panel = JPanel(null)
+open class Item(id: Long) : PineObject(id) {
 
-    var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
-    val color: String by stringProp(::color, initialValue = "#ffffff") { panel.background = Color.decode(color) }
-
-    init {
-        connect("x") { resizeSlot() }
-        connect("y") { resizeSlot() }
-        connect("width") { resizeSlot() }
-        connect("height") { resizeSlot() }
-
-        panel.background = Color.decode(color)
-
-
-        children.connect {
-            panel.removeAll()
-            for (child in children) {
-                if (child is Rectangle) {
-                    panel.add(child.panel)
-                }
-                if (child is Label) {
-                    panel.add(child.label)
-                }
-            }
-        }
-        resizeSlot()
+    companion object {
+        val meta = PineMetaObject("Item") { Item(it) }
     }
 
-    private fun resizeSlot() {
-        panel.bounds = java.awt.Rectangle(x, y, width, height)
-        panel.isVisible = visible
-    }
+    var x: Int by intProp(::x, initialValue = 1)
+    var y: Int by intProp(::y, initialValue = 1)
+    var width: Int by intProp(::width, initialValue = 50)
+    var height: Int by intProp(::height, initialValue = 50)
 }

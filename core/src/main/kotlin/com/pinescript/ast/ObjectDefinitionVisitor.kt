@@ -32,43 +32,83 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.pinescript.ast
 
+import com.pinescript.ast.fbs.ObjectDefinition
+import com.pinescript.ast.fbs.SignalExpr
 import com.pinescript.core.*
 import com.pinescript.parser.PineScriptParser
 
-class ObjectDefinitionVisitor(engine: PineEngine, rootContext: PineContext) :
-    PineScriptVisitor<PineObject>(engine, rootContext) {
+/*
+table ObjectDefinition {
+    debugName: string;
+    type:      int32;
+    debugId:   string;
+    id:        int64;
+    children:  [ObjectDefinition];
+    signals:   [SignalAssignment];
+    props:     [Prop];
+}
+ */
 
-    override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): PineObject? {
+class ObjectDefinitionVisitor(engine: PineEngine) : PineScriptVisitor<Int>(engine) {
 
-        val type = ctx.ObjectType().text
-
-        val obj = engine.getAllocator(type)(-1)
-
+    override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): Int {
+        val rootContext = engine.rootContext
+        val fb = engine.compiler.flatBuilder
         val initContext = ctx.objectInitializer()
+        val objIdentifierCtx = initContext.objectIdentifier()
+        val objMember = initContext.objectMember()
 
-        initContext.objectIdentifier()?.also { rootContext.registerObject(it.Identifier().text, obj) }
 
-        initContext.objectMember().forEach {
-            /* getChildren parsing */
+        // Object information
+        val nameType = ctx.ObjectType().text
+        val typeIdx = engine.types.getIndexOrNull(nameType) ?: ctx.ObjectType()
+            .throwParseException("Type $nameType not found engine")
+        val type = engine.types[typeIdx]!!
+        val debugName = objIdentifierCtx?.Identifier()?.text ?: ""
+        val objId = engine.compiler.generateObjectId(typeIdx, debugName)
+        val children: MutableList<Int> = mutableListOf()
+        val signals: MutableList<Int> = mutableListOf()
+        val props: MutableList<Int> = mutableListOf()
 
+        objMember.forEach {
+
+            /* Children parsing */
             if (it.objectDefinition() != null) {
-                val newObject = ObjectDefinitionVisitor(engine, rootContext).visit(it.objectDefinition())
-                obj.children.add(newObject)
+                children.add(ObjectDefinitionVisitor(engine).visit(it.objectDefinition()))
             }
 
             /* assigning script to a declared property */
             if (it.propertyAssignement() != null) {
-                PropertyVisitor(engine, rootContext, obj).visit(it.propertyAssignement())
+                props.add(PropertyVisitor(engine, typeIdx, objId).visit(it.propertyAssignement()))
             }
 
+            /*
+                table SignalAssignment {
+                    debugName:     string;
+                    id:            ubyte;
+                    expr:          CallableExpr;
+                }
+             */
             it.signalAssignement()?.also { sigCtx ->
                 val name = sigCtx.Identifier().text
-                val sig = obj.signals[name] ?: throw PineScriptParseException(sigCtx.COLON(), "Signal $name not found int $obj")
-                sig.connect { ExpressionVisitor(engine, rootContext, obj).visit(sigCtx.callableExpression())() }
+                val id = type.signalIndexes[name] ?: sigCtx.Identifier().throwParseException("signal $name not found")
+                val expr = ExpressionVisitor(engine, typeIdx, objId).visit(sigCtx.callableExpression())
+                signals.add(SignalExpr.createSignalExpr(fb, id, expr.first, expr.second))
             }
         }
 
-        obj.emitMount()
-        return obj
+        val childrenVec = ObjectDefinition.createChildrenVector(fb, children.toIntArray())
+        val propVec = ObjectDefinition.createChildrenVector(fb, props.toIntArray())
+        val signalVec = ObjectDefinition.createChildrenVector(fb, signals.toIntArray())
+        return ObjectDefinition.createObjectDefinition(
+            fb,
+            fb.createString(nameType),
+            typeIdx,
+            fb.createString(debugName),
+            objId,
+            childrenVec,
+            signalVec,
+            propVec
+        )
     }
 }

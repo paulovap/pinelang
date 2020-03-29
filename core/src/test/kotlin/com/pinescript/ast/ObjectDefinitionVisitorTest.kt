@@ -58,7 +58,7 @@ class ObjectDefinitionVisitorTest {
     @Throws(Exception::class)
     fun setUp() {
         engine = PineEngine.Builder()
-            .registerPineType("TestObject") { TestObject() }
+            .registerPineType(PineMetaObject("TestObject") { TestObject() })
             .build()
     }
 
@@ -98,7 +98,7 @@ class ObjectDefinitionVisitorTest {
             bool: true;
         }"""
         ).objectDefinition()
-        val v = ObjectDefinitionVisitor(engine!!, PineContext())
+        val v = ObjectDefinitionVisitor(engine!!)
         val obj = v.visit(tree) as TestObject
 
         assertNotNull(obj)

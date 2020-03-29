@@ -32,16 +32,18 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.pinescript.core.PineContext
+import com.pinescript.ast.fbs.Program
 import com.pinescript.core.PineEngine
-import com.pinescript.core.PineObject
 import com.pinescript.parser.PineScriptParser
 
-class ProgramVisitor(engine: PineEngine, rootContext: PineContext) : PineScriptVisitor<PineObject>(engine, rootContext) {
+@ExperimentalUnsignedTypes
+class ProgramVisitor(engine: PineEngine) : PineScriptVisitor<Program>(engine) {
 
-    override fun visitProgram(ctx: PineScriptParser.ProgramContext): PineObject {
-        val obj = ObjectDefinitionVisitor(engine, rootContext).visit(ctx.rootMember().objectDefinition())
-        obj.emitMount()
-        return obj
+    override fun visitProgram(ctx: PineScriptParser.ProgramContext): Program {
+        val fb =engine.compiler.flatBuilder
+        val objPos = ObjectDefinitionVisitor(engine).visit(ctx.rootMember().objectDefinition())
+
+        fb.finish(Program.createProgram(fb, objPos))
+        return Program.getRootAsProgram(fb.dataBuffer())
     }
 }

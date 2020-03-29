@@ -35,6 +35,7 @@ kotlin {
 
 dependencies {
 
+    implementation project(path: ":core")
     // Ktor
     implementation "io.ktor:ktor:$ktor_version"
     implementation "io.ktor:ktor-server-netty:$ktor_version"

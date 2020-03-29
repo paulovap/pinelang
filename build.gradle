@@ -12,6 +12,16 @@ apply plugin: 'antlr'
 group 'com.flexscript'
 version '1.0-SNAPSHOT'
 
+allprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            freeCompilerArgs += [
+                    "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                    "-XXLanguage:+InlineClasses"
+            ]
+        }
+    }
+}
 
 repositories {
     mavenLocal()

@@ -126,7 +126,24 @@ open class ListPineProp<T>(val name: String, initialSlot: (Slot)? = null) : Pine
     }
 }
 
+open class Meta(vararg strings: String) {
+
+
+    private val propIndexes: Map<String, Int>
+
+    init {
+        propIndexes = mapOf(*strings.mapIndexed { idx, key -> key to idx }.toTypedArray())
+    }
+
+}
+
 open class PineObject(val id: Long = -1) {
+
+    companion object  {
+        const val SIG_MOUNT = "mount"
+        const val SIG_UNMOUNT = "unmount"
+        val meta = PineMetaObject("Object") { PineObject(it) }
+    }
 
     // Children objects
     val children: ListPineProp<PineObject> = ListPineProp("children")
@@ -170,11 +187,6 @@ open class PineObject(val id: Long = -1) {
 
     fun dispose() {
         emitUnmount()
-    }
-
-    companion object {
-        const val SIG_MOUNT = "mount"
-        const val SIG_UNMOUNT = "unmount"
     }
 
     fun makeSignal(name: String): Pair<String, BaseSignal> = name to BaseSignal(name)

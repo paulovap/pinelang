@@ -1,10 +1,8 @@
-package com.pinescript.ui
+package com.pinescript.lsp.ui
 
-import com.pinescript.core.boolProp
-import com.pinescript.core.stringProp
+import com.pinescript.core.*
 import java.awt.Color
-import java.awt.Dimension
-import javax.swing.JLabel
+import javax.swing.JPanel
 
 
 /*
@@ -39,12 +37,16 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Label : Item() {
-    val label = JLabel("oh my god")
+class Rectangle(id: Long) : Item(id) {
 
-    var text: String by stringProp(::text, initialValue = "") { resizeSlot() }
+    companion object {
+        val meta = PineMetaObject("Rectangle") { Rectangle(it) }
+    }
+
+    val panel = JPanel(null)
+
     var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
-    val color: String by stringProp(::color, initialValue = "#000000") { label.foreground = Color.decode(color) }
+    val color: String by stringProp(::color, initialValue = "#ffffff") { panel.background = Color.decode(color) }
 
     init {
         connect("x") { resizeSlot() }
@@ -52,24 +54,25 @@ class Label : Item() {
         connect("width") { resizeSlot() }
         connect("height") { resizeSlot() }
 
-        resizeSlot()
+        panel.background = Color.decode(color)
+
 
         children.connect {
-            label.removeAll()
+            panel.removeAll()
             for (child in children) {
                 if (child is Rectangle) {
-                    label.add(child.panel)
+                    panel.add(child.panel)
+                }
+                if (child is Label) {
+                    panel.add(child.label)
                 }
             }
         }
+        resizeSlot()
     }
 
     private fun resizeSlot() {
-        label.foreground = Color.decode(color)
-        label.text = text
-        label.size = Dimension(width, height)
-//        label.size = label.preferredSize
-        label.setLocation(x, y)
-        label.isVisible = visible
+        panel.bounds = java.awt.Rectangle(x, y, width, height)
+        panel.isVisible = visible
     }
 }

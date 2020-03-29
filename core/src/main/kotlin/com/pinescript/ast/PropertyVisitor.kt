@@ -32,25 +32,49 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.pinescript.ast.fbs.Prop
+import com.pinescript.ast.fbs.PropType
 import com.pinescript.core.*
 import com.pinescript.parser.PineScriptParser
 
-class PropertyVisitor(engine: PineEngine, rootContext: PineContext, var owner: PineObject) :
-    PineScriptVisitor<Unit>(engine, rootContext) {
+/*
+table Prop {
+    debugName: string;
+    idx:       byte;
+    type:      PropType;
+    value:     Expr;
+}
+ */
+@ExperimentalUnsignedTypes
+class PropertyVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Long) : PineScriptVisitor<Int>(engine) {
 
-    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
+    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?): Int {
+        val fb = engine.compiler.flatBuilder
         val propName = ctx!!.Identifier().text
-        val prop = owner.getProp(propName) ?: ctx.Identifier().throwPropNotFound(propName, "this")
+        val propIdx = engine.types[ownerType]?.propIndexes?.get(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, "this")
 
-        ctx.expression()?.let { exprCtx ->
-
-            exprCtx.primitiveExpression()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(it)) }
-
-            exprCtx.objectPropertyExpression()?.let { prop.bind(findProp(owner, it.Identifier())) }
-
-            exprCtx.binaryOperation()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(exprCtx)) }
-
-            exprCtx.callableExpression()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(it)) }
-        }
+        Prop.startProp(engine.compiler.flatBuilder)
+        Prop.addDebugName(fb, fb.createString(propName))
+        Prop.addIdx(fb, propIdx.toUByte())
+        Prop.addType(fb, PropType.Boolean)
+        val (valueType, value) = ExpressionVisitor(engine, ownerType, ownerId).visit(ctx.expression()!!)
+        Prop.addValue(fb, value)
+        Prop.addValueType(fb, valueType.toUByte())
+        return Prop.endProp(engine.compiler.flatBuilder)
     }
+//    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
+//        val propName = ctx!!.Identifier().text
+//        val prop = owner.getProp(propName) ?: ctx.Identifier().throwPropNotFound(propName, "this")
+//
+//        ctx.expression()?.let { exprCtx ->
+//
+//            exprCtx.primitiveExpression()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(it)) }
+//
+//            exprCtx.objectPropertyExpression()?.let { prop.bind(findProp(owner, it.Identifier())) }
+//
+//            exprCtx.binaryOperation()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(exprCtx)) }
+//
+//            exprCtx.callableExpression()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(it)) }
+//        }
+//    }
 }

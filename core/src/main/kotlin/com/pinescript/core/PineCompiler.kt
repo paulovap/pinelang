@@ -32,14 +32,18 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.ProgramVisitor
+import com.pinescript.ast.fbs.Program
 import com.pinescript.parser.PineScriptLexer
 import com.pinescript.parser.PineScriptParser
 import org.antlr.v4.runtime.*
+import sun.security.util.ObjectIdentifier
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.reflect.full.memberProperties
 
 class PineContext {
 
@@ -54,7 +58,24 @@ class PineContext {
     fun find(id: String) = refs[id]
 }
 
+data class CompileObjectMetaData(val typeIdx: Int, val objId: Long, val objName: String)
+
+@ExperimentalUnsignedTypes
 class PineCompiler internal constructor(private val engine: PineEngine) {
+
+    private var incrementalId: Long = 1
+    private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
+
+    fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
+
+    fun generateObjectId(typeId: Int, objectIdentifier: String?): Long {
+        if (objectIdentifier != null)
+            ids[objectIdentifier] = CompileObjectMetaData(typeId, incrementalId, objectIdentifier)
+        return incrementalId++
+    }
+
+    val flatBuilder: FlatBufferBuilder = FlatBufferBuilder(1024)
+    val keepDebugSymbols = true
 
     private val baseErrorListener = object: BaseErrorListener() {
         override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
@@ -63,11 +84,11 @@ class PineCompiler internal constructor(private val engine: PineEngine) {
         }
     }
 
-    fun compile(unit: String): PineObject {
+    fun compile(unit: String): Program {
         return loadAst(unit)
     }
 
-    private fun loadAst(unit: String): PineObject {
+    private fun loadAst(unit: String): Program {
         try {
             val context = PineContext()
 
@@ -85,11 +106,40 @@ class PineCompiler internal constructor(private val engine: PineEngine) {
 
             val tree = parser.program()
 
-            val programVisitor = ProgramVisitor(engine, context)
+            val programVisitor = ProgramVisitor(engine)
             return programVisitor.visit(tree)
         } catch (e: IOException) {
             throw PineScriptException("unable to load unit", e)
         }
 
     }
+
+//    private fun loadAst(unit: String): PineObject {
+//        try {
+//            val context = PineContext()
+//
+//            val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
+//            val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+//
+//            lexer.removeErrorListeners()
+//            lexer.addErrorListener(baseErrorListener)
+//
+//            val tokens = CommonTokenStream(lexer)
+//            val parser = PineScriptParser(tokens)
+//
+//            parser.removeErrorListeners()
+//            parser.addErrorListener(baseErrorListener)
+//
+//            val tree = parser.program()
+//
+//            val programVisitor = ProgramVisitor(engine, context)
+//
+//            val clazz = String::class
+//            val props = clazz.memberProperties
+//            return programVisitor.visit(tree)
+//        } catch (e: IOException) {
+//            throw PineScriptException("unable to load unit", e)
+//        }
+//
+//    }
 }

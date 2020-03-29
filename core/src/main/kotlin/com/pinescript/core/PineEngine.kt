@@ -31,39 +31,58 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package com.pinescript.core
 
-import java.util.HashMap
+import com.pinescript.ast.fbs.Program
+import com.pinescript.util.IndexedMap
 
+typealias Allocator = (Long) -> PineObject
 // id, parent, children, properties
-typealias ObjectAllocator = (Long) -> PineObject
+class PineMetaObject(val scriptName: String, val allocator: Allocator) {
 
+    val propIndexes: Map<String, Int>
+    val signalIndexes: Map<String, Int>
+    val callableIndexes: Map<String, Int>
+
+    init {
+        val pineObj = allocator(-1)
+        this.propIndexes = pineObj.props.index
+        this.signalIndexes = pineObj.signals.index
+        this.callableIndexes = pineObj.callables.index
+    }
+}
+
+@ExperimentalUnsignedTypes
 class PineEngine private constructor(
-    val types: HashMap<String, ObjectAllocator>,
-
+    val types: IndexedMap<PineMetaObject>,
     val dpCalculator: (Int) -> Int) {
 
-    private var compiler: PineCompiler = PineCompiler(this)
+    val compiler: PineCompiler = PineCompiler(this)
+    val rootContext: PineContext = PineContext()
 
     fun load(script: String): PineObject {
+        return PineObject()//compiler.compile(script)
+    }
+
+    fun compile(script: String): Program {
         return compiler.compile(script)
     }
 
-    fun getAllocator(qmlType: String): ObjectAllocator {
-        return types[qmlType]?: throw PineScriptException("Allocator of type $qmlType not found")
+    fun getAllocator(qmlType: String): Allocator {
+        return types[qmlType]?.allocator ?: throw PineScriptException("Allocator of type $qmlType not found")
     }
 
     class Builder {
-        private val types = HashMap<String, ObjectAllocator>()
+        private val types = IndexedMap<PineMetaObject>()
         private var dpCalc: (Int) -> Int = { it }
         init {
             // @TODO: For conversion reasons, ints always have to be Longs in QML.
             // The reason for this is Number.parse() returns Long for integers
             // Don't know best approach yet
-            types["var"] = { id -> PineObject(id)}
-            types["Object"] = { id -> PineObject(id)}
+            types["var"] = PineObject.meta
+            types["Object"] = PineObject.meta
         }
 
-        fun registerPineType(typeName: String, allocator: ObjectAllocator): Builder {
-            types[typeName] = allocator
+        fun registerPineType(meta: PineMetaObject): Builder {
+            types[meta.scriptName] = meta
             return this
         }
 
