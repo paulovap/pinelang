@@ -17,10 +17,10 @@ class CallableExpr : Table() {
         __init(_i, _bb)
         return this
     }
-    val objId : Long
+    val objId : Int
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.getLong(o + bb_pos) else 0L
+            return if(o != 0) bb.getInt(o + bb_pos) else 0
         }
     val callIdx : UByte
         get() {
@@ -34,14 +34,14 @@ class CallableExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createCallableExpr(builder: FlatBufferBuilder, objId: Long, callIdx: UByte) : Int {
+        fun createCallableExpr(builder: FlatBufferBuilder, objId: Int, callIdx: UByte) : Int {
             builder.startTable(2)
             addObjId(builder, objId)
             addCallIdx(builder, callIdx)
             return endCallableExpr(builder)
         }
         fun startCallableExpr(builder: FlatBufferBuilder) = builder.startTable(2)
-        fun addObjId(builder: FlatBufferBuilder, objId: Long) = builder.addLong(0, objId, 0L)
+        fun addObjId(builder: FlatBufferBuilder, objId: Int) = builder.addInt(0, objId, 0)
         fun addCallIdx(builder: FlatBufferBuilder, callIdx: UByte) = builder.addByte(1, callIdx.toByte(), 0)
         fun endCallableExpr(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()

@@ -1,4 +1,7 @@
 import com.pinescript.core.PineEngine
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.PineObject
+import com.pinescript.core.intProp
 import io.ktor.util.KtorExperimentalAPI
 import kotlin.system.measureTimeMillis
 
@@ -36,12 +39,136 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-
+class Item(id: Long) : PineObject(id) {
+    companion object {
+        val meta = PineMetaObject("Item") { Item(it) }
+    }
+    val a: Int by intProp(::a)
+}
 @KtorExperimentalAPI
 fun main(argv: Array<String>) {
-    val engine = PineEngine.Builder().build()
-    println( measureTimeMillis { engine.compile("Object { id: test }") })
-    println( measureTimeMillis { engine.compile("Object { id: test }") })
-    println( measureTimeMillis { engine.compile("Object { id: test }") })
-    println( measureTimeMillis { engine.compile("Object { id: test Object { }  Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { }}") })
+    val engine = PineEngine.Builder().registerPineType(Item.meta).build()
+    val script = """
+        Item { id: test; a: 20
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+            Item{ a: test.a + 20; on mount: helloText() }
+        }
+    """.trimIndent()
+    // warmup
+    repeat(10) { engine.compile(script) }
+    val times = 100000
+    val total = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
+    println("run $times in total $total ms avg ${total/times.toDouble()} ms")
+
+//    val program = engine.compile(script, false)
+//    val releaseBytes = engine.compiler.flatBuilder.sizedByteArray()
+//    val programDebug = engine.compile(script, true)
+//    val debugBytes = engine.compiler.flatBuilder.sizedByteArray()
+//    println("scriptSize ${script.toByteArray().size/1024} kb")
+//    println("compiledSize ${releaseBytes.size/1024} kb")
+//    println("compiledSizeDebug ${debugBytes.size/1024} kb")
+//    println(measureTimeMillis {
+//        repeat(times) {
+//            engine.compile(script)
+//        }
+//    } / times.toDouble())
 }

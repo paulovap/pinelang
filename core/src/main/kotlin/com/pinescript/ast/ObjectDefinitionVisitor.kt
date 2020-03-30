@@ -33,27 +33,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.pinescript.ast
 
 import com.pinescript.ast.fbs.ObjectDefinition
+import com.pinescript.ast.fbs.ObjectDefinition.Companion.createChildrenVector
+import com.pinescript.ast.fbs.ObjectDefinition.Companion.createPropsVector
+import com.pinescript.ast.fbs.ObjectDefinition.Companion.createSignalsVector
 import com.pinescript.ast.fbs.SignalExpr
 import com.pinescript.core.*
 import com.pinescript.parser.PineScriptParser
 
 /*
 table ObjectDefinition {
-    debugName: string;
+    id:        int32;
     type:      int32;
-    debugId:   string;
-    id:        int64;
     children:  [ObjectDefinition];
-    signals:   [SignalAssignment];
+    signals:   [SignalExpr];
     props:     [Prop];
+    debugName: string;
+    debugType: string;
 }
  */
 
-class ObjectDefinitionVisitor(engine: PineEngine) : PineScriptVisitor<Int>(engine) {
+class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScriptVisitor<Int>(compiler, debug) {
+
+    val propertyVisitor = PropertyVisitor(compiler, -1, -1, debug)
+    val expressionVisitor = ExpressionVisitor(compiler, -1, -1, debug)
 
     override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): Int {
-        val rootContext = engine.rootContext
-        val fb = engine.compiler.flatBuilder
         val initContext = ctx.objectInitializer()
         val objIdentifierCtx = initContext.objectIdentifier()
         val objMember = initContext.objectMember()
@@ -61,54 +65,66 @@ class ObjectDefinitionVisitor(engine: PineEngine) : PineScriptVisitor<Int>(engin
 
         // Object information
         val nameType = ctx.ObjectType().text
-        val typeIdx = engine.types.getIndexOrNull(nameType) ?: ctx.ObjectType()
+        val typeIdx = types.getIndexOrNull(nameType) ?: ctx.ObjectType()
             .throwParseException("Type $nameType not found engine")
-        val type = engine.types[typeIdx]!!
+        val type = types[typeIdx]!!
         val debugName = objIdentifierCtx?.Identifier()?.text ?: ""
-        val objId = engine.compiler.generateObjectId(typeIdx, debugName)
-        val children: MutableList<Int> = mutableListOf()
-        val signals: MutableList<Int> = mutableListOf()
-        val props: MutableList<Int> = mutableListOf()
+        val objId = compiler.generateObjectId(typeIdx, debugName)
+        val children: MutableList<Int> = ArrayList(16)
+        val signals: MutableList<Int> = ArrayList(16)
+        val props: MutableList<Int> = ArrayList(16)
 
         objMember.forEach {
 
             /* Children parsing */
             if (it.objectDefinition() != null) {
-                children.add(ObjectDefinitionVisitor(engine).visit(it.objectDefinition()))
+                children.add(visit(it.objectDefinition()))
             }
 
             /* assigning script to a declared property */
             if (it.propertyAssignement() != null) {
-                props.add(PropertyVisitor(engine, typeIdx, objId).visit(it.propertyAssignement()))
+                props.add(propertyVisitor.reset(typeIdx, objId).visit(it.propertyAssignement()))
             }
 
             /*
                 table SignalAssignment {
-                    debugName:     string;
                     id:            ubyte;
                     expr:          CallableExpr;
+                    debugName:     string;
                 }
              */
             it.signalAssignement()?.also { sigCtx ->
                 val name = sigCtx.Identifier().text
                 val id = type.signalIndexes[name] ?: sigCtx.Identifier().throwParseException("signal $name not found")
-                val expr = ExpressionVisitor(engine, typeIdx, objId).visit(sigCtx.callableExpression())
-                signals.add(SignalExpr.createSignalExpr(fb, id, expr.first, expr.second))
+                val expr = expressionVisitor.reset(typeIdx, objId).visit(sigCtx.callableExpression())
+                signals.add( run {
+                    val debugNameIdx = if (debug) fb.createString(name) else -1
+                    SignalExpr.startSignalExpr(fb)
+                    SignalExpr.addId(fb, id.toUByte())
+                    SignalExpr.addExpr(fb, expr.second)
+                    if (debugNameIdx != -1) SignalExpr.addDebugName(fb, debugNameIdx)
+                    SignalExpr.endSignalExpr(fb)
+                })
             }
         }
 
-        val childrenVec = ObjectDefinition.createChildrenVector(fb, children.toIntArray())
-        val propVec = ObjectDefinition.createChildrenVector(fb, props.toIntArray())
-        val signalVec = ObjectDefinition.createChildrenVector(fb, signals.toIntArray())
-        return ObjectDefinition.createObjectDefinition(
-            fb,
-            fb.createString(nameType),
-            typeIdx,
-            fb.createString(debugName),
-            objId,
-            childrenVec,
-            signalVec,
-            propVec
-        )
+
+        val childrenVec = if (children.size > 0) createChildrenVector(fb, children.toIntArray()) else -1
+        val propVec = if (props.size > 0) createPropsVector(fb, props.toIntArray()) else -1
+        val signalVec = if (signals.size > 0) createSignalsVector(fb, signals.toIntArray()) else -1
+        val debugNameIdx = if (debug) fb.createString(debugName) else -1
+        val nameTypeIdx = if (debug) fb.createString(nameType) else -1
+
+        ObjectDefinition.startObjectDefinition(fb)
+        ObjectDefinition.addId(fb, objId)
+        ObjectDefinition.addId(fb, typeIdx)
+
+        if (childrenVec != -1) ObjectDefinition.addChildren(fb, childrenVec)
+        if (propVec != -1) ObjectDefinition.addProps(fb, propVec)
+        if (signalVec != -1) ObjectDefinition.addSignals(fb, signalVec)
+        if (debugNameIdx != -1) ObjectDefinition.addDebugName(fb, debugNameIdx)
+        if (nameTypeIdx != -1) ObjectDefinition.addDebugType(fb, nameTypeIdx)
+
+        return ObjectDefinition.endObjectDefinition(fb)
     }
 }

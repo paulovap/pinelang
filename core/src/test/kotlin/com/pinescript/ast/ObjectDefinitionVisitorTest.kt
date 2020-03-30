@@ -32,6 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.pinescript.ast
 
+import com.google.flatbuffers.Table
+import com.pinescript.ast.fbs.Expr
+import com.pinescript.ast.fbs.PrimitiveExpr
+import com.pinescript.ast.fbs.Program
 import com.pinescript.core.*
 import org.junit.After
 import org.junit.Before
@@ -41,11 +45,10 @@ import java.io.IOException
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import kotlin.system.measureTimeMillis
 
 
 class ObjectDefinitionVisitorTest {
-
-    private var engine: PineEngine? = null
 
     class TestObject : PineObject(-1) {
         val myInt: Int by intProp(::myInt)
@@ -54,17 +57,29 @@ class ObjectDefinitionVisitorTest {
         val myBool: Boolean by boolProp(::myBool)
     }
 
+    private var engine: PineEngine = PineEngine.Builder()
+        .registerPineType(PineMetaObject("TestObject") { TestObject() })
+        .build()
+
+
+
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        engine = PineEngine.Builder()
-            .registerPineType(PineMetaObject("TestObject") { TestObject() })
-            .build()
     }
 
     @After
     @Throws(Exception::class)
     fun tearDown() {
+    }
+
+    @Test
+    fun myTest() {
+        val engine = PineEngine.Builder().build()
+        println( measureTimeMillis { engine.compile("Object { id: test }") })
+        println( measureTimeMillis { engine.compile("Object { id: test }") })
+        println( measureTimeMillis { engine.compile("Object { id: test }") })
+        println( measureTimeMillis { engine.compile("Object { id: test Object { }  Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { }}") })
     }
 
 //    @Test
@@ -89,36 +104,36 @@ class ObjectDefinitionVisitorTest {
     @Test
     @Throws(IOException::class)
     fun testPrimivesAssignments() {
-        val tree = LoadTree.loadTree(
-            """
+        val script = """
         TestObject { 
-            double: 10.1; 
-            string: "oh my"; 
-            int: 20; 
-            bool: true;
-        }"""
-        ).objectDefinition()
-        val v = ObjectDefinitionVisitor(engine!!)
-        val obj = v.visit(tree) as TestObject
+            myDouble: 10.1; 
+            myString: "oh my"; 
+            myInt: 20; 
+            myBool: true;
+        }""".trimEnd()
+        val program: Program = engine.compile(script)
 
-        assertNotNull(obj)
+        assertNotNull(program)
+        assertNotNull(program.root)
+        assertEquals(0, program.root!!.childrenLength)
+        assertEquals(4, program.root!!.propsLength)
 
-        val propDouble = obj.getProp("double")
-        assertEquals(10.1, propDouble.value)
-        assertEquals(10.1, obj.myDouble, 0.01)
+        val doubleProp = program.root!!.props(0)!!
+        val doubleExpr = doubleProp.value(PrimitiveExpr()) as PrimitiveExpr
 
-        val propString = obj.getProp("string")
-        assertEquals("oh my", propString.value)
-        assertEquals("oh my", obj.myString)
+        assertEquals("myDouble", doubleProp.debugName)
+        assertEquals(Expr.PrimitiveExpr, doubleProp.valueType)
+        assertEquals(10.1, doubleExpr.value, 0.04)
 
-        val propInt = obj.getProp("int")
-        assertEquals(20, propInt.value)
-        assertEquals(20, obj.myInt)
+        val stringProp = program.root!!.props(1)!!
+        val stringExpr = stringProp.value(PrimitiveExpr()) as PrimitiveExpr
 
-        val propBool = obj.getProp("bool")
-        assertEquals(true, propBool.value)
-        assertEquals(true, obj.myBool)
+        assertEquals("myString", stringProp.debugName)
+        assertEquals(Expr.PrimitiveExpr, stringProp.valueType)
+        assertEquals("oh my", stringExpr.stringValue)
 
+
+        //(program.root!!.props(0)!!.value(PrimitiveExpr()) as PrimitiveExpr).value
     }
 //
 //    @Test

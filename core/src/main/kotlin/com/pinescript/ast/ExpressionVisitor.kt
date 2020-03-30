@@ -45,8 +45,14 @@ table PrimitiveExpr {
 union Expr {CallableExpr, BinaryExpr, PrimitiveExpr}
  */
 @ExperimentalUnsignedTypes
-class ExpressionVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Long) :
-    PineScriptVisitor<Pair<UByte, Int>>(engine) {
+class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: Int, debug: Boolean) :
+    PineScriptVisitor<Pair<UByte, Int>>(compiler, debug) {
+
+    fun reset(ownerType: Int, ownerId: Int): ExpressionVisitor {
+        this.ownerType = ownerType
+        this.ownerId = ownerId
+        return this
+    }
 
     override fun visitExpression(context: PineScriptParser.ExpressionContext?): Pair<UByte, Int> {
         val ctx = context!!
@@ -63,19 +69,17 @@ class ExpressionVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Lon
     }
 
     private fun createPropExpr(ctx: PineScriptParser.ObjectPropertyExpressionContext): Pair<UByte, Int> {
-        val fb = engine.compiler.flatBuilder
         val ids = ctx.Identifier()
         return Pair(
             Expr.PropExpr,
             if (ids.size == 1) {
-                val propId =
-                    engine.types[ownerType]!!.propIndexes[ids[0].text] ?: ids[0].throwPropNotFound(ids[0].text, "this")
+                val propId = types[ownerType]!!.propIndexes[ids[0].text] ?: ids[0].throwPropNotFound(ids[0].text, "this")
                 PropExpr.createPropExpr(fb, ownerId, propId.toUByte())
             } else {
                 val objName = ids[0].text!!
                 val propName = ids[1].text!!
-                val objMeta = engine.compiler.objectMetaData(objName) ?: ids[0].throwObjNotFound(ids[0].text)
-                val objType = engine.types[objMeta.typeIdx]!!
+                val objMeta = compiler.objectMetaData(objName) ?: ids[0].throwObjNotFound(ids[0].text)
+                val objType = types[objMeta.typeIdx]!!
                 val propIdx = objType.propIndexes[propName] ?: ids[1].throwPropNotFound(ids[1].text, ids[0].text)
                 PropExpr.createPropExpr(fb, ownerId, propIdx.toUByte())
             }
@@ -94,7 +98,7 @@ class ExpressionVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Lon
         left: PineScriptParser.ExpressionContext,
         right: PineScriptParser.ExpressionContext
     ): Pair<UByte, Int> {
-        val fb = engine.compiler.flatBuilder
+        val fb = compiler.flatBuilder
         val (leftType, leftValue) = visit(left)
         val (rightType, rightValue) = visit(right)
         return Pair(
@@ -110,10 +114,10 @@ class ExpressionVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Lon
      }
      */
     override fun visitCallableExpression(ctx: PineScriptParser.CallableExpressionContext?): Pair<UByte, Int> {
-        val fb = engine.compiler.flatBuilder
+        val fb = compiler.flatBuilder
         val name = ctx!!.Identifier().text
         val callIdx =
-            engine.types[ownerType]!!.callableIndexes[name] ?: ctx.Identifier().throwCallableNotFound(name, "this")
+            types[ownerType]!!.callableIndexes[name] ?: ctx.Identifier().throwCallableNotFound(name, "this")
         return Pair(Expr.CallableExpr, CallableExpr.createCallableExpr(fb, ownerId, callIdx.toUByte()))
     }
 
@@ -127,41 +131,31 @@ class ExpressionVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Lon
         }
      */
     override fun visitPrimitiveExpression(ctx: PineScriptParser.PrimitiveExpressionContext?): Pair<UByte, Int> {
-        val fb = engine.compiler.flatBuilder
         val exprType = Expr.PrimitiveExpr
         val exprVal = when {
-            ctx!!.TRUE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 0.toUByte(), 0, 0.0, 0)
-            ctx.FALSE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 1.toUByte(), 0, 0.0, 0)
+            ctx!!.TRUE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 0.0, 0)
+            ctx.FALSE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 1.0, 0)
             ctx.StringLiteral() != null -> createPrimitiveExpr(
                 fb,
                 PrimitiveType.String,
-                0.toUByte(),
-                0,
                 0.0,
                 fb.createString(ctx.StringLiteral().text.removeQuotes())
             )
             ctx.IntegerLiteral() != null -> createPrimitiveExpr(
                 fb,
                 PrimitiveType.Int,
-                0.toUByte(),
-                ctx.IntegerLiteral().text.toInt().dp(ctx.integerSuffix() != null),
-                0.0,
-                0
+                ctx.IntegerLiteral().text.toInt().dp(ctx.integerSuffix() != null).toDouble(), 0
             )
-            ctx.FloatLiteral() != null -> createPrimitiveExpr(
-                fb,
-                PrimitiveType.Boolean,
-                0.toUByte(),
-                0,
-                ctx.FloatLiteral().text.toDouble(),
-                0
+            ctx.FloatLiteral() != null -> createPrimitiveExpr(fb,
+                PrimitiveType.Double,
+                ctx.FloatLiteral().text.toDouble(), 0
             )
             else -> throw PineScriptParseException(ctx.start, "failed to parse primitive expression")
         }
         return Pair(exprType, exprVal)
     }
 
-    private fun Int.dp(shouldApply: Boolean): Int = engine.dpCalculator(this)
+    private fun Int.dp(shouldApply: Boolean): Int = this
     private fun String.removeQuotes(): String = substring(1 until this.length - 1)
 
     private fun PineScriptParser.BinaryOperationContext.getOp(): UByte {

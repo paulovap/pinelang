@@ -22,28 +22,18 @@ class PrimitiveExpr : Table() {
             val o = __offset(4)
             return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
-    val boolValue : UByte
+    val value : Double
         get() {
             val o = __offset(6)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
-        }
-    val intValue : Int
-        get() {
-            val o = __offset(8)
-            return if(o != 0) bb.getInt(o + bb_pos) else 0
-        }
-    val doubleValue : Double
-        get() {
-            val o = __offset(10)
             return if(o != 0) bb.getDouble(o + bb_pos) else 0.0
         }
     val stringValue : String?
         get() {
-            val o = __offset(12)
+            val o = __offset(8)
             return if (o != 0) __string(o + bb_pos) else null
         }
-    val stringValueAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(12, 1)
-    fun stringValueInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 12, 1)
+    val stringValueAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(8, 1)
+    fun stringValueInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 8, 1)
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
         fun getRootAsPrimitiveExpr(_bb: ByteBuffer): PrimitiveExpr = getRootAsPrimitiveExpr(_bb, PrimitiveExpr())
@@ -51,21 +41,17 @@ class PrimitiveExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createPrimitiveExpr(builder: FlatBufferBuilder, type: UByte, boolValue: UByte, intValue: Int, doubleValue: Double, stringValueOffset: Int) : Int {
-            builder.startTable(5)
-            addDoubleValue(builder, doubleValue)
+        fun createPrimitiveExpr(builder: FlatBufferBuilder, type: UByte, value: Double, stringValueOffset: Int) : Int {
+            builder.startTable(3)
+            addValue(builder, value)
             addStringValue(builder, stringValueOffset)
-            addIntValue(builder, intValue)
-            addBoolValue(builder, boolValue)
             addType(builder, type)
             return endPrimitiveExpr(builder)
         }
-        fun startPrimitiveExpr(builder: FlatBufferBuilder) = builder.startTable(5)
+        fun startPrimitiveExpr(builder: FlatBufferBuilder) = builder.startTable(3)
         fun addType(builder: FlatBufferBuilder, type: UByte) = builder.addByte(0, type.toByte(), 0)
-        fun addBoolValue(builder: FlatBufferBuilder, boolValue: UByte) = builder.addByte(1, boolValue.toByte(), 0)
-        fun addIntValue(builder: FlatBufferBuilder, intValue: Int) = builder.addInt(2, intValue, 0)
-        fun addDoubleValue(builder: FlatBufferBuilder, doubleValue: Double) = builder.addDouble(3, doubleValue, 0.0)
-        fun addStringValue(builder: FlatBufferBuilder, stringValue: Int) = builder.addOffset(4, stringValue, 0)
+        fun addValue(builder: FlatBufferBuilder, value: Double) = builder.addDouble(1, value, 0.0)
+        fun addStringValue(builder: FlatBufferBuilder, stringValue: Int) = builder.addOffset(2, stringValue, 0)
         fun endPrimitiveExpr(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

@@ -46,35 +46,31 @@ table Prop {
 }
  */
 @ExperimentalUnsignedTypes
-class PropertyVisitor(engine: PineEngine, val ownerType: Int, val ownerId: Long) : PineScriptVisitor<Int>(engine) {
+class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: Int, debug: Boolean) :
+    PineScriptVisitor<Int>(compiler, debug) {
+
+    val expressionVisitor = ExpressionVisitor(compiler, ownerType, ownerId, debug)
+
+    fun reset(ownerType: Int, ownerId: Int): PropertyVisitor {
+        this.ownerType = ownerType
+        this.ownerId = ownerId
+        expressionVisitor.reset(ownerType, ownerId)
+        return this
+    }
 
     override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?): Int {
-        val fb = engine.compiler.flatBuilder
         val propName = ctx!!.Identifier().text
-        val propIdx = engine.types[ownerType]?.propIndexes?.get(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, "this")
+        val propIdx =
+            types[ownerType]?.propIndexes?.get(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, types[ownerType]!!.scriptName)
 
-        Prop.startProp(engine.compiler.flatBuilder)
-        Prop.addDebugName(fb, fb.createString(propName))
+        val (valueType, valueIdx) = expressionVisitor.visit(ctx.expression()!!)
+
+        val debugNameIdx = if (debug) fb.createString(propName) else -1
+        Prop.startProp(fb)
         Prop.addIdx(fb, propIdx.toUByte())
-        Prop.addType(fb, PropType.Boolean)
-        val (valueType, value) = ExpressionVisitor(engine, ownerType, ownerId).visit(ctx.expression()!!)
-        Prop.addValue(fb, value)
-        Prop.addValueType(fb, valueType.toUByte())
-        return Prop.endProp(engine.compiler.flatBuilder)
+        Prop.addValueType(fb, valueType)
+        Prop.addValue(fb, valueIdx)
+        if (debugNameIdx != -1) Prop.addDebugName(fb, debugNameIdx)
+        return Prop.endProp(fb)
     }
-//    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?) {
-//        val propName = ctx!!.Identifier().text
-//        val prop = owner.getProp(propName) ?: ctx.Identifier().throwPropNotFound(propName, "this")
-//
-//        ctx.expression()?.let { exprCtx ->
-//
-//            exprCtx.primitiveExpression()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(it)) }
-//
-//            exprCtx.objectPropertyExpression()?.let { prop.bind(findProp(owner, it.Identifier())) }
-//
-//            exprCtx.binaryOperation()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(exprCtx)) }
-//
-//            exprCtx.callableExpression()?.let { prop.setPineValue(ExpressionVisitor(engine, rootContext, owner).visit(it)) }
-//        }
-//    }
 }

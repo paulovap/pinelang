@@ -17,31 +17,26 @@ class Prop : Table() {
         __init(_i, _bb)
         return this
     }
-    val debugName : String?
-        get() {
-            val o = __offset(4)
-            return if (o != 0) __string(o + bb_pos) else null
-        }
-    val debugNameAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(4, 1)
-    fun debugNameInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 4, 1)
     val idx : UByte
         get() {
-            val o = __offset(6)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
-        }
-    val type : UByte
-        get() {
-            val o = __offset(8)
+            val o = __offset(4)
             return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
     val valueType : UByte
         get() {
-            val o = __offset(10)
+            val o = __offset(6)
             return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
     fun value(obj: Table) : Table? {
-        val o = __offset(12); return if (o != 0) __union(obj, o + bb_pos) else null
+        val o = __offset(8); return if (o != 0) __union(obj, o + bb_pos) else null
     }
+    val debugName : String?
+        get() {
+            val o = __offset(10)
+            return if (o != 0) __string(o + bb_pos) else null
+        }
+    val debugNameAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(10, 1)
+    fun debugNameInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 10, 1)
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
         fun getRootAsProp(_bb: ByteBuffer): Prop = getRootAsProp(_bb, Prop())
@@ -49,21 +44,19 @@ class Prop : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createProp(builder: FlatBufferBuilder, debugNameOffset: Int, idx: UByte, type: UByte, valueType: UByte, valueOffset: Int) : Int {
-            builder.startTable(5)
-            addValue(builder, valueOffset)
+        fun createProp(builder: FlatBufferBuilder, idx: UByte, valueType: UByte, valueOffset: Int, debugNameOffset: Int) : Int {
+            builder.startTable(4)
             addDebugName(builder, debugNameOffset)
+            addValue(builder, valueOffset)
             addValueType(builder, valueType)
-            addType(builder, type)
             addIdx(builder, idx)
             return endProp(builder)
         }
-        fun startProp(builder: FlatBufferBuilder) = builder.startTable(5)
-        fun addDebugName(builder: FlatBufferBuilder, debugName: Int) = builder.addOffset(0, debugName, 0)
-        fun addIdx(builder: FlatBufferBuilder, idx: UByte) = builder.addByte(1, idx.toByte(), 0)
-        fun addType(builder: FlatBufferBuilder, type: UByte) = builder.addByte(2, type.toByte(), 0)
-        fun addValueType(builder: FlatBufferBuilder, valueType: UByte) = builder.addByte(3, valueType.toByte(), 0)
-        fun addValue(builder: FlatBufferBuilder, value: Int) = builder.addOffset(4, value, 0)
+        fun startProp(builder: FlatBufferBuilder) = builder.startTable(4)
+        fun addIdx(builder: FlatBufferBuilder, idx: UByte) = builder.addByte(0, idx.toByte(), 0)
+        fun addValueType(builder: FlatBufferBuilder, valueType: UByte) = builder.addByte(1, valueType.toByte(), 0)
+        fun addValue(builder: FlatBufferBuilder, value: Int) = builder.addOffset(2, value, 0)
+        fun addDebugName(builder: FlatBufferBuilder, debugName: Int) = builder.addOffset(3, debugName, 0)
         fun endProp(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

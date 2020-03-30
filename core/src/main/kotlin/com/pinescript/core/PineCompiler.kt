@@ -37,10 +37,12 @@ import com.pinescript.ast.ProgramVisitor
 import com.pinescript.ast.fbs.Program
 import com.pinescript.parser.PineScriptLexer
 import com.pinescript.parser.PineScriptParser
+import com.pinescript.util.IndexedMap
 import org.antlr.v4.runtime.*
 import sun.security.util.ObjectIdentifier
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.reflect.full.memberProperties
@@ -58,24 +60,22 @@ class PineContext {
     fun find(id: String) = refs[id]
 }
 
-data class CompileObjectMetaData(val typeIdx: Int, val objId: Long, val objName: String)
+data class CompileObjectMetaData(val typeIdx: Int, val objId: Int, val objName: String)
 
 @ExperimentalUnsignedTypes
-class PineCompiler internal constructor(private val engine: PineEngine) {
+class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
 
-    private var incrementalId: Long = 1
+    private var incrementalId: Int = 1
     private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
+    val flatBuilder: FlatBufferBuilder = FlatBufferBuilder(1024)
 
     fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
 
-    fun generateObjectId(typeId: Int, objectIdentifier: String?): Long {
+    fun generateObjectId(typeId: Int, objectIdentifier: String?): Int {
         if (objectIdentifier != null)
             ids[objectIdentifier] = CompileObjectMetaData(typeId, incrementalId, objectIdentifier)
         return incrementalId++
     }
-
-    val flatBuilder: FlatBufferBuilder = FlatBufferBuilder(1024)
-    val keepDebugSymbols = true
 
     private val baseErrorListener = object: BaseErrorListener() {
         override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
@@ -84,14 +84,9 @@ class PineCompiler internal constructor(private val engine: PineEngine) {
         }
     }
 
-    fun compile(unit: String): Program {
-        return loadAst(unit)
-    }
-
-    private fun loadAst(unit: String): Program {
+    fun compile(unit: String, keepDebugSymbols: Boolean = true): Program {
         try {
-            val context = PineContext()
-
+            this.flatBuilder.clear()
             val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
             val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
 
@@ -105,13 +100,10 @@ class PineCompiler internal constructor(private val engine: PineEngine) {
             parser.addErrorListener(baseErrorListener)
 
             val tree = parser.program()
-
-            val programVisitor = ProgramVisitor(engine)
-            return programVisitor.visit(tree)
+            return ProgramVisitor(this, keepDebugSymbols).visit(tree)
         } catch (e: IOException) {
             throw PineScriptException("unable to load unit", e)
         }
-
     }
 
 //    private fun loadAst(unit: String): PineObject {

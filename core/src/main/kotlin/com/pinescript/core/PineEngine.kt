@@ -33,6 +33,7 @@ package com.pinescript.core
 
 import com.pinescript.ast.fbs.Program
 import com.pinescript.util.IndexedMap
+import java.nio.ByteBuffer
 
 typealias Allocator = (Long) -> PineObject
 // id, parent, children, properties
@@ -55,15 +56,15 @@ class PineEngine private constructor(
     val types: IndexedMap<PineMetaObject>,
     val dpCalculator: (Int) -> Int) {
 
-    val compiler: PineCompiler = PineCompiler(this)
     val rootContext: PineContext = PineContext()
+    val compiler: PineCompiler = PineCompiler(types)
 
     fun load(script: String): PineObject {
         return PineObject()//compiler.compile(script)
     }
 
-    fun compile(script: String): Program {
-        return compiler.compile(script)
+    fun compile(script: String, keepDebugSymbols: Boolean = true): Program {
+        return compiler.compile(script, keepDebugSymbols)
     }
 
     fun getAllocator(qmlType: String): Allocator {

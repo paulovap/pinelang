@@ -32,18 +32,15 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.google.flatbuffers.FlatBufferBuilder
-import com.pinescript.core.*
+import com.pinescript.core.PineCompiler
+import com.pinescript.core.PineScriptParseException
 import com.pinescript.parser.PineScriptBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNode
 
-open class PineScriptVisitor<T>(protected val engine: PineEngine) : PineScriptBaseVisitor<T>() {
+open class PineScriptVisitor<T>(protected var compiler: PineCompiler, var debug: Boolean) : PineScriptBaseVisitor<T>() {
 
-    fun findProp(owner: PineObject, name: List<TerminalNode>): PineProp<*> {
-        val obj = if (name.size == 1) owner else engine.rootContext.find(name[0].text) ?: name[0].throwObjNotFound(name[0].text)
-        val idx = if (name.isNotEmpty()) 1 else 0
-        return obj.getProp(name[idx].text) ?: name[idx].throwPropNotFound(name[0].text, obj.toString())
-    }
+    val types = compiler.types
+    val fb = compiler.flatBuilder
 
     fun TerminalNode.throwPropNotFound(propName: String, objName: String): Nothing {
         throw PineScriptParseException(this, "prop $propName on object $objName not found")
