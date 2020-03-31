@@ -63,14 +63,14 @@ objectIdentifier
 objectMember
     : objectDefinition
     | signalAssignement
-    | propertyAssignement
+    | propertyDefinition
     ;
 
 signalAssignement
     : ON Identifier COLON callableExpression SEMICOLON?
     ;
 // prop: ... ;
-propertyAssignement
+propertyDefinition
     : Identifier COLON expression SEMICOLON?
     ;
 
@@ -578,7 +578,7 @@ FloatLiteral
     ;
 
 fragment DecimalIntegerLiteral
-    : [1-9] [0-9]*
+    : [0-9]+
     ;
 fragment ExponentPart
     : [eE] [+-]? [0-9]+

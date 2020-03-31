@@ -54,8 +54,8 @@ table ObjectDefinition {
 
 class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScriptVisitor<Int>(compiler, debug) {
 
-    val propertyVisitor = PropertyVisitor(compiler, -1, -1, debug)
-    val expressionVisitor = ExpressionVisitor(compiler, -1, -1, debug)
+    private val propertyVisitor = PropertyVisitor(compiler, -1, -1, debug)
+    private val expressionVisitor = ExpressionVisitor(compiler, -1, -1, debug)
 
     override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): Int {
         val initContext = ctx.objectInitializer()
@@ -82,8 +82,8 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
             }
 
             /* assigning script to a declared property */
-            if (it.propertyAssignement() != null) {
-                props.add(propertyVisitor.reset(typeIdx, objId).visit(it.propertyAssignement()))
+            if (it.propertyDefinition() != null) {
+                props.add(propertyVisitor.reset(typeIdx, objId).visit(it.propertyDefinition()))
             }
 
             /*
@@ -101,7 +101,7 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
                     val debugNameIdx = if (debug) fb.createString(name) else -1
                     SignalExpr.startSignalExpr(fb)
                     SignalExpr.addId(fb, id.toUByte())
-                    SignalExpr.addExpr(fb, expr.second)
+                    SignalExpr.addExpr(fb, expr)
                     if (debugNameIdx != -1) SignalExpr.addDebugName(fb, debugNameIdx)
                     SignalExpr.endSignalExpr(fb)
                 })
@@ -117,7 +117,7 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
 
         ObjectDefinition.startObjectDefinition(fb)
         ObjectDefinition.addId(fb, objId)
-        ObjectDefinition.addId(fb, typeIdx)
+        ObjectDefinition.addType(fb, typeIdx)
 
         if (childrenVec != -1) ObjectDefinition.addChildren(fb, childrenVec)
         if (propVec != -1) ObjectDefinition.addProps(fb, propVec)

@@ -40,7 +40,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Label(id: Long) : Item(id) {
+class Label(id: Int) : Item(id) {
 
     companion object {
         val meta = PineMetaObject("Label") { Label(it) }
@@ -60,7 +60,7 @@ class Label(id: Long) : Item(id) {
 
         resizeSlot()
 
-        children.connect {
+        connect("children") {
             label.removeAll()
             for (child in children) {
                 if (child is Rectangle) {

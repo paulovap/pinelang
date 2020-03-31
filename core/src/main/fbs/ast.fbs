@@ -1,11 +1,5 @@
 namespace com.pinescript.ast.fbs;
 
-union Expr {CallableExpr, BinaryExpr, PrimitiveExpr, PropExpr}
-
-table CallableExpr {
-    objId: int32;
-    callIdx: ubyte;
-}
 
 enum BinaryOp : ubyte {
     PLUS = 0,
@@ -17,6 +11,17 @@ enum BinaryOp : ubyte {
     OR
 }
 
+union ExprValue {CallableExpr, BinaryExpr, PrimitiveExpr, PropRefExpr}
+
+table Expr {
+    expValue: ExprValue;
+}
+
+table CallableExpr {
+    objId: int32;
+    callIdx: ubyte;
+}
+
 table BinaryExpr {
     op: BinaryOp;
     left: Expr;
@@ -24,10 +29,11 @@ table BinaryExpr {
 }
 
 enum PrimitiveType : ubyte {
-    Int = 0,
+    Void = 0,
+    Int,
+    Boolean,
     Double,
     String,
-    Boolean,
     ObjectProperty
 }
 
@@ -37,13 +43,13 @@ table PrimitiveExpr {
     stringValue: string;
 }
 
-table PropExpr {
+table PropRefExpr {
     objId: int32;
-    propIdx: ubyte;
+    propId: ubyte;
 }
 
-table Prop {
-    idx:       ubyte;
+table PropDefinition {
+    id:       ubyte;
     value:     Expr;
     debugName: string;
 }
@@ -59,7 +65,7 @@ table ObjectDefinition {
     type:      int32;
     children:  [ObjectDefinition];
     signals:   [SignalExpr];
-    props:     [Prop];
+    props:     [PropDefinition];
     debugName: string;
     debugType: string;
 }

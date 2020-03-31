@@ -37,7 +37,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-open class Item(id: Long) : PineObject(id) {
+open class Item(id: Int) : PineObject(id) {
 
     companion object {
         val meta = PineMetaObject("Item") { Item(it) }

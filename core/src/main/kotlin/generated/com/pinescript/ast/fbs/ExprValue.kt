@@ -4,14 +4,14 @@ package com.pinescript.ast.fbs
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
-class Expr private constructor() {
+class ExprValue private constructor() {
     companion object {
         const val NONE: UByte = 0u
         const val CallableExpr: UByte = 1u
         const val BinaryExpr: UByte = 2u
         const val PrimitiveExpr: UByte = 3u
-        const val PropExpr: UByte = 4u
-        val names : Array<String> = arrayOf("NONE", "CallableExpr", "BinaryExpr", "PrimitiveExpr", "PropExpr")
+        const val PropRefExpr: UByte = 4u
+        val names : Array<String> = arrayOf("NONE", "CallableExpr", "BinaryExpr", "PrimitiveExpr", "PropRefExpr")
         fun name(e: Int) : String = names[e]
     }
 }

@@ -102,13 +102,13 @@ public class PineScriptBaseListener implements PineScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx) { }
+	@Override public void enterPropertyDefinition(PineScriptParser.PropertyDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPropertyAssignement(PineScriptParser.PropertyAssignementContext ctx) { }
+	@Override public void exitPropertyDefinition(PineScriptParser.PropertyDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -8,12 +8,12 @@ import com.google.flatbuffers.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
-class PropExpr : Table() {
+class PropRefExpr : Table() {
 
     fun __init(_i: Int, _bb: ByteBuffer)  {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : PropExpr {
+    fun __assign(_i: Int, _bb: ByteBuffer) : PropRefExpr {
         __init(_i, _bb)
         return this
     }
@@ -22,28 +22,28 @@ class PropExpr : Table() {
             val o = __offset(4)
             return if(o != 0) bb.getInt(o + bb_pos) else 0
         }
-    val propIdx : UByte
+    val propId : UByte
         get() {
             val o = __offset(6)
             return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
-        fun getRootAsPropExpr(_bb: ByteBuffer): PropExpr = getRootAsPropExpr(_bb, PropExpr())
-        fun getRootAsPropExpr(_bb: ByteBuffer, obj: PropExpr): PropExpr {
+        fun getRootAsPropRefExpr(_bb: ByteBuffer): PropRefExpr = getRootAsPropRefExpr(_bb, PropRefExpr())
+        fun getRootAsPropRefExpr(_bb: ByteBuffer, obj: PropRefExpr): PropRefExpr {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createPropExpr(builder: FlatBufferBuilder, objId: Int, propIdx: UByte) : Int {
+        fun createPropRefExpr(builder: FlatBufferBuilder, objId: Int, propId: UByte) : Int {
             builder.startTable(2)
             addObjId(builder, objId)
-            addPropIdx(builder, propIdx)
-            return endPropExpr(builder)
+            addPropId(builder, propId)
+            return endPropRefExpr(builder)
         }
-        fun startPropExpr(builder: FlatBufferBuilder) = builder.startTable(2)
+        fun startPropRefExpr(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addObjId(builder: FlatBufferBuilder, objId: Int) = builder.addInt(0, objId, 0)
-        fun addPropIdx(builder: FlatBufferBuilder, propIdx: UByte) = builder.addByte(1, propIdx.toByte(), 0)
-        fun endPropExpr(builder: FlatBufferBuilder) : Int {
+        fun addPropId(builder: FlatBufferBuilder, propId: UByte) = builder.addByte(1, propId.toByte(), 0)
+        fun endPropRefExpr(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o
         }

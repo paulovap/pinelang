@@ -1,19 +1,14 @@
 package com.pinescript.core
 
+import com.pinescript.ast.fbs.BinaryOp
+import com.pinescript.ast.fbs.BinaryOp.Companion.AND
+import com.pinescript.ast.fbs.BinaryOp.Companion.DIV
+import com.pinescript.ast.fbs.BinaryOp.Companion.MINUS
+import com.pinescript.ast.fbs.BinaryOp.Companion.MULTI
+import com.pinescript.ast.fbs.BinaryOp.Companion.OR
+import com.pinescript.ast.fbs.BinaryOp.Companion.PLUS
+import com.pinescript.ast.fbs.BinaryOp.Companion.REMAINDER
 import com.pinescript.core.PineValue.Companion.of
-
-enum class BinaryOp(val value: Int) {
-    PLUS(1),
-    MINUS(2),
-    MULTI(3),
-    DIV(4),
-    REMAINDER(5),
-    AND(6),
-    OR(7);
-
-    fun isNumberOp() = this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
-    fun isBooleanOp() = this == AND || this == OR
-}
 
 interface PineNumber<T> {
     operator fun plus(other: PineValue<*>): PineValue<T>
@@ -29,15 +24,31 @@ interface PineNumber<T> {
 data class PineType(val typeName: String, val type: Int) {
     companion object {
         val VOID = PineType("Void", 0)
-        val BOOL = PineType("Bool", 1)
-        val INT = PineType("Int", 2)
+        val INT = PineType("Int", 1)
+        val BOOL = PineType("Bool", 2)
         val DOUBLE = PineType("Double", 3)
         val STRING = PineType("String", 4)
         val OBJECT = PineType("Object", 5)
         val LIST = PineType("List", 4)
         val FUNCTION = PineType("Function", 5)
         val LAMBDA = PineType("Lambda", 6)
+
+        fun fromUByte(type: UByte): PineType {
+            return when(type.toInt()) {
+                VOID.type -> VOID
+                INT.type -> INT
+                BOOL.type -> BOOL
+                DOUBLE.type -> DOUBLE
+                STRING.type -> STRING
+                OBJECT.type -> OBJECT
+                LIST.type -> LIST
+                FUNCTION.type -> FUNCTION
+                LAMBDA.type -> LAMBDA
+                else -> throw PineScriptException("invalid PineType $type")
+            }
+        }
     }
+
 }
 
 abstract class PineValue<T> {
@@ -67,6 +78,7 @@ abstract class PineValue<T> {
         fun of(value: Float) = PineDouble(value.toDouble())
         fun of(value: Boolean) = PineBoolean(value)
         fun of(value: String) = PineString(value)
+        fun of(value: List<*>) = PineList(value)
         fun <T> of(value: T): PineValue<*> {
             return when (value) {
                 is Int -> of(value)
@@ -74,9 +86,30 @@ abstract class PineValue<T> {
                 is Float -> of(value)
                 is Boolean -> of(value)
                 is String -> of(value)
+                is List<*> -> of(value)
+                is MutableList<*> -> of(value)
                 else -> throw PineScriptException("Value $value not recognized")
             }
         }
+    }
+
+    fun toPineDouble(): PineDouble {
+        return if (isNumber()){
+            if (isInt()) {
+                of((this as PineInt).getValue().toDouble())
+            } else {
+                this as PineDouble
+            }
+        } else throw PineScriptException("$this cannot be cast to PineDouble")
+    }
+    fun toPineInt(): PineInt {
+        return if (isNumber()){
+            if (isDouble()) {
+                of((this as PineDouble).getValue().toInt())
+            } else {
+                this as PineInt
+            }
+        } else throw PineScriptException("$this cannot be cast to PineDouble")
     }
 }
 
@@ -207,32 +240,51 @@ data class PineString(private val value: String) : PineValue<String>() {
     override operator fun invoke(): String = value
 }
 
-data class PineBinaryExprValue<T>(
-    val op: BinaryOp,
+data class PineList(private val value: List<*>) : PineValue<List<*>>() {
+    override fun getPineType(): PineType = PineType.LIST
+    override fun getValue() = value
+    override operator fun invoke(): List<*> = value
+}
+
+data class BinaryExprValue<T>(
+    val op: UByte,
     val leftHandValue: PineValue<T>,
     val rightHandValue: PineValue<*>
-) : ExprValue<T>({
-    if (op.isNumberOp()) {
-        val left = leftHandValue as PineNumber<T>
-        when (op) {
-            BinaryOp.PLUS -> (left + rightHandValue).getValue()
-            BinaryOp.MINUS -> (left - rightHandValue).getValue()
-            BinaryOp.MULTI -> (left * rightHandValue).getValue()
-            BinaryOp.DIV -> (left / rightHandValue).getValue()
-            BinaryOp.REMAINDER -> (left % rightHandValue).getValue()
-            else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+) : PineExprValue<T>({
+    val pineValue = if (op.isNumberOp()) {
+        if (leftHandValue.isDouble() || rightHandValue.isDouble()) {
+            val left = leftHandValue.toPineDouble()
+            when (op) {
+                PLUS -> (left + rightHandValue)
+                MINUS -> (left - rightHandValue)
+                MULTI -> (left * rightHandValue)
+                DIV -> (left / rightHandValue)
+                REMAINDER -> (left % rightHandValue)
+                else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+            }
+        } else {
+            val left = leftHandValue.toPineInt()
+            when (op) {
+                PLUS -> (left + rightHandValue)
+                MINUS -> (left - rightHandValue)
+                MULTI -> (left * rightHandValue)
+                DIV -> (left / rightHandValue)
+                REMAINDER -> (left % rightHandValue)
+                else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+            }
         }
     } else {
         val left = leftHandValue as PineBoolean
         when (op) {
-            BinaryOp.AND -> (left.and(rightHandValue) as PineValue<T>).getValue()
-            BinaryOp.OR -> (left.or(rightHandValue) as PineValue<T>).getValue()
+            AND -> left.and(rightHandValue)
+            OR -> left.or(rightHandValue)
             else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
         }
-    }
+    } as PineValue<T>
+    pineValue.getValue()
 })
 
-open class ExprValue<T>(val lambda: () -> T) : PineValue<T>() {
+open class PineExprValue<T>(val lambda: () -> T) : PineValue<T>() {
 
     override fun getPineType(): PineType = PineType.FUNCTION
     override operator fun invoke(): T = getValue()
@@ -245,3 +297,6 @@ fun Double.toPineValue() = of(this)
 fun Float.toPineValue() = of(this)
 fun Long.toPineValue() = of(this)
 fun Boolean.toPineValue() = of(this)
+
+private fun UByte.isNumberOp() = this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
+private fun UByte.isBooleanOp() = this == AND || this == OR

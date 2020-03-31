@@ -126,6 +126,5 @@ class MainWindow : JFrame() {
 
 @KtorExperimentalAPI
 fun main(argv: Array<String>) {
-    CRC32()
     SwingUtilities.invokeLater { MainWindow().isVisible = true }
 }

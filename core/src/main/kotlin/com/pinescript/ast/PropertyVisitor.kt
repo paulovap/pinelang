@@ -32,8 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.pinescript.ast.fbs.Prop
-import com.pinescript.ast.fbs.PropType
+import com.pinescript.ast.fbs.PropDefinition
 import com.pinescript.core.*
 import com.pinescript.parser.PineScriptParser
 
@@ -58,19 +57,17 @@ class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: I
         return this
     }
 
-    override fun visitPropertyAssignement(ctx: PineScriptParser.PropertyAssignementContext?): Int {
+    override fun visitPropertyDefinition(ctx: PineScriptParser.PropertyDefinitionContext?): Int {
         val propName = ctx!!.Identifier().text
-        val propIdx =
-            types[ownerType]?.propIndexes?.get(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, types[ownerType]!!.scriptName)
+        val propId = types[ownerType]?.propIndexes?.get(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, types[ownerType]!!.scriptName)
 
-        val (valueType, valueIdx) = expressionVisitor.visit(ctx.expression()!!)
+        val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
 
         val debugNameIdx = if (debug) fb.createString(propName) else -1
-        Prop.startProp(fb)
-        Prop.addIdx(fb, propIdx.toUByte())
-        Prop.addValueType(fb, valueType)
-        Prop.addValue(fb, valueIdx)
-        if (debugNameIdx != -1) Prop.addDebugName(fb, debugNameIdx)
-        return Prop.endProp(fb)
+        PropDefinition.startPropDefinition(fb)
+        PropDefinition.addId(fb, propId.toUByte())
+        PropDefinition.addValue(fb, exprValue)
+        if (debugNameIdx != -1) PropDefinition.addDebugName(fb, debugNameIdx)
+        return PropDefinition.endPropDefinition(fb)
     }
 }

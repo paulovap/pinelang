@@ -59,7 +59,7 @@ generateGrammarSource {
 task flatbuffer(type: Exec) {
 
     String inputDir = file('src/main/fbs')
-    String outputDir = file("src/main/kotlin")
+    String outputDir = file("src/main/kotlin/generated/")
     String flatc = 'flatc'
 
     def fbsFiles = layout.files {file(inputDir).listFiles() } .filter{ File f -> f.name.endsWith(".fbs")}.toList()
@@ -70,6 +70,9 @@ task flatbuffer(type: Exec) {
     errorOutput = new ByteArrayOutputStream()
     commandLine flatc, '-o', outputDir, '--kotlin', fbsFiles[0]
 
+    doFirst {
+        delete "$outputDir/"
+    }
     doLast {
         if (execResult.getExitValue() != 0) {
             println(standardOutput.toString())
@@ -80,4 +83,5 @@ task flatbuffer(type: Exec) {
 
 compileKotlin {
     dependsOn flatbuffer
+    dependsOn generateGrammarSource
 }

@@ -39,25 +39,26 @@ import com.pinescript.parser.PineScriptLexer
 import com.pinescript.parser.PineScriptParser
 import com.pinescript.util.IndexedMap
 import org.antlr.v4.runtime.*
-import sun.security.util.ObjectIdentifier
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
-import kotlin.reflect.full.memberProperties
 
 class PineContext {
 
-    private val refs: HashMap<String, PineObject> = hashMapOf()
+    val refs: HashMap<Int, PineObject> = hashMapOf()
 
-    fun registerObject(text: String, obj: PineObject) {
-        if (refs.containsKey(text))
-            throw PineScriptException("object with id $text already defined: ${refs[text].toString()}!")
-        refs[text] = obj
+    fun registerObject(id: Int, obj: PineObject) {
+        if (refs.containsKey(id))
+            throw PineScriptException("object with id $id already defined: ${refs[id].toString()}!")
+        refs[id] = obj
     }
 
-    fun find(id: String) = refs[id]
+    fun clear() {
+        refs.clear()
+    }
+
+    operator fun get(id: Int) = refs[id]
 }
 
 data class CompileObjectMetaData(val typeIdx: Int, val objId: Int, val objName: String)
@@ -65,16 +66,17 @@ data class CompileObjectMetaData(val typeIdx: Int, val objId: Int, val objName: 
 @ExperimentalUnsignedTypes
 class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
 
-    private var incrementalId: Int = 1
+    private var incrementalId: Int = 0
     private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
     val flatBuilder: FlatBufferBuilder = FlatBufferBuilder(1024)
 
     fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
 
     fun generateObjectId(typeId: Int, objectIdentifier: String?): Int {
+        incrementalId++
         if (objectIdentifier != null)
             ids[objectIdentifier] = CompileObjectMetaData(typeId, incrementalId, objectIdentifier)
-        return incrementalId++
+        return incrementalId
     }
 
     private val baseErrorListener = object: BaseErrorListener() {

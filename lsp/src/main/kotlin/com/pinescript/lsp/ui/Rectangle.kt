@@ -37,7 +37,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Rectangle(id: Long) : Item(id) {
+class Rectangle(id: Int) : Item(id) {
 
     companion object {
         val meta = PineMetaObject("Rectangle") { Rectangle(it) }
@@ -57,9 +57,10 @@ class Rectangle(id: Long) : Item(id) {
         panel.background = Color.decode(color)
 
 
-        children.connect {
+        connect("children") {
             panel.removeAll()
             for (child in children) {
+                println("yay")
                 if (child is Rectangle) {
                     panel.add(child.panel)
                 }

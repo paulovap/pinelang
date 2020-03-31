@@ -31,12 +31,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package com.pinescript.core
 
-import com.pinescript.ast.fbs.Program
+import com.pinescript.ast.fbs.*
+import com.pinescript.core.PineType.Companion.BOOL
+import com.pinescript.core.PineType.Companion.DOUBLE
+import com.pinescript.core.PineType.Companion.INT
+import com.pinescript.core.PineType.Companion.STRING
+import com.pinescript.core.PineValue.Companion.of
 import com.pinescript.util.IndexedMap
-import java.nio.ByteBuffer
 
-typealias Allocator = (Long) -> PineObject
-// id, parent, children, properties
+typealias Allocator = (Int) -> PineObject
+
+
 class PineMetaObject(val scriptName: String, val allocator: Allocator) {
 
     val propIndexes: Map<String, Int>
@@ -56,19 +61,101 @@ class PineEngine private constructor(
     val types: IndexedMap<PineMetaObject>,
     val dpCalculator: (Int) -> Int) {
 
-    val rootContext: PineContext = PineContext()
+    private val rootContext: PineContext = PineContext()
     val compiler: PineCompiler = PineCompiler(types)
 
-    fun load(script: String): PineObject {
-        return PineObject()//compiler.compile(script)
+    fun load(script: String, debugSymbol: Boolean = false): PineObject {
+        return eval(compiler.compile(script, debugSymbol))
     }
 
-    fun compile(script: String, keepDebugSymbols: Boolean = true): Program {
+    fun compile(script: String, keepDebugSymbols: Boolean = false): Program {
         return compiler.compile(script, keepDebugSymbols)
     }
 
-    fun getAllocator(qmlType: String): Allocator {
-        return types[qmlType]?.allocator ?: throw PineScriptException("Allocator of type $qmlType not found")
+    fun eval(program: Program): PineObject {
+        rootContext.clear()
+        val rootExpr = program.root!!
+        return evalObject(rootExpr)
+    }
+
+    private fun evalObject(objExpr: ObjectDefinition): PineObject {
+        val obj = types[objExpr.type]!!.allocator(objExpr.id)
+
+        rootContext.registerObject(objExpr.id, obj)
+
+        val childExpr = ObjectDefinition()
+        for (i in 0 until objExpr.childrenLength) {
+            obj.children.add(evalObject(objExpr.children(childExpr, i)!!))
+        }
+
+        val propExpr = PropDefinition()
+        for (i in 0 until objExpr.propsLength) {
+            evalProp(obj, objExpr.props(propExpr, i)!!)
+        }
+
+        val sigExpr = SignalExpr()
+        for (i in 0 until objExpr.signalsLength) {
+            objExpr.signals(sigExpr, i)
+            evalSignal(obj, sigExpr)
+        }
+
+        obj.emitMount()
+        return obj
+    }
+
+    private fun evalProp(obj: PineObject, propDef: PropDefinition) {
+        val prop = obj.props[propDef.id.toInt()]!!
+
+        //ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
+        val exprValue = propDef.value!!
+        val value = if (exprValue.expValueType == ExprValue.PropRefExpr) {
+            val otherProp = evalPropertyReferenceExp(exprValue.expValue(PropRefExpr())!! as PropRefExpr)
+            otherProp.connect { prop.setPineValue(otherProp.value) }
+            otherProp.value
+        } else {
+            evalExpr(exprValue)
+        }
+
+        prop.setPineValue(value)
+    }
+
+    private fun evalPrimitiveExpr(primitiveExpr: PrimitiveExpr): PineValue<*> {
+        return when(PineType.fromUByte(primitiveExpr.type)) {
+                INT -> of(primitiveExpr.value.toInt())
+                BOOL -> of(primitiveExpr.value.toInt() > 0)
+                DOUBLE -> of(primitiveExpr.value)
+                STRING -> of(primitiveExpr.stringValue!!)
+                else -> throw PineScriptException("Unable to eval primitive expr $primitiveExpr")
+        }
+    }
+
+    private fun evalExpr(expr: Expr): PineValue<*> {
+
+        return when (expr.expValueType) {
+            ExprValue.PrimitiveExpr -> evalPrimitiveExpr(expr.expValue(PrimitiveExpr()) as PrimitiveExpr)
+            ExprValue.CallableExpr -> evalCallableExpression(expr.expValue(CallableExpr()) as CallableExpr)
+            ExprValue.BinaryExpr -> evalBinaryExpr(expr.expValue(BinaryExpr())!! as BinaryExpr)
+            ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
+            else -> throw PineScriptException("Unable to evaluate expression of type ${ExprValue.name(expr.expValueType.toInt())}")
+        }
+    }
+    private fun evalBinaryExpr(binaryExpr: BinaryExpr): BinaryExprValue<*> {
+        return BinaryExprValue(binaryExpr.op, evalExpr(binaryExpr.left!!), evalExpr(binaryExpr.right!!))
+    }
+
+    private fun evalPropertyReferenceExp(propRefExpr: PropRefExpr): PineProp<*> {
+        val otherObj = rootContext[propRefExpr.objId]!!
+        return otherObj.props[propRefExpr.propId.toInt()]!!
+    }
+
+    private fun <T: PineObject> evalSignal(obj: T, sigExpr: SignalExpr) {
+        val signal = obj.signals[sigExpr.id.toInt()]!!
+        signal.connect { evalCallableExpression(sigExpr.expr!!)() }
+    }
+
+    private fun evalCallableExpression(expr: CallableExpr): PineValue<*> {
+        val otherObj = rootContext.refs[expr.objId]!!
+        return otherObj.callables[expr.callIdx.toInt()]!!
     }
 
     class Builder {
@@ -95,4 +182,5 @@ class PineEngine private constructor(
             return PineEngine(types, dpCalc)
         }
     }
+
 }

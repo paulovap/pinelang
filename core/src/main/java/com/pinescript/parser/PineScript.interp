@@ -90,7 +90,7 @@ objectInitializer
 objectIdentifier
 objectMember
 signalAssignement
-propertyAssignement
+propertyDefinition
 expression
 binaryOperation
 objectPropertyExpression

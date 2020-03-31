@@ -28,13 +28,13 @@ public class PineScriptParser extends Parser {
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
 		RULE_objectIdentifier = 4, RULE_objectMember = 5, RULE_signalAssignement = 6, 
-		RULE_propertyAssignement = 7, RULE_expression = 8, RULE_binaryOperation = 9, 
+		RULE_propertyDefinition = 7, RULE_expression = 8, RULE_binaryOperation = 9, 
 		RULE_objectPropertyExpression = 10, RULE_primitiveExpression = 11, RULE_integerSuffix = 12, 
 		RULE_callableExpression = 13, RULE_arguments = 14;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"program", "rootMember", "objectDefinition", "objectInitializer", "objectIdentifier", 
-			"objectMember", "signalAssignement", "propertyAssignement", "expression", 
+			"objectMember", "signalAssignement", "propertyDefinition", "expression", 
 			"binaryOperation", "objectPropertyExpression", "primitiveExpression", 
 			"integerSuffix", "callableExpression", "arguments"
 		};
@@ -404,8 +404,8 @@ public class PineScriptParser extends Parser {
 		public SignalAssignementContext signalAssignement() {
 			return getRuleContext(SignalAssignementContext.class,0);
 		}
-		public PropertyAssignementContext propertyAssignement() {
-			return getRuleContext(PropertyAssignementContext.class,0);
+		public PropertyDefinitionContext propertyDefinition() {
+			return getRuleContext(PropertyDefinitionContext.class,0);
 		}
 		public ObjectMemberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -451,7 +451,7 @@ public class PineScriptParser extends Parser {
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(59);
-				propertyAssignement();
+				propertyDefinition();
 				}
 				break;
 			default:
@@ -534,35 +534,35 @@ public class PineScriptParser extends Parser {
 		return _localctx;
 	}
 
-	public static class PropertyAssignementContext extends ParserRuleContext {
+	public static class PropertyDefinitionContext extends ParserRuleContext {
 		public TerminalNode Identifier() { return getToken(PineScriptParser.Identifier, 0); }
 		public TerminalNode COLON() { return getToken(PineScriptParser.COLON, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode SEMICOLON() { return getToken(PineScriptParser.SEMICOLON, 0); }
-		public PropertyAssignementContext(ParserRuleContext parent, int invokingState) {
+		public PropertyDefinitionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_propertyAssignement; }
+		@Override public int getRuleIndex() { return RULE_propertyDefinition; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterPropertyAssignement(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).enterPropertyDefinition(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitPropertyAssignement(this);
+			if ( listener instanceof PineScriptListener ) ((PineScriptListener)listener).exitPropertyDefinition(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitPropertyAssignement(this);
+			if ( visitor instanceof PineScriptVisitor ) return ((PineScriptVisitor<? extends T>)visitor).visitPropertyDefinition(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final PropertyAssignementContext propertyAssignement() throws RecognitionException {
-		PropertyAssignementContext _localctx = new PropertyAssignementContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_propertyAssignement);
+	public final PropertyDefinitionContext propertyDefinition() throws RecognitionException {
+		PropertyDefinitionContext _localctx = new PropertyDefinitionContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_propertyDefinition);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

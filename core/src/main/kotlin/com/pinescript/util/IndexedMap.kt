@@ -25,10 +25,10 @@ class IndexedMap<V>(initialCapacity: Int = 10,
     operator fun set(key: String, value: V): IndexedMap<V> {
         if (index.containsKey(key))
             throw PineScriptException("key $key already exists")
-        synchronized(props) {
+        //synchronized(props) {
             props.add(value)
             index[key] = props.size - 1
-        }
+        //}
         return this
     }
 

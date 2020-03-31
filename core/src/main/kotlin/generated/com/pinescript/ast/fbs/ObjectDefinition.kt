@@ -53,8 +53,8 @@ class ObjectDefinition : Table() {
         get() {
             val o = __offset(10); return if (o != 0) __vector_len(o) else 0
         }
-    fun props(j: Int) : com.pinescript.ast.fbs.Prop? = props(com.pinescript.ast.fbs.Prop(), j)
-    fun props(obj: com.pinescript.ast.fbs.Prop, j: Int) : com.pinescript.ast.fbs.Prop? {
+    fun props(j: Int) : com.pinescript.ast.fbs.PropDefinition? = props(com.pinescript.ast.fbs.PropDefinition(), j)
+    fun props(obj: com.pinescript.ast.fbs.PropDefinition, j: Int) : com.pinescript.ast.fbs.PropDefinition? {
         val o = __offset(12)
         return if (o != 0) {
             obj.__assign(__indirect(__vector(o) + j * 4), bb)
