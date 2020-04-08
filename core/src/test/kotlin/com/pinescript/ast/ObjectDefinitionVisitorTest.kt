@@ -52,14 +52,19 @@ import kotlin.system.measureTimeMillis
 class ObjectDefinitionVisitorTest {
 
     class TestObject : PineObject(-1) {
+
+        companion object {
+            val meta = PineMetaObject("TestObject") { TestObject() }
+        }
         val myInt: Int by intProp(::myInt)
         var myDouble: Double by doubleProp(::myDouble)
         val myString: String by stringProp(::myString)
         val myBool: Boolean by boolProp(::myBool)
+        override fun getMeta(): PineMetaObject = meta
     }
 
     private var engine: PineEngine = PineEngine.Builder()
-        .registerPineType(PineMetaObject("TestObject") { TestObject() })
+        .registerPineType(TestObject.meta)
         .build()
 
 

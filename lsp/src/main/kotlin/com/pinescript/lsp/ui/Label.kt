@@ -49,15 +49,19 @@ class Label(id: Int) : Item(id) {
 
     val label = JLabel("oh my god")
 
-    var text: String by stringProp(::text, initialValue = "") { resizeSlot() }
-    var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
-    val color: String by stringProp(::color, initialValue = "#000000") { label.foreground = Color.decode(color) }
+    var text: String by stringProp(::text, initialValue = "")
+    var visible: Boolean by boolProp(::visible, initialValue = true)
+    val color: String by stringProp(::color, initialValue = "#000000")
+
+    override fun getMeta(): PineMetaObject = meta
 
     init {
         connect("x") { resizeSlot() }
         connect("y") { resizeSlot() }
         connect("width") { resizeSlot() }
-        connect("height") { resizeSlot() }
+        connect("text") { resizeSlot() }
+        connect("visible") { resizeSlot() }
+        connect("color") { resizeSlot() }
 
         resizeSlot()
 

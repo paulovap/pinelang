@@ -48,4 +48,6 @@ open class Item(id: Int) : PineObject(id) {
     var y: Int by intProp(::y, initialValue = 1)
     var width: Int by intProp(::width, initialValue = 50)
     var height: Int by intProp(::height, initialValue = 50)
+
+    override fun getMeta(): PineMetaObject = meta
 }

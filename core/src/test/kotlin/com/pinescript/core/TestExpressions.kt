@@ -16,10 +16,17 @@ import kotlin.test.assertFailsWith
 
 class TestExpressions {
 
+    class Item: PineObject(-1) {
+        companion object {
+            val meta = PineMetaObject("Item") {Item()}
+        }
+
+        override fun getMeta(): PineMetaObject = meta
+    }
     @Test
     fun testBinaryMathExpressions() {
 
-        val root = PineObject(-1)
+        val root = Item()
         val v10 = of(10)
         val v25 = of(25)
 
@@ -36,7 +43,7 @@ class TestExpressions {
 
     @Test
     fun testBinaryBooleanExpressions() {
-        val root = PineObject()
+        val root = Item()
         val vTrue = of(true)
         val vFalse = of(false)
 

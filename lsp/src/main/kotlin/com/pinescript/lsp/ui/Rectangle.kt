@@ -46,14 +46,16 @@ class Rectangle(id: Int) : Item(id) {
 
     val panel = JPanel(null)
 
-    var visible: Boolean by boolProp(::visible, initialValue = true) { resizeSlot() }
-    val color: String by stringProp(::color, initialValue = "#ffffff") { panel.background = Color.decode(color) }
+    var visible: Boolean by boolProp(::visible, initialValue = true)
+    val color: String by stringProp(::color, initialValue = "#ffffff")
 
     init {
         connect("x") { resizeSlot() }
         connect("y") { resizeSlot() }
         connect("width") { resizeSlot() }
         connect("height") { resizeSlot() }
+        connect("visible") { resizeSlot() }
+        connect("color")  { panel.background = Color.decode(color) }
 
         panel.background = Color.decode(color)
 
@@ -61,7 +63,6 @@ class Rectangle(id: Int) : Item(id) {
         connect("children") {
             panel.removeAll()
             for (child in children) {
-                println("yay")
                 if (child is Rectangle) {
                     panel.add(child.panel)
                 }
@@ -72,6 +73,8 @@ class Rectangle(id: Int) : Item(id) {
         }
         resizeSlot()
     }
+
+    override fun getMeta(): PineMetaObject = meta
 
     private fun resizeSlot() {
         panel.bounds = java.awt.Rectangle(x, y, width, height)

@@ -1,4 +1,4 @@
-package com.pinescript.main.com.pinescript.main
+package com.pinescript.main
 
 import com.pinescript.ast.fbs.ObjectDefinition
 import com.pinescript.ast.fbs.PropDefinition
@@ -54,6 +54,7 @@ class Item(id: Int) : PineObject(id) {
     val str2: String by stringProp(::str2)
     val str3: String by stringProp(::str3)
     val str4: String by stringProp(::str4)
+    override fun getMeta(): PineMetaObject = meta
 }
 
 
@@ -167,10 +168,10 @@ fun main() {
             Item{ int1: test.int1 + 20; on mount: helloText() }
         }
     """.trimIndent()
-    val obj = engine.load(script, true) as Item
+    //val obj = engine.load(script, true) as Item
 //    println(obj.a)
 //    obj.dispose()
-//    benchmarkWhole(script, engine)
+    benchmarkWhole(script, engine)
     //println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
     //benchmark(script, engine)
     //benchmarkWalk(script, engine)
@@ -186,17 +187,17 @@ fun main() {
 //            engine.compile(script)
 //        }
 //    } / times.toDouble())
-    while (true) {
-        sleep(1000)
-    }
-    println(obj)
+//    while (true) {
+//        sleep(1000)
+//    }
+//    println(obj)
 }
 
 fun benchmarkWhole(script: String, engine: PineEngine) {
     val compiled = engine.compile(script, false)
     val times = 10000
     val warmupTimes = 1000
-    repeat(1000) { engine.load(script) }
+    repeat(warmupTimes) { engine.load(script) }
 
     var totalCompile = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
     println("compile $times in total $totalCompile ms avg ${totalCompile/times.toDouble()} ms")

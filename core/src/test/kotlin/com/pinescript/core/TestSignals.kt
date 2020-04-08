@@ -51,25 +51,22 @@ class TestSignals {
 
     @Test
     fun testConnections() {
-        val root = PineObject(-1)
-        val a = BaseSignal(root,"test")
-        assertEquals("test", a.getScriptName())
+        val root = Item(-1)
         var count = 0
         val slot: () -> Unit = { count++ }
-        a.connect(slot)
-        a.connect(slot)
-        a.emit()
-        a.emit()
-        a.emit()
-        assertEquals(3, count)
-        a.disconnect(slot)
-        a.emit()
-        assertEquals(3, count)
-        a.connect(slot)
-        a.emit()
-        assertEquals(4, count)
-        a.disconnectAll()
-        assertEquals(4, count)
+        root.connect("myInt" , slot)
+        root.connect("myInt" , slot)
+        root.myInt = 1
+        root.myInt = 2
+        root.myInt = 3
+        assertEquals(6, count)
+        root.disconnect("myInt", slot)
+        root.myInt = 4
+        assertEquals(7, count)
+        root.connect("myInt" , slot)
+        root.myInt = 5
+        assertEquals(9, count)
+        assertEquals(9, count)
     }
 
 }

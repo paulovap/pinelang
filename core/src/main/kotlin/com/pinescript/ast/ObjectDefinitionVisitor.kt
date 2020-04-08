@@ -74,7 +74,8 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
         val signals: MutableList<Int> = ArrayList(16)
         val props: MutableList<Int> = ArrayList(16)
 
-        objMember.forEach {
+        for (i in 0 until objMember.size) {
+            val it = objMember[i]
 
             /* Children parsing */
             if (it.objectDefinition() != null) {
@@ -87,17 +88,18 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
             }
 
             /*
-                table SignalAssignment {
-                    id:            ubyte;
-                    expr:          CallableExpr;
-                    debugName:     string;
-                }
-             */
+            table SignalAssignment {
+                id:            ubyte;
+                expr:          CallableExpr;
+                debugName:     string;
+            }
+         */
             it.signalAssignement()?.also { sigCtx ->
                 val name = sigCtx.Identifier().text
-                val id = type.signalIndexes[name] ?: sigCtx.Identifier().throwParseException("signal $name not found")
+                val id =
+                    type.indexOfSignal(name) ?: sigCtx.Identifier().throwParseException("signal $name not found")
                 val expr = expressionVisitor.reset(typeIdx, objId).visit(sigCtx.callableExpression())
-                signals.add( run {
+                signals.add(run {
                     val debugNameIdx = if (debug) fb.createString(name) else -1
                     SignalExpr.startSignalExpr(fb)
                     SignalExpr.addId(fb, id.toUByte())

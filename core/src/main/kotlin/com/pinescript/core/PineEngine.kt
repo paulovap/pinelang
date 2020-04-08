@@ -38,24 +38,46 @@ import com.pinescript.core.PineType.Companion.INT
 import com.pinescript.core.PineType.Companion.STRING
 import com.pinescript.core.PineValue.Companion.of
 import com.pinescript.util.IndexedMap
-import com.pinescript.util.toIndexMap
 
 typealias Allocator = (Int) -> PineObject
 
 
 class PineMetaObject(val scriptName: String,
                           val allocator: Allocator) {
-
-
-    val propIndexes: Map<String, Int>
-    val signalIndexes: Map<String, Int>
-    val callableIndexes: Map<String, Int>
+    val signalNames: Array<String>
+    private val propIndexEnd: Int
+    private val signalIndexEnd: Int
+    private val callableIndexEnd: Int
 
     init {
         val pineObj = allocator(-1)
-        propIndexes = pineObj.props.toIndexMap()
-        signalIndexes = pineObj.signals.toIndexMap()
-        callableIndexes = pineObj.callables.toIndexMap()
+        propIndexEnd = pineObj.props.size -1
+        signalIndexEnd = propIndexEnd + pineObj.signals.size
+        callableIndexEnd = signalIndexEnd + pineObj.callables.size
+
+        signalNames = Array(callableIndexEnd + 1) {
+            when {
+                it <= propIndexEnd -> pineObj.props[it].getScriptName()
+                it <= signalIndexEnd -> pineObj.signals[it - propIndexEnd -1].getScriptName()
+                else -> pineObj.callables[it - signalIndexEnd -1].getScriptName()
+            }
+        }
+    }
+
+    fun indexOfProp(name: String): Int = findRelative(0, propIndexEnd, name)
+
+    fun indexOfSignal(name: String): Int = findRelative(propIndexEnd + 1, signalIndexEnd, name)
+
+    fun indexOfCallable(name: String): Int = findRelative(signalIndexEnd + 1, callableIndexEnd, name)
+
+    fun indexOfAny(name: String): Int = findRelative(0, callableIndexEnd, name)
+
+    private fun findRelative(start: Int, end: Int, name: String): Int {
+        for (i in start..end) {
+            if (signalNames[i] == name)
+                return i - start
+        }
+        throw PineScriptException("Signal/Prop/Callable with name $name not found on $this")
     }
 }
 
@@ -107,7 +129,7 @@ class PineEngine private constructor(
     }
 
     private fun evalProp(obj: PineObject, propDef: PropDefinition) {
-        val prop = obj.props[propDef.id.toInt()]!!
+        val prop = obj.props[propDef.id.toInt()]
 
         //ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
         val exprValue = propDef.value!!
@@ -169,8 +191,8 @@ class PineEngine private constructor(
             // can populate the PineMetaObject at runtime. This can be really error-prone
             // and allocates unnecessary. One option is to code generate, but for now we keep it
             // in runtime.
-            types["var"] = PineObject.getMeta()
-            types["Object"] = PineObject.getMeta()
+            //types["var"] = PineObject.getMeta()
+            //types["Object"] = PineObject.getMeta()
         }
 
         fun registerPineType(meta: PineMetaObject): Builder {

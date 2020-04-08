@@ -3,9 +3,6 @@ package com.pinescript.util
 import com.pinescript.core.PineObject
 import com.pinescript.core.PineScriptException
 
-public fun <V> indexedMapOf(vararg pairs: Pair<String, V>): IndexedMap<V> =
-    IndexedMap<V>(pairs.size).apply { pairs.forEach { this[it.first] = it.second } }
-
 class IndexedMap<V>(initialCapacity: Int = 10,
                     val index: MutableMap<String, Int> = HashMap(initialCapacity),
                     private val props: MutableList<V> = ArrayList(initialCapacity)) {

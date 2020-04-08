@@ -6,9 +6,13 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class Item(id: Int): PineObject(id) {
-    val myInt: Int by intProp(::myInt)
-    val myDouble: Double by doubleProp(::myDouble)
-    val myString: String by stringProp(::myString)
+    companion object {
+        val meta = PineMetaObject("Item") {Item(it)}
+    }
+    var myInt: Int by intProp(::myInt)
+    var myDouble: Double by doubleProp(::myDouble)
+    var myString: String by stringProp(::myString)
+    override fun getMeta(): PineMetaObject = meta
 }
 
 class TestLang {

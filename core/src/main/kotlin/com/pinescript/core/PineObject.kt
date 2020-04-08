@@ -2,24 +2,24 @@ package com.pinescript.core
 
 import com.pinescript.core.PineValue.Companion.of
 import com.pinescript.util.safeGet
-import com.pinescript.util.safeSet
+import com.pinescript.util.safeAdd
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 typealias Slot = () -> Unit
 
+data class PineConnection(val signalIdx: Int, val slot: Slot)
+
 interface PineSignal {
 
-    fun getPineObject() : PineObject
+    fun getPineObject(): PineObject
 
     fun getScriptName(): String
-
-    //val slots: MutableSet<Slot>
 
     /**
      * Execute all Slots.
      */
-    fun emit() = getPineObject().slots.safeGet(getScriptName()).forEach { it() }
+    fun emit() = getPineObject().emit(getScriptName())
 
     /**
      * Connect a Slot to a signal.<br></br>
@@ -34,8 +34,6 @@ interface PineSignal {
      * @param slot the Slot to be removed
      */
     fun disconnect(slot: () -> Unit) = getPineObject().disconnect(getScriptName(), slot)
-
-    fun disconnectAll() = getPineObject().slots[getScriptName()]!!.clear()
 }
 
 class BaseSignal(private val pineObject: PineObject, val name: String) : PineSignal {
@@ -119,23 +117,11 @@ open class ChildrenListPineProp(private val pineObject: PineObject,
     }
 }
 
-open class PineObject(val id: Int = -1) {
+abstract class PineObject(val id: Int = -1) {
 
     companion object  {
         const val SIG_MOUNT = "mount"
         const val SIG_UNMOUNT = "unmount"
-
-        private var meta: PineMetaObject? = null
-
-        fun getMeta(): PineMetaObject {
-            synchronized(this) {
-                if (meta == null) {
-                    val obj = PineObject(-1)
-                    meta = PineMetaObject("Object") {PineObject(it)}
-                }
-            }
-            return meta ?: throw PineScriptException("Meta object not created")
-        }
     }
 
     // All "events" that can be fired by an object to a script
@@ -149,7 +135,7 @@ open class PineObject(val id: Int = -1) {
 
     val children: ChildrenListPineProp = childrenProp(::childrenList)
 
-    val slots: MutableMap<String, MutableSet<Slot>> = mutableMapOf()
+    val slots: MutableList<PineConnection> = mutableListOf()
 
     // All functions that can be called from script
     val callables: MutableList<PineCallable<*>> = mutableListOf()
@@ -167,21 +153,30 @@ open class PineObject(val id: Int = -1) {
         makeCallable("helloText")  { "Hello world" }
     }
 
-    fun getSignal(name: String): PineSignal? = signals[getMeta().signalIndexes[name] ?: throw PineScriptException("signal $name not found in $this")]
+    abstract fun getMeta(): PineMetaObject
 
+    fun emit(signal: String) {
+        val sigIdx = getMeta().indexOfAny(signal)
+        for (i in 0 until slots.size) {
+            val connection = slots[i]
+            if (connection.signalIdx == sigIdx)
+                connection.slot()
+        }
+         //slots[getMeta().indexOfAny(signal)]?.forEach { it() }
+    }
     fun emitMount() {
-        getSignal(SIG_MOUNT)?.emit()
+        emit(SIG_MOUNT)
         children.forEach { it.emitMount() }
     }
     fun emitUnmount() {
         children.forEach { it.dispose() }
-        getSignal(SIG_UNMOUNT)?.emit()
+        emit(SIG_UNMOUNT)
     }
 
-    fun connect(signal: String, slot: () -> Unit) { slots.safeSet(signal, slot) }
-    fun disconnect(signal: String, slot: () -> Unit) = slots.safeGet(signal).remove(slot)
+    fun connect(signal: String, slot: () -> Unit): Boolean = slots.add(PineConnection(getMeta().indexOfAny(signal), slot))
+    fun disconnect(signal: String, slot: () -> Unit): Boolean = slots.remove(PineConnection(getMeta().indexOfAny(signal), slot))
 
-    fun getProp(name: String): PineProp<*> = props[meta!!.propIndexes[name]?: throw PineScriptException("Prop name  $name not found on $this")]
+    fun getProp(name: String): PineProp<*> = props[getMeta().indexOfProp(name)]
 
     fun dispose() {
         emitUnmount()
@@ -202,35 +197,29 @@ open class PineObject(val id: Int = -1) {
 
 fun PineObject.intProp(
     kProp: KProperty<Int>,
-    initialValue: Int = 0,
-    slot: (() -> Unit)? = null
-) = registerProp(PineProp(this, kProp.name, PineType.INT, kProp, of(initialValue)), slot)
+    initialValue: Int = 0
+) = registerProp(PineProp(this, kProp.name, PineType.INT, kProp, of(initialValue)))
 
 fun PineObject.boolProp(
     kProp: KProperty<Boolean>,
-    initialValue: Boolean = false,
-    slot: (() -> Unit)? = null
-) = registerProp(PineProp(this, kProp.name, PineType.BOOL, kProp, of(initialValue)), slot)
+    initialValue: Boolean = false
+) = registerProp(PineProp(this, kProp.name, PineType.BOOL, kProp, of(initialValue)))
 
 fun PineObject.stringProp(
     kProp: KProperty<String>,
-    initialValue: String = "",
-    slot: (() -> Unit)? = null
-) = registerProp(PineProp(this, kProp.name, PineType.STRING, kProp, of(initialValue)), slot)
+    initialValue: String = ""
+) = registerProp(PineProp(this, kProp.name, PineType.STRING, kProp, of(initialValue)))
 
 fun PineObject.doubleProp(
     kProp: KProperty<Double>,
-    initialValue: Double = 0.0,
-    slot: (() -> Unit)? = null
-) = registerProp(PineProp(this, kProp.name, PineType.DOUBLE, kProp, of(initialValue)), slot)
+    initialValue: Double = 0.0
+) = registerProp(PineProp(this, kProp.name, PineType.DOUBLE, kProp, of(initialValue)))
 
 private fun PineObject.childrenProp(
-    kProp: KProperty<MutableList<PineObject>>,
-    slot: (() -> Unit)? = null
-    ): ChildrenListPineProp = registerProp(ChildrenListPineProp(this, kProp), slot) as ChildrenListPineProp
+    kProp: KProperty<MutableList<PineObject>>
+    ): ChildrenListPineProp = registerProp(ChildrenListPineProp(this, kProp)) as ChildrenListPineProp
 
-fun <T> PineObject.registerProp(prop: PineProp<T>, slot: Slot?): PineProp<T> {
+fun <T> PineObject.registerProp(prop: PineProp<T>): PineProp<T> {
     props.add(prop)
-    slot?.also { this.connect(prop.getScriptName(), slot) }
     return prop
 }

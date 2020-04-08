@@ -285,7 +285,7 @@ class BinaryExprValue<T>(
     pineValue.getValue()
 })
 
-open class PineCallable<T>(val owner: PineObject, val name: String,  val lambda: () -> T) : PineSignal, PineValue<T>() {
+open class PineCallable<T>(val owner: PineObject, val name: String, val lambda: () -> T) : PineSignal, PineValue<T>() {
 
     override fun getPineType(): PineType = PineType.FUNCTION
     override operator fun invoke(): T = getValue()
