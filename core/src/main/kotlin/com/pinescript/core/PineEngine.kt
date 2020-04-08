@@ -38,11 +38,14 @@ import com.pinescript.core.PineType.Companion.INT
 import com.pinescript.core.PineType.Companion.STRING
 import com.pinescript.core.PineValue.Companion.of
 import com.pinescript.util.IndexedMap
+import com.pinescript.util.toIndexMap
 
 typealias Allocator = (Int) -> PineObject
 
 
-class PineMetaObject(val scriptName: String, val allocator: Allocator) {
+class PineMetaObject(val scriptName: String,
+                          val allocator: Allocator) {
+
 
     val propIndexes: Map<String, Int>
     val signalIndexes: Map<String, Int>
@@ -50,9 +53,9 @@ class PineMetaObject(val scriptName: String, val allocator: Allocator) {
 
     init {
         val pineObj = allocator(-1)
-        this.propIndexes = pineObj.props.index
-        this.signalIndexes = pineObj.signals.index
-        this.callableIndexes = pineObj.callables.index
+        propIndexes = pineObj.props.toIndexMap()
+        signalIndexes = pineObj.signals.toIndexMap()
+        callableIndexes = pineObj.callables.toIndexMap()
     }
 }
 
@@ -113,7 +116,7 @@ class PineEngine private constructor(
             otherProp.connect { prop.setPineValue(otherProp.value) }
             otherProp.value
         } else {
-            evalExpr(exprValue)
+            evalExpr(obj, exprValue)
         }
 
         prop.setPineValue(value)
@@ -129,18 +132,18 @@ class PineEngine private constructor(
         }
     }
 
-    private fun evalExpr(expr: Expr): PineValue<*> {
+    private fun evalExpr(owner: PineObject, expr: Expr): PineValue<*> {
 
         return when (expr.expValueType) {
             ExprValue.PrimitiveExpr -> evalPrimitiveExpr(expr.expValue(PrimitiveExpr()) as PrimitiveExpr)
             ExprValue.CallableExpr -> evalCallableExpression(expr.expValue(CallableExpr()) as CallableExpr)
-            ExprValue.BinaryExpr -> evalBinaryExpr(expr.expValue(BinaryExpr())!! as BinaryExpr)
+            ExprValue.BinaryExpr -> evalBinaryExpr(owner, expr.expValue(BinaryExpr())!! as BinaryExpr)
             ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
             else -> throw PineScriptException("Unable to evaluate expression of type ${ExprValue.name(expr.expValueType.toInt())}")
         }
     }
-    private fun evalBinaryExpr(binaryExpr: BinaryExpr): BinaryExprValue<*> {
-        return BinaryExprValue(binaryExpr.op, evalExpr(binaryExpr.left!!), evalExpr(binaryExpr.right!!))
+    private fun evalBinaryExpr(owner: PineObject, binaryExpr: BinaryExpr): BinaryExprValue<*> {
+        return BinaryExprValue(owner, "anon" ,binaryExpr.op, evalExpr(owner, binaryExpr.left!!), evalExpr(owner, binaryExpr.right!!))
     }
 
     private fun evalPropertyReferenceExp(propRefExpr: PropRefExpr): PineProp<*> {
@@ -162,11 +165,12 @@ class PineEngine private constructor(
         private val types = IndexedMap<PineMetaObject>()
         private var dpCalc: (Int) -> Int = { it }
         init {
-            // @TODO: For conversion reasons, ints always have to be Longs in QML.
-            // The reason for this is Number.parse() returns Long for integers
-            // Don't know best approach yet
-            types["var"] = PineObject.meta
-            types["Object"] = PineObject.meta
+            // @TODO We need to allocate an registered object at least once, so we
+            // can populate the PineMetaObject at runtime. This can be really error-prone
+            // and allocates unnecessary. One option is to code generate, but for now we keep it
+            // in runtime.
+            types["var"] = PineObject.getMeta()
+            types["Object"] = PineObject.getMeta()
         }
 
         fun registerPineType(meta: PineMetaObject): Builder {

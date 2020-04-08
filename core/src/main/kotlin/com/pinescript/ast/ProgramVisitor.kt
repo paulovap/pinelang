@@ -34,18 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import com.pinescript.ast.fbs.Program
 import com.pinescript.core.PineCompiler
-import com.pinescript.core.PineEngine
-import com.pinescript.core.PineMetaObject
-import com.pinescript.parser.PineScriptParser
-import com.pinescript.util.IndexedMap
-import java.nio.ByteBuffer
+import com.pinescript.parser.PineScript
 
 @ExperimentalUnsignedTypes
 class ProgramVisitor(compiler: PineCompiler, debug: Boolean) : PineScriptVisitor<Program>(compiler, debug) {
 
     val objectDefinitionVisitor = ObjectDefinitionVisitor(compiler, debug)
 
-    override fun visitProgram(ctx: PineScriptParser.ProgramContext): Program {
+    override fun visitProgram(ctx: PineScript.ProgramContext): Program {
         val objPos = objectDefinitionVisitor.visit(ctx.rootMember().objectDefinition())
         fb.finish(Program.createProgram(fb, objPos))
         return Program.getRootAsProgram(fb.dataBuffer())

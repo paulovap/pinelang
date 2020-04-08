@@ -1,6 +1,5 @@
 package com.pinescript.core
 
-import com.pinescript.ast.fbs.BinaryOp
 import com.pinescript.ast.fbs.BinaryOp.Companion.AND
 import com.pinescript.ast.fbs.BinaryOp.Companion.DIV
 import com.pinescript.ast.fbs.BinaryOp.Companion.MINUS
@@ -246,11 +245,13 @@ data class PineList(private val value: List<*>) : PineValue<List<*>>() {
     override operator fun invoke(): List<*> = value
 }
 
-data class BinaryExprValue<T>(
+class BinaryExprValue<T>(
+    owner: PineObject,
+    name: String,
     val op: UByte,
     val leftHandValue: PineValue<T>,
     val rightHandValue: PineValue<*>
-) : PineExprValue<T>({
+) : PineCallable<T>(owner, name, {
     val pineValue = if (op.isNumberOp()) {
         if (leftHandValue.isDouble() || rightHandValue.isDouble()) {
             val left = leftHandValue.toPineDouble()
@@ -284,11 +285,13 @@ data class BinaryExprValue<T>(
     pineValue.getValue()
 })
 
-open class PineExprValue<T>(val lambda: () -> T) : PineValue<T>() {
+open class PineCallable<T>(val owner: PineObject, val name: String,  val lambda: () -> T) : PineSignal, PineValue<T>() {
 
     override fun getPineType(): PineType = PineType.FUNCTION
     override operator fun invoke(): T = getValue()
     override fun getValue(): T = lambda()
+    override fun getPineObject(): PineObject = owner
+    override fun getScriptName(): String = name
 }
 
 fun String.toPineValue() = of(this)

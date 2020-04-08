@@ -1,6 +1,7 @@
 package com.pinescript.lsp.ui
 
 import com.pinescript.core.*
+import com.pinescript.util.toIndexMap
 import java.awt.Color
 import javax.swing.JPanel
 

@@ -5,7 +5,7 @@ import com.pinescript.ast.fbs.BinaryOp
 import com.pinescript.ast.fbs.ExprValue
 import com.pinescript.ast.fbs.PrimitiveExpr.Companion.createPrimitiveExpr
 import com.pinescript.core.*
-import com.pinescript.parser.PineScriptParser
+import com.pinescript.parser.PineScript
 
 /*
 table CallableExpr {
@@ -55,7 +55,7 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         return this
     }
 
-    override fun visitExpression(context: PineScriptParser.ExpressionContext?): Int {
+    override fun visitExpression(context: PineScript.ExpressionContext?): Int {
         val ctx = context!!
 
         val primitiveExpr = ctx.primitiveExpression()
@@ -69,7 +69,7 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         }
     }
 
-    private fun createPropExpr(ctx: PineScriptParser.ObjectPropertyExpressionContext): Int {
+    private fun createPropExpr(ctx: PineScript.ObjectPropertyExpressionContext): Int {
         val ids = ctx.Identifier()
         return if (ids.size == 1) {
                 val propId = types[ownerType]!!.propIndexes[ids[0].text] ?: ids[0].throwPropNotFound(ids[0].text, "this")
@@ -92,9 +92,9 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
     }
      */
     private fun createBinaryOperationExp(
-        opCtx: PineScriptParser.BinaryOperationContext,
-        left: PineScriptParser.ExpressionContext,
-        right: PineScriptParser.ExpressionContext
+        opCtx: PineScript.BinaryOperationContext,
+        left: PineScript.ExpressionContext,
+        right: PineScript.ExpressionContext
     ): Int {
         val fb = compiler.flatBuilder
         val leftIdx = visit(left)
@@ -102,13 +102,7 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         return BinaryExpr.createBinaryExpr(fb, opCtx.getOp(), leftIdx, rightIdx)
     }
 
-    /*
-    table CallableExpr {
-        objId: int64;
-        callIdx: ubyte;
-     }
-     */
-    override fun visitCallableExpression(ctx: PineScriptParser.CallableExpressionContext?): Int {
+    override fun visitCallableExpression(ctx: PineScript.CallableExpressionContext?): Int {
         val fb = compiler.flatBuilder
         val name = ctx!!.Identifier().text
         val callIdx =
@@ -125,15 +119,16 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
             stringValue:   string;
         }
      */
-    override fun visitPrimitiveExpression(ctx: PineScriptParser.PrimitiveExpressionContext?): Int {
+
+    override fun visitPrimitiveExpression(ctx: PineScript.PrimitiveExpressionContext?): Int {
         return when {
             ctx!!.TRUE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 0.0, 0)
             ctx.FALSE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 1.0, 0)
-            ctx.StringLiteral() != null -> createPrimitiveExpr(
+            ctx.stringLiteral() != null -> createPrimitiveExpr(
                 fb,
                 PrimitiveType.String,
                 0.0,
-                fb.createString(ctx.StringLiteral().text.removeQuotes())
+                visit(ctx.stringLiteral())
             )
             ctx.IntegerLiteral() != null -> createPrimitiveExpr(
                 fb,
@@ -149,10 +144,14 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         }
     }
 
+    override fun visitStringLiteral(ctx: PineScript.StringLiteralContext?): Int {
+        return fb.createString(ctx!!.DoubleQuoteString().text)
+    }
+
     private fun Int.dp(shouldApply: Boolean): Int = this
     private fun String.removeQuotes(): String = substring(1 until this.length - 1)
 
-    private fun PineScriptParser.BinaryOperationContext.getOp(): UByte {
+    private fun PineScript.BinaryOperationContext.getOp(): UByte {
         return when {
             this.PLUS() != null -> BinaryOp.PLUS
             this.MINUS() != null -> BinaryOp.MINUS

@@ -1,8 +1,6 @@
 package com.pinescript.core
 
 import com.pinescript.core.PineValue.Companion.of
-import com.pinescript.util.IndexedMap
-import com.pinescript.util.indexedMapOf
 import com.pinescript.util.safeGet
 import com.pinescript.util.safeSet
 import kotlin.properties.ReadWriteProperty
@@ -121,77 +119,85 @@ open class ChildrenListPineProp(private val pineObject: PineObject,
     }
 }
 
-open class Meta(vararg strings: String) {
-
-
-    private val propIndexes: Map<String, Int>
-
-    init {
-        propIndexes = mapOf(*strings.mapIndexed { idx, key -> key to idx }.toTypedArray())
-    }
-
-}
-
 open class PineObject(val id: Int = -1) {
 
     companion object  {
         const val SIG_MOUNT = "mount"
         const val SIG_UNMOUNT = "unmount"
-        val meta = PineMetaObject("Object") { PineObject(it) }
+
+        private var meta: PineMetaObject? = null
+
+        fun getMeta(): PineMetaObject {
+            synchronized(this) {
+                if (meta == null) {
+                    val obj = PineObject(-1)
+                    meta = PineMetaObject("Object") {PineObject(it)}
+                }
+            }
+            return meta ?: throw PineScriptException("Meta object not created")
+        }
     }
 
     // All "events" that can be fired by an object to a script
-    val signals = indexedMapOf<PineSignal>(
-        makeSignal(SIG_MOUNT),
-        makeSignal(SIG_UNMOUNT)
-    )
+    val signals: MutableList<PineSignal> = mutableListOf()
 
     // All Object properties accessible to the script
-    val props = IndexedMap<PineProp<*>>()
+    val props: MutableList<PineProp<*>> = mutableListOf()
 
     // Children objects
     private val childrenList: MutableList<PineObject> = mutableListOf()
+
     val children: ChildrenListPineProp = childrenProp(::childrenList)
-
-
 
     val slots: MutableMap<String, MutableSet<Slot>> = mutableMapOf()
 
     // All functions that can be called from script
-    val callables = indexedMapOf(
-        makeCallable("printHello") { println("Hello world") },
-        makeCallable("helloText")  { "Hello world" }
-    )
+    val callables: MutableList<PineCallable<*>> = mutableListOf()
+ //       makeCallable("printHello") { println("Hello world") },
+ //       makeCallable("helloText")  { "Hello world" }
+  //  )
 
 
 
     init {
-//        signals[SIG_MOUNT]?.connect { println("Did mount for object $this") }
-//        signals[SIG_UNMOUNT]?.connect { println("Did unmount for object $this") }
+        makeSignal(SIG_MOUNT) //.connect { println("Did mount for object $this") }
+        makeSignal(SIG_UNMOUNT) //.connect { println("Did unmount for object $this") }
+
+        makeCallable("printHello") { println("Hello world") }
+        makeCallable("helloText")  { "Hello world" }
     }
 
+    fun getSignal(name: String): PineSignal? = signals[getMeta().signalIndexes[name] ?: throw PineScriptException("signal $name not found in $this")]
+
     fun emitMount() {
-        signals[SIG_MOUNT]?.emit()
+        getSignal(SIG_MOUNT)?.emit()
         children.forEach { it.emitMount() }
     }
     fun emitUnmount() {
         children.forEach { it.dispose() }
-        signals[SIG_UNMOUNT]?.emit()
+        getSignal(SIG_UNMOUNT)?.emit()
     }
 
     fun connect(signal: String, slot: () -> Unit) { slots.safeSet(signal, slot) }
     fun disconnect(signal: String, slot: () -> Unit) = slots.safeGet(signal).remove(slot)
 
-    fun getPropOrNull(name: String): PineProp<*>? = props[name]
-
-    fun getProp(name: String): PineProp<*> = getPropOrNull(name) ?: throw PineScriptException("prop $name not found")
+    fun getProp(name: String): PineProp<*> = props[meta!!.propIndexes[name]?: throw PineScriptException("Prop name  $name not found on $this")]
 
     fun dispose() {
         emitUnmount()
     }
 
-    fun makeSignal(name: String): Pair<String, BaseSignal> = name to BaseSignal(this, name)
-    fun <T>makeCallable(name: String, lambda: () -> T): Pair<String, PineExprValue<*>> = name to PineExprValue(lambda)
+    fun makeSignal(name: String): PineSignal {
+        val sig = BaseSignal(this, name)
+        signals.add(sig)
+        return sig
+    }
+
+    fun <T>makeCallable(name: String, lambda: () -> T): PineCallable<T> {
+        val callable = PineCallable(this, name, lambda)
+        callables.add(callable)
+        return callable
+    }
 }
 
 fun PineObject.intProp(
@@ -224,9 +230,7 @@ private fun PineObject.childrenProp(
     ): ChildrenListPineProp = registerProp(ChildrenListPineProp(this, kProp), slot) as ChildrenListPineProp
 
 fun <T> PineObject.registerProp(prop: PineProp<T>, slot: Slot?): PineProp<T> {
-    if (prop.getScriptName() in props)
-        throw PineScriptException("Property of name ${prop.getScriptName()} already exists for type ${PineObject::javaClass::name}")
-    props[prop.getScriptName()] = prop
+    props.add(prop)
     slot?.also { this.connect(prop.getScriptName(), slot) }
     return prop
 }

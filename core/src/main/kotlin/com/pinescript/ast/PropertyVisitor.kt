@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import com.pinescript.ast.fbs.PropDefinition
 import com.pinescript.core.*
-import com.pinescript.parser.PineScriptParser
+import com.pinescript.parser.PineScript
 
 /*
 table Prop {
@@ -57,7 +57,7 @@ class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: I
         return this
     }
 
-    override fun visitPropertyDefinition(ctx: PineScriptParser.PropertyDefinitionContext?): Int {
+    override fun visitPropertyDefinition(ctx: PineScript.PropertyDefinitionContext?): Int {
         val propName = ctx!!.Identifier().text
         val propId = types[ownerType]?.propIndexes?.get(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, types[ownerType]!!.scriptName)
 

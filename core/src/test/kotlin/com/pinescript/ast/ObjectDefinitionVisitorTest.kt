@@ -37,6 +37,7 @@ import com.pinescript.ast.fbs.Expr
 import com.pinescript.ast.fbs.PrimitiveExpr
 import com.pinescript.ast.fbs.Program
 import com.pinescript.core.*
+import com.pinescript.util.toIndexMap
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

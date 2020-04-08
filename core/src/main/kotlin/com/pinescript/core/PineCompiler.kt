@@ -35,8 +35,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.ProgramVisitor
 import com.pinescript.ast.fbs.Program
-import com.pinescript.parser.PineScriptLexer
-import com.pinescript.parser.PineScriptParser
+import com.pinescript.parser.PineLexer
+import com.pinescript.parser.PineScript
 import com.pinescript.util.IndexedMap
 import org.antlr.v4.runtime.*
 import java.io.ByteArrayInputStream
@@ -90,13 +90,13 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
         try {
             this.flatBuilder.clear()
             val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
-            val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+            val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
 
             lexer.removeErrorListeners()
             lexer.addErrorListener(baseErrorListener)
 
             val tokens = CommonTokenStream(lexer)
-            val parser = PineScriptParser(tokens)
+            val parser = PineScript(tokens)
 
             parser.removeErrorListeners()
             parser.addErrorListener(baseErrorListener)

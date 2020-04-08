@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.pinescript.ast
 
 import com.pinescript.core.PineEngine
-import com.pinescript.parser.PineScriptLexer
-import com.pinescript.parser.PineScriptParser
+import com.pinescript.parser.PineLexer
+import com.pinescript.parser.PineScript
 import org.antlr.v4.runtime.BailErrorStrategy
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -48,11 +48,11 @@ import kotlin.system.measureTimeMillis
 object LoadTree {
 
     @Throws(IOException::class)
-    fun loadTree(code: String): PineScriptParser {
+    fun loadTree(code: String): PineScript {
         val stream = ByteArrayInputStream(code.toByteArray(StandardCharsets.UTF_8))
-        val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+        val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
         val tokens = CommonTokenStream(lexer)
-        val parser = PineScriptParser(tokens)
+        val parser = PineScript(tokens)
         parser.errorHandler = BailErrorStrategy()
         return parser
     }

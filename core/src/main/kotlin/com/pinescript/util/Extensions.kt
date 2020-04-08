@@ -1,5 +1,7 @@
 package com.pinescript.util
 
+import com.pinescript.core.PineCallable
+import com.pinescript.core.PineSignal
 import java.util.zip.CRC32
 
 fun String.crc32(): Long {
@@ -26,4 +28,9 @@ fun <K, V>MutableMap<K, MutableSet<V>>.safeGet(key: K): MutableSet<V> {
         this[key] = list
     }
     return list
+}
+
+fun List<PineSignal>.toIndexMap(): Map<String, Int> {
+    var count = 0;
+    return this.associateBy({it.getScriptName()}, {count++})
 }

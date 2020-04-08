@@ -18,27 +18,30 @@ class TestExpressions {
 
     @Test
     fun testBinaryMathExpressions() {
+
+        val root = PineObject(-1)
         val v10 = of(10)
         val v25 = of(25)
 
-        assertEquals(35, BinaryExprValue(PLUS, v10, v25)())
-        assertEquals(-15, BinaryExprValue(MINUS, v10, v25)())
-        assertEquals(250, BinaryExprValue(MULTI, v10, v25)())
-        assertEquals(2, BinaryExprValue(DIV, v25, v10)())
-        assertEquals(5, BinaryExprValue(REMAINDER, v25, v10)())
+        assertEquals(35, BinaryExprValue(root, "anon", PLUS, v10, v25)())
+        assertEquals(-15, BinaryExprValue(root, "anon", MINUS, v10, v25)())
+        assertEquals(250, BinaryExprValue(root, "anon", MULTI, v10, v25)())
+        assertEquals(2, BinaryExprValue(root, "anon", DIV, v25, v10)())
+        assertEquals(5, BinaryExprValue(root, "anon", REMAINDER, v25, v10)())
 
-        val exp = BinaryExprValue(AND, of(true), v10)
+        val exp = BinaryExprValue(root, "anon", AND, of(true), v10)
         assertEquals(FUNCTION, exp.getPineType())
-        assertFailsWith(PineScriptException::class) {exp()}
+        assertFailsWith(PineScriptException::class) { exp() }
     }
 
     @Test
     fun testBinaryBooleanExpressions() {
+        val root = PineObject()
         val vTrue = of(true)
         val vFalse = of(false)
 
-        assertEquals(true, BinaryExprValue(AND, vTrue, vTrue)())
-        assertEquals(true, BinaryExprValue(OR, vTrue, vFalse)())
-        assertFailsWith(PineScriptException::class) {BinaryExprValue(PLUS, of(10), vFalse)()}
+        assertEquals(true, BinaryExprValue(root, "anon", AND, vTrue, vTrue)())
+        assertEquals(true, BinaryExprValue(root, "anon", OR, vTrue, vFalse)())
+        assertFailsWith(PineScriptException::class) { BinaryExprValue(root, "anon", PLUS, of(10), vFalse)() }
     }
 }

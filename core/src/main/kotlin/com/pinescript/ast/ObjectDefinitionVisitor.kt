@@ -38,7 +38,7 @@ import com.pinescript.ast.fbs.ObjectDefinition.Companion.createPropsVector
 import com.pinescript.ast.fbs.ObjectDefinition.Companion.createSignalsVector
 import com.pinescript.ast.fbs.SignalExpr
 import com.pinescript.core.*
-import com.pinescript.parser.PineScriptParser
+import com.pinescript.parser.PineScript
 
 /*
 table ObjectDefinition {
@@ -57,7 +57,7 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
     private val propertyVisitor = PropertyVisitor(compiler, -1, -1, debug)
     private val expressionVisitor = ExpressionVisitor(compiler, -1, -1, debug)
 
-    override fun visitObjectDefinition(ctx: PineScriptParser.ObjectDefinitionContext): Int {
+    override fun visitObjectDefinition(ctx: PineScript.ObjectDefinitionContext): Int {
         val initContext = ctx.objectInitializer()
         val objIdentifierCtx = initContext.objectIdentifier()
         val objMember = initContext.objectMember()

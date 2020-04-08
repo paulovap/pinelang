@@ -1,9 +1,11 @@
+package com.pinescript.main.com.pinescript.main
+
 import com.pinescript.ast.fbs.ObjectDefinition
 import com.pinescript.ast.fbs.PropDefinition
 import com.pinescript.ast.fbs.SignalExpr
 import com.pinescript.core.*
 import io.ktor.util.KtorExperimentalAPI
-import java.lang.instrument.Instrumentation
+import java.lang.Thread.sleep
 import kotlin.system.measureTimeMillis
 
 
@@ -53,6 +55,8 @@ class Item(id: Int) : PineObject(id) {
     val str3: String by stringProp(::str3)
     val str4: String by stringProp(::str4)
 }
+
+
 @KtorExperimentalAPI
 fun main() {
     val engine = PineEngine.Builder().registerPineType(Item.meta).build()
@@ -182,13 +186,17 @@ fun main() {
 //            engine.compile(script)
 //        }
 //    } / times.toDouble())
-
+    while (true) {
+        sleep(1000)
+    }
+    println(obj)
 }
 
 fun benchmarkWhole(script: String, engine: PineEngine) {
-    repeat(1000) { engine.load(script) }
     val compiled = engine.compile(script, false)
-    val times = 1000
+    val times = 10000
+    val warmupTimes = 1000
+    repeat(1000) { engine.load(script) }
 
     var totalCompile = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
     println("compile $times in total $totalCompile ms avg ${totalCompile/times.toDouble()} ms")
@@ -212,7 +220,11 @@ fun benchmarkWalk(script: String, engine: PineEngine) {
     val root = program.root!!
     repeat(100) { walkProgram(root) }
     val times = 100000
-    val total = measureTimeMillis { repeat(times) { walkProgram(root) } }
+    val total = measureTimeMillis { repeat(times) {
+        walkProgram(
+            root
+        )
+    } }
     println("run $times in total $total ms avg ${total/times.toDouble()} ms")
 }
 

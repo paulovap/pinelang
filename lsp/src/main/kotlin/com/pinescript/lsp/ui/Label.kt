@@ -3,6 +3,7 @@ package com.pinescript.lsp.ui
 import com.pinescript.core.PineMetaObject
 import com.pinescript.core.boolProp
 import com.pinescript.core.stringProp
+import com.pinescript.util.toIndexMap
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.JLabel
