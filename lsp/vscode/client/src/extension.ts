@@ -10,7 +10,10 @@ import {
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
-	TransportKind
+	TransportKind,
+	SocketTransport,
+	createServerSocketTransport,
+	MessageTransports
 } from 'vscode-languageclient';
 
 let client: LanguageClient;
@@ -26,15 +29,24 @@ export function activate(context: ExtensionContext) {
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
-	let serverOptions: ServerOptions = {
-		run: { module: serverModule, transport: TransportKind.tcp },
-		debug: {
-			module: serverModule,
-			transport: TransportKind.tcp,
-			options: debugOptions
-		}
-	};
+	let [reader, writer] = createServerSocketTransport(8080)
+	let serverOptions: ServerOptions = () =>  {
+		return Promise.resolve({
+				reader: reader,
+				writer: writer,
+				detached: true
+			})
+	}
 
+	// let serverOptions: ServerOptions = {
+	// 	run: { module: serverModule, transport: TransportKind.ipc },
+	// 	debug: {
+	// 		module: serverModule,
+	// 		transport: TransportKind.ipc,
+	// 		options: debugOptions
+	// 	}
+	// };
+	
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
@@ -48,11 +60,10 @@ export function activate(context: ExtensionContext) {
 	// Create the language client and start the client.
 	client = new LanguageClient(
 		'languageServerExample',
-		'Language Server Example',
+		'languageServerExample',
 		serverOptions,
 		clientOptions
 	);
-
 	// Start the client. This will also launch the server
 	client.start();
 }

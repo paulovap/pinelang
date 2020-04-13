@@ -1,5 +1,20 @@
 namespace com.pinescript.ast.fbs;
 
+struct Position {
+    line: int32;
+    char: int32;
+}
+
+struct Range {
+    start: Position;
+    end:Position;
+}
+
+table DebugInfo {
+    range: Range;
+    debugName: string;
+    debugType: string;
+}
 
 enum BinaryOp : ubyte {
     PLUS = 0,
@@ -50,14 +65,14 @@ table PropRefExpr {
 
 table PropDefinition {
     id:       ubyte;
-    value:     Expr;
-    debugName: string;
+    value:    Expr;
+    debug:    DebugInfo;
 }
 
 table SignalExpr {
-    id:            ubyte;
-    expr:          CallableExpr;
-    debugName:     string;
+    id:     ubyte;
+    expr:   CallableExpr;
+    debug:  DebugInfo;
 }
 
 table ObjectDefinition {
@@ -66,8 +81,7 @@ table ObjectDefinition {
     children:  [ObjectDefinition];
     signals:   [SignalExpr];
     props:     [PropDefinition];
-    debugName: string;
-    debugType: string;
+    debug:     DebugInfo;
 }
 
 table Program {

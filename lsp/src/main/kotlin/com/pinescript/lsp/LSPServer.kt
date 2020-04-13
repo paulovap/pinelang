@@ -1,91 +1,151 @@
 package com.pinescript.lsp
 
-import com.squareup.moshi.Moshi
+import com.pinescript.lsp.LSPMethod.Companion.fromMethod
+import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.*
 import io.ktor.util.cio.use
-import io.ktor.utils.io.read
+import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.readUTF8Line
-import io.ktor.utils.io.readUntilDelimiter
 import io.ktor.utils.io.writeStringUtf8
 import kotlinx.coroutines.*
+import java.lang.RuntimeException
 import java.net.InetSocketAddress
 
-enum class ErrorCode(val err: Int) {
-    ParseError(-32700),
-    InvalidRequest(-32600),
-    MethodNotFound(-32601),
-    InvalidParams(-32602),
-    InternalError(-32603),
-    ServerErrorStart(-32099),
-    ServerErrorEnd(-32000),
-    ServerNotInitialized(-32002),
-    UnknownErrorCode(-32001),
-    RequestCancelled(-32800),
-    ContentModified(-32801)
+enum class LSPMethod(val method: String, val paramType: Class<*>) {
+    Ignore("$", LSPEmptyParams::class.java),
+    Initialize("initialize", LSPInitializeParams::class.java),
+    Initialized("initialized", LSPEmptyParams::class.java),
+    TextDocumentDidOpen("textDocument/didOpen", TextDocumentDidOpenParams::class.java),
+    TextDocumentDidChange("textDocument/didChange", TextDocumentDidChangeParams::class.java),
+    TextDocumentDocumentSymbol("textDocument/documentSymbol", TextDocumentDocumentSymbolParams::class.java),
+    TextDocumentCompletion("textDocument/completion", TextDocumentCompletionParams::class.java),
+    Shutdown("shutdown", LSPEmptyParams::class.java),
+    PublishDiagnotics("textDocument/publishDiagnostic", LSPDiagnostic::class.java);
+
+    companion object {
+        fun fromMethod(method: String): LSPMethod {
+            return values().firstOrNull { method == it.method } ?: Ignore
+        }
+    }
 }
 
-fun jsonRpc(data: String): String = "Content-Length: ${data.length}\r\n\r\n${data}"
-
-data class ResponseError(
-    val code: ErrorCode,
-    val message: String? = null,
-    val data: Any? = null
-)
-data class Request(val id: Int, val method: String, val params: Any? = null)
-
-data class Response (
-    val id: Int,
-    val result: Any?,
-    val error: ResponseError? = null,
-    val jsonrpc: String = "2.0"
-)
-
-data class CompletionProvider(val triggerCharacters: List<String>, val resolveProvider: Boolean = false)
-
-//change: 1 is non-incremental, 2 is incremental
-data class TextDocumentSync(
-    val openClose: Boolean = true,
-    val change: Int = 1,
-    val save: Map<String, Any> = mapOf("includeText" to true)
-)
-
-data class Capabilities(
-    val completionProvider: CompletionProvider = CompletionProvider(listOf("."), false),
-    val definitionProvider: Boolean = true,
-    val textDocumentSync: TextDocumentSync = TextDocumentSync(),
-    val hoverProvider: Boolean = true,
-    val documentSymbolProvider: Boolean = true
-)
-
-fun makeRequest(id: Int, method: String, params: Any? = null): String {
-    val moshi = Moshi.Builder()
-        // ... add your own JsonAdapters and factories ...
-        .add(KotlinJsonAdapterFactory())
-        .build()
-    val adapter = moshi.adapter(Request::class.java)
-    val request = adapter.toJson(Request(id, method, params))
-    return jsonRpc(request)
+interface LSPDelegate {
+    fun onInitialize(capabilities: LSPInitializeParams): LSPInitializeServerResult
+    fun onInitialized()
+    fun onShutdown()
+    fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): LSPDiagnostic
+    fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic
+    fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): LSPDiagnostic
+    fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams)
 }
 
-class LSPServer {
+fun jsonRPCHeader(data: String): JsonRPCHeader {
+    val regex = "Content-Length: ([0-9]+)".toRegex()
+    try {
+        val size = regex.find(data)?.groupValues?.get(1)!!.toInt()
+        return JsonRPCHeader(size)
+    } catch (e: Exception) {
+        throw RuntimeException("Unable to parse header: $data")
+    }
+}
+
+class LSPRequestAdapter : JsonAdapter<JsonRPCRequest>() {
+
+    private val moshi = Moshi.Builder().add(TextDocumentSyncKindAdapter()).add(KotlinJsonAdapterFactory()).build()
+
+    @FromJson
+    override fun fromJson(reader: JsonReader): JsonRPCRequest? {
+        var id: Int? = null
+        var method: String? = null
+        var params: Any? = null
+        var jsonrpc = "2.0"
+
+        reader.beginObject()
+        while (reader.hasNext()) {
+            when (reader.nextName()) {
+                "jsonrpc" -> jsonrpc = reader.nextString()
+                "id" -> id = reader.nextInt()
+                "method" -> method = reader.nextString()
+                "params" -> params = moshi.adapter(fromMethod(method!!).paramType).fromJson(reader)
+            }
+        }
+        reader.endObject()
+        return JsonRPCRequest(jsonrpc, id, method!!, params)
+    }
+
+    @ToJson
+    override fun toJson(writer: JsonWriter, value: JsonRPCRequest?) {}
+}
+
+class LSPServer(private val delegate: LSPDelegate) {
     private var initialized = false
     private var job: Job? = null
 
-    fun handleRequest(request: Request): Response {
+    private val moshi = Moshi.Builder()
+        .add(TextDocumentSyncKindAdapter())
+        .add(LSPRequestAdapter())
+        .add(KotlinJsonAdapterFactory())
+        .build()
 
-        if (!initialized && request.method != "initialize") {
-            return Response(request.id, null, ResponseError(ErrorCode.ServerNotInitialized, "call initialize first"))
-        }
-
-        return when(request.method) {
-            "initialize" -> initialize(request.id)
-            else -> Response(request.id, null, ResponseError(ErrorCode.MethodNotFound, request.method))
-        }
+    private fun jsonRPCRequest(data: ByteArray): JsonRPCRequest {
+        val adapter = moshi.adapter(JsonRPCRequest::class.java)
+        return adapter.fromJson(String(data))!!
     }
 
-    fun initialize(id: Int) : Response = Response(id, Capabilities()).also { initialized = true }
+    private suspend fun handleRequest(request: JsonRPCRequest, output: ByteWriteChannel) {
+        val error: ResponseError? = null
+        val responseAdapter = moshi.adapter(LSPResponse::class.java).serializeNulls()
+        val notifyAdapter = moshi.adapter(LSPNotification::class.java)
+        val responseData: String? = try {
+            if (!initialized && request.method != "initialize") {
+                jsonRpc(responseAdapter.toJson(LSPResponse(
+                    request.id,
+                    null,
+                    ResponseError(ErrorCode.ServerNotInitialized, "call initialize first")
+                )))
+            } else {
+                when (fromMethod(request.method)) {
+                    LSPMethod.Initialize -> {
+                        initialized = true
+                        val result = delegate.onInitialize(request.params as LSPInitializeParams)
+                        val response = LSPResponse(request.id, result,null)
+                        jsonRpc(responseAdapter.toJson(response))
+                    }
+                    LSPMethod.Initialized -> {
+                        delegate.onInitialized()
+                        null
+                    }
+                    LSPMethod.TextDocumentDidOpen -> {
+                        //val diag = delegate.onTextDocumentDidOpen(request.params as TextDocumentDidOpenParams)
+                        //val notify = JsonRPCNotification()
+                        null
+                    }
+                    LSPMethod.TextDocumentDidChange -> {
+                        val note = delegate.onTextDocumentDidChange(request.params as TextDocumentDidChangeParams)
+                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                    }
+                    LSPMethod.TextDocumentDocumentSymbol -> {
+                        val note = delegate.onTextDocumentDocumentSymbol(request.params as TextDocumentDocumentSymbolParams)
+                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                    }
+                    LSPMethod.TextDocumentCompletion -> {
+                        delegate.onTextDocumentCompletion(request.params as TextDocumentCompletionParams); null
+                    }
+                   LSPMethod.Shutdown -> {
+                        delegate.onShutdown(); null
+                    }
+                    else -> null
+                }
+
+            }
+        } catch (e: java.lang.Exception) {
+            jsonRpc(responseAdapter.toJson(LSPResponse(request.id, null, ResponseError(ErrorCode.MethodNotFound), request.jsonrpc)))
+        }
+        println("response: $responseData\n")
+        responseData?.run { output.writeStringUtf8(responseData) }
+    }
 
     fun startServer(hostname: String = "localhost", port: Int = 2323) {
         job = GlobalScope.async(Dispatchers.IO) {
@@ -106,16 +166,21 @@ class LSPServer {
                         output.use {
                             try {
                                 while (true) {
-                                    val header = input.readUTF8Line() // this is header
-                                    println("${socket.remoteAddress}: $header")
+                                    val headerStr = input.readUTF8Line()!!
+                                    val header = jsonRPCHeader(headerStr)
                                     input.readUTF8Line() // next is empty
-                                    val body = ByteArray(30)
-                                    input.readFully(body, 0,30)
-                                    println(String(body))
-                                    output.writeStringUtf8("Test\r\n")
+                                    println("request: header: $header")
+                                    val body = ByteArray(header.contentLength)
+                                    input.readFully(body, 0, header.contentLength)
+                                    println("resquest: ${String(body)}\n")
+                                    val request = jsonRPCRequest(body)
+                                    handleRequest(request, output)
+                                    if (request.method == "shutdown") {
+                                        break
+                                    }
                                 }
                             } catch (e: Throwable) {
-                                //e.printStackTrace()
+                                e.printStackTrace()
                             }
                         }
                     }

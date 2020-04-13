@@ -1,22 +1,79 @@
 {
-	"name": "lsp-pine",
-	"description": "VSCode part of a language server",
-	"author": "Paulo Pinheiro",
+	"name": "lsp-sample",
+	"description": "A language server example",
+	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "0.0.1",
-	"publisher": "pine",
+	"version": "1.0.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Microsoft/vscode-extension-samples"
 	},
+	"publisher": "vscode-samples",
+	"categories": [],
+	"keywords": [
+		"multi-root ready"
+	],
 	"engines": {
 		"vscode": "^1.43.0"
 	},
-	"dependencies": {
-		"vscode-languageclient": "^6.1.3"
+	"activationEvents": [
+		"onLanguage:pine"
+	],
+	"languages": [{
+        "id": "pine",
+        "extensions": [ ".pine", ".pn" ],
+        "aliases": [ "Pine", "pine" ]
+    }],
+	"languageServerExample.trace.server": "verbose",
+	"main": "./client/out/extension",
+	"contributes": {
+		"languages": [{
+			"id": "pine",
+			"aliases": ["Pine", "pine"],
+			"extensions": [".pine",".pn"]
+		}],
+		"grammars": [{
+			"language": "pine",
+			"scopeName": "source.pine",
+			"path": "./syntaxes/pine.tmLanguage.json"
+		}],
+		"configuration": {
+			"type": "object",
+			"title": "Example configuration",
+			"properties": {
+				"languageServerExample.maxNumberOfProblems": {
+					"scope": "resource",
+					"type": "number",
+					"default": 100,
+					"description": "Controls the maximum number of problems produced by the server."
+				},
+				"languageServerExample.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "verbose",
+					"description": "Traces the communication between VS Code and the language server."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.43.0",
-		"vscode-test": "^1.3.0"
+		"@types/mocha": "^5.2.7",
+		"mocha": "^6.2.2",
+		"@types/node": "^12.11.7",
+		"eslint": "^6.4.0",
+		"@typescript-eslint/parser": "^2.3.0",
+		"typescript": "^3.8.3"
 	}
 }

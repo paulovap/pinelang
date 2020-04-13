@@ -1,6 +1,7 @@
 import com.pinescript.core.PineEngine
 import com.pinescript.core.PineObject
 import com.pinescript.core.PineValue
+import com.pinescript.lsp.*
 import com.pinescript.lsp.ui.Label
 import com.pinescript.lsp.ui.Rectangle
 import io.ktor.util.KtorExperimentalAPI
@@ -9,7 +10,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.util.zip.CRC32
+import java.lang.Thread.sleep
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -124,7 +125,61 @@ class MainWindow : JFrame() {
     }
 }
 
+class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
+
+    var docSettings: Map<String, String> = mutableMapOf()
+    var capabilities: LSPInitializeParams? = null
+
+    var lastextScript: String = "";
+
+    override fun onInitialize(capabilities: LSPInitializeParams): LSPInitializeServerResult {
+
+        val workspaceFolders = capabilities.capabilities.workspace?.workspaceFolders == true
+        return LSPInitializeServerResult (
+            capabilities = JsonRPCServerCapabilitiesImpl(
+                textDocumentSync = TextDocumentSyncKind.Full,//TextDocumentSync(),
+                completionProvider = CompletionProvider(resolveProvider = true),
+                workspace = if(workspaceFolders) WorkspaceFoldersServerCapabilities(WorkspaceFoldersCapabilities(true)) else null
+            ),
+            serverInfo = LSPServerInfo("PineLang Server")
+        )
+    }
+
+    override fun onInitialized() {
+    }
+
+    override fun onShutdown() {
+    }
+
+    override fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): LSPDiagnostic {
+        println("$doc")
+
+        //val ast = pineEngine.compile(doc.textDocument.text)
+        return LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")
+    }
+
+    override fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic {
+        return LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")
+    }
+
+
+    override fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): LSPDiagnostic {
+        println("$didChangeTextDoc")
+        return LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")
+    }
+
+    override fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams) {
+        println("$documentCompletionParams")
+    }
+}
+
 @KtorExperimentalAPI
 fun main(argv: Array<String>) {
-    SwingUtilities.invokeLater { MainWindow().isVisible = true }
+    //SwingUtilities.invokeLater { MainWindow().isVisible = true }
+    val pineEngine = PineEngine.Builder().build()
+    val server = LSPServer(ServerImpl(pineEngine))
+    server.startServer("localhost", 8080)
+    while (true) {
+        sleep(1000)
+    }
 }

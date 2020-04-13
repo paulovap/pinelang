@@ -108,7 +108,7 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         val fb = compiler.flatBuilder
         val name = ctx!!.Identifier().text
         val callIdx =
-            types[ownerType]!!.indexOfCallable(name) ?: ctx.Identifier().throwCallableNotFound(name, "this")
+            types[ownerType]!!.indexOfCallable(name)
         return CallableExpr.createCallableExpr(fb, ownerId, callIdx.toUByte())
     }
 

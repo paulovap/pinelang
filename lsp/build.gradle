@@ -22,9 +22,6 @@ repositories {
 }
 
 kotlin {
-    experimental {
-        coroutines "enable"
-    }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -44,6 +41,7 @@ dependencies {
     // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     implementation("com.squareup.moshi:moshi:1.9.2")
+    implementation("com.squareup.moshi:moshi-adapters:1.8.0")
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-test-junit5"

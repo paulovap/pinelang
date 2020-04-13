@@ -97,25 +97,25 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
             it.signalAssignement()?.also { sigCtx ->
                 val name = sigCtx.Identifier().text
                 val id =
-                    type.indexOfSignal(name) ?: sigCtx.Identifier().throwParseException("signal $name not found")
+                    type.indexOfSignal(name)
                 val expr = expressionVisitor.reset(typeIdx, objId).visit(sigCtx.callableExpression())
                 signals.add(run {
-                    val debugNameIdx = if (debug) fb.createString(name) else -1
+                    val debugInfo: Int? = if (debug) createDebugInfo(sigCtx, name, "signalExp") else null
                     SignalExpr.startSignalExpr(fb)
                     SignalExpr.addId(fb, id.toUByte())
                     SignalExpr.addExpr(fb, expr)
-                    if (debugNameIdx != -1) SignalExpr.addDebugName(fb, debugNameIdx)
+                    debugInfo?.run { SignalExpr.addDebug(fb, debugInfo) }
                     SignalExpr.endSignalExpr(fb)
                 })
             }
         }
 
 
+        val debugInfo = if (debug) createDebugInfo(ctx, debugName, nameType) else null
+
         val childrenVec = if (children.size > 0) createChildrenVector(fb, children.toIntArray()) else -1
         val propVec = if (props.size > 0) createPropsVector(fb, props.toIntArray()) else -1
         val signalVec = if (signals.size > 0) createSignalsVector(fb, signals.toIntArray()) else -1
-        val debugNameIdx = if (debug) fb.createString(debugName) else -1
-        val nameTypeIdx = if (debug) fb.createString(nameType) else -1
 
         ObjectDefinition.startObjectDefinition(fb)
         ObjectDefinition.addId(fb, objId)
@@ -124,8 +124,7 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
         if (childrenVec != -1) ObjectDefinition.addChildren(fb, childrenVec)
         if (propVec != -1) ObjectDefinition.addProps(fb, propVec)
         if (signalVec != -1) ObjectDefinition.addSignals(fb, signalVec)
-        if (debugNameIdx != -1) ObjectDefinition.addDebugName(fb, debugNameIdx)
-        if (nameTypeIdx != -1) ObjectDefinition.addDebugType(fb, nameTypeIdx)
+        debugInfo?.run { ObjectDefinition.addDebug(fb, debugInfo) }
 
         return ObjectDefinition.endObjectDefinition(fb)
     }

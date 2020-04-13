@@ -63,11 +63,11 @@ class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: I
 
         val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
 
-        val debugNameIdx = if (debug) fb.createString(propName) else -1
+        val debugInfo = if (debug) createDebugInfo(ctx, propName, "PropertyDefinition") else null
         PropDefinition.startPropDefinition(fb)
         PropDefinition.addId(fb, propId.toUByte())
         PropDefinition.addValue(fb, exprValue)
-        if (debugNameIdx != -1) PropDefinition.addDebugName(fb, debugNameIdx)
+        debugInfo?.run { PropDefinition.addDebug(fb, debugInfo) }
         return PropDefinition.endPropDefinition(fb)
     }
 }

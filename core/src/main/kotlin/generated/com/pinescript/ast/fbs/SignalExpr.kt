@@ -31,13 +31,15 @@ class SignalExpr : Table() {
             null
         }
     }
-    val debugName : String?
-        get() {
-            val o = __offset(8)
-            return if (o != 0) __string(o + bb_pos) else null
+    val debug : com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
+    fun debug(obj: com.pinescript.ast.fbs.DebugInfo) : com.pinescript.ast.fbs.DebugInfo? {
+        val o = __offset(8)
+        return if (o != 0) {
+            obj.__assign(__indirect(o + bb_pos), bb)
+        } else {
+            null
         }
-    val debugNameAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(8, 1)
-    fun debugNameInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 8, 1)
+    }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
         fun getRootAsSignalExpr(_bb: ByteBuffer): SignalExpr = getRootAsSignalExpr(_bb, SignalExpr())
@@ -45,9 +47,9 @@ class SignalExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createSignalExpr(builder: FlatBufferBuilder, id: UByte, exprOffset: Int, debugNameOffset: Int) : Int {
+        fun createSignalExpr(builder: FlatBufferBuilder, id: UByte, exprOffset: Int, debugOffset: Int) : Int {
             builder.startTable(3)
-            addDebugName(builder, debugNameOffset)
+            addDebug(builder, debugOffset)
             addExpr(builder, exprOffset)
             addId(builder, id)
             return endSignalExpr(builder)
@@ -55,7 +57,7 @@ class SignalExpr : Table() {
         fun startSignalExpr(builder: FlatBufferBuilder) = builder.startTable(3)
         fun addId(builder: FlatBufferBuilder, id: UByte) = builder.addByte(0, id.toByte(), 0)
         fun addExpr(builder: FlatBufferBuilder, expr: Int) = builder.addOffset(1, expr, 0)
-        fun addDebugName(builder: FlatBufferBuilder, debugName: Int) = builder.addOffset(2, debugName, 0)
+        fun addDebug(builder: FlatBufferBuilder, debug: Int) = builder.addOffset(2, debug, 0)
         fun endSignalExpr(builder: FlatBufferBuilder) : Int {
             val o = builder.endTable()
             return o

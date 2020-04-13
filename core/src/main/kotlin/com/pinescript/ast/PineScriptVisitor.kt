@@ -32,9 +32,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.pinescript.ast.fbs.DebugInfo
+import com.pinescript.ast.fbs.Range
 import com.pinescript.core.PineCompiler
 import com.pinescript.core.PineScriptParseException
 import com.pinescript.parser.PineScriptBaseVisitor
+import jdk.nashorn.internal.ir.Terminal
+import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.TerminalNode
 
 open class PineScriptVisitor<T>(protected var compiler: PineCompiler, var debug: Boolean) : PineScriptBaseVisitor<T>() {
@@ -58,4 +63,25 @@ open class PineScriptVisitor<T>(protected var compiler: PineCompiler, var debug:
         throw PineScriptParseException(this, msg)
     }
 
+    fun createDebugInfo(startNode: TerminalNode, endNode: TerminalNode, name: String?, type: String?): Int =
+        createDebugInfo(startNode.symbol, endNode.symbol, name, type)
+
+
+    fun createDebugInfo(ctx: ParserRuleContext, name: String?, type: String?): Int = createDebugInfo(ctx.start, ctx.stop, name, type)
+
+    fun createDebugInfo(startToken: Token, endToken: Token, name: String?, type: String?): Int {
+
+        val rangePos = Range.createRange(fb,
+            startToken.line,
+            startToken.charPositionInLine,
+            endToken.line,
+            endToken.charPositionInLine)
+        val namePos: Int? = name?.run { fb.createString(name) }
+        val typePos: Int? = type?.run { fb.createString(type) }
+        DebugInfo.startDebugInfo(fb)
+        DebugInfo.addRange(fb, rangePos)
+        namePos?.run { DebugInfo.addDebugName(fb, namePos) }
+        typePos?.run { DebugInfo.addDebugType(fb, typePos) }
+        return DebugInfo.endDebugInfo(fb)
+    }
 }
