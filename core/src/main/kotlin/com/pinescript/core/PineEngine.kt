@@ -41,6 +41,13 @@ import com.pinescript.util.IndexedMap
 
 typealias Allocator = (Int) -> PineObject
 
+class PineItem(id: Int): PineObject(id) {
+    companion object {
+        val meta = PineMetaObject("Item") { PineItem(it) }
+    }
+
+    override fun getMeta(): PineMetaObject = meta
+}
 
 class PineMetaObject(val scriptName: String,
                           val allocator: Allocator) {
@@ -64,20 +71,20 @@ class PineMetaObject(val scriptName: String,
         }
     }
 
-    fun indexOfProp(name: String): Int = findRelative(0, propIndexEnd, name)
+    fun indexOfProp(name: String): Int? = findRelative(0, propIndexEnd, name)
 
-    fun indexOfSignal(name: String): Int = findRelative(propIndexEnd + 1, signalIndexEnd, name)
+    fun indexOfSignal(name: String): Int? = findRelative(propIndexEnd + 1, signalIndexEnd, name)
 
-    fun indexOfCallable(name: String): Int = findRelative(signalIndexEnd + 1, callableIndexEnd, name)
+    fun indexOfCallable(name: String): Int? = findRelative(signalIndexEnd + 1, callableIndexEnd, name)
 
-    fun indexOfAny(name: String): Int = findRelative(0, callableIndexEnd, name)
+    fun indexOfAny(name: String): Int? = findRelative(0, callableIndexEnd, name)
 
-    private fun findRelative(start: Int, end: Int, name: String): Int {
+    private fun findRelative(start: Int, end: Int, name: String): Int? {
         for (i in start..end) {
             if (signalNames[i] == name)
                 return i - start
         }
-        throw PineScriptException("Signal/Prop/Callable with name $name not found on $this")
+        return null
     }
 }
 
@@ -192,7 +199,7 @@ class PineEngine private constructor(
             // and allocates unnecessary. One option is to code generate, but for now we keep it
             // in runtime.
             //types["var"] = PineObject.getMeta()
-            //types["Object"] = PineObject.getMeta()
+            registerPineType(PineItem.meta)
         }
 
         fun registerPineType(meta: PineMetaObject): Builder {

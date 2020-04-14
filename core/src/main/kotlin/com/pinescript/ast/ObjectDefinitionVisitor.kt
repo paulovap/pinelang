@@ -65,8 +65,7 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
 
         // Object information
         val nameType = ctx.ObjectType().text
-        val typeIdx = types.getIndexOrNull(nameType) ?: ctx.ObjectType()
-            .throwParseException("Type $nameType not found engine")
+        val typeIdx = types.getIndexOrNull(nameType) ?: ctx.ObjectType().throwParseException("Type $nameType not found engine")
         val type = types[typeIdx]!!
         val debugName = objIdentifierCtx?.Identifier()?.text ?: ""
         val objId = compiler.generateObjectId(typeIdx, debugName)
@@ -102,7 +101,7 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
                 signals.add(run {
                     val debugInfo: Int? = if (debug) createDebugInfo(sigCtx, name, "signalExp") else null
                     SignalExpr.startSignalExpr(fb)
-                    SignalExpr.addId(fb, id.toUByte())
+                    SignalExpr.addId(fb, id!!.toUByte())
                     SignalExpr.addExpr(fb, expr)
                     debugInfo?.run { SignalExpr.addDebug(fb, debugInfo) }
                     SignalExpr.endSignalExpr(fb)

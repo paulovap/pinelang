@@ -1,5 +1,6 @@
 import com.pinescript.core.PineEngine
 import com.pinescript.core.PineObject
+import com.pinescript.core.PineScriptParseException
 import com.pinescript.core.PineValue
 import com.pinescript.lsp.*
 import com.pinescript.lsp.ui.Label
@@ -127,8 +128,7 @@ class MainWindow : JFrame() {
 
 class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
 
-    var docSettings: Map<String, String> = mutableMapOf()
-    var capabilities: LSPInitializeParams? = null
+    var docItem: TextDocumentItem? = null
 
     var lastextScript: String = "";
 
@@ -151,11 +151,23 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
     override fun onShutdown() {
     }
 
-    override fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): LSPDiagnostic {
+    override fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams {
+        docItem = doc.textDocument
         println("$doc")
+        try {
+            val ast = pineEngine.compile(doc.textDocument.text)
+            println("AST: $ast")
+        } catch (e: PineScriptParseException) {
+            e.printStackTrace()
+            println("error: ${e.message}")
+            return PublishDiagnosticsParams(
+                uri = docItem!!.uri,
+                diagnostics = listOf(LSPDiagnostic(e.toRange(), 3, severity = 1, message=e.message!!, source = "Pine Compiler")))
+        }
 
-        //val ast = pineEngine.compile(doc.textDocument.text)
-        return LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")
+        return PublishDiagnosticsParams(
+            uri = docItem!!.uri,
+            diagnostics = listOf(LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")))
     }
 
     override fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic {
@@ -163,13 +175,34 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
     }
 
 
-    override fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): LSPDiagnostic {
+    override fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams {
         println("$didChangeTextDoc")
-        return LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")
+        try {
+            val ast = pineEngine.compile(didChangeTextDoc.contentChanges[0].text)
+            println("AST: $ast")
+            return PublishDiagnosticsParams(
+                uri = docItem!!.uri,
+                diagnostics = listOf()
+            )
+        } catch (e: PineScriptParseException) {
+            e.printStackTrace()
+            println("error: ${e.message}")
+            return PublishDiagnosticsParams(
+                uri = docItem!!.uri,
+                diagnostics = listOf(LSPDiagnostic(e.toRange(), 3, severity = 1, message=e.message!!, source = "Pine Compiler"))
+                )
+        }
     }
 
     override fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams) {
         println("$documentCompletionParams")
+    }
+
+    private fun PineScriptParseException.toRange(): Range {
+        return Range(
+            Position(this.startLine -1, this.startCol),
+            Position(this.endLine -1, this.endCol + 1)
+        )
     }
 }
 

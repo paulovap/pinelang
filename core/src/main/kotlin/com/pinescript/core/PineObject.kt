@@ -82,7 +82,7 @@ open class PineProp<T>(
 
     private fun checkType(other: PineProp<*>): PineProp<*> {
         if (other.pineType != this.pineType)
-            throw PineScriptParseException("unable to bind prop $other into ${this}. Incompatible types}")
+            throw PineScriptException("unable to bind prop $other into ${this}. Incompatible types}")
         return this
     }
 
@@ -173,10 +173,10 @@ abstract class PineObject(val id: Int = -1) {
         emit(SIG_UNMOUNT)
     }
 
-    fun connect(signal: String, slot: () -> Unit): Boolean = slots.add(PineConnection(getMeta().indexOfAny(signal), slot))
-    fun disconnect(signal: String, slot: () -> Unit): Boolean = slots.remove(PineConnection(getMeta().indexOfAny(signal), slot))
+    fun connect(signal: String, slot: () -> Unit): Boolean = slots.add(PineConnection(getMeta().indexOfAny(signal)!!, slot))
+    fun disconnect(signal: String, slot: () -> Unit): Boolean = slots.remove(PineConnection(getMeta().indexOfAny(signal)!!, slot))
 
-    fun getProp(name: String): PineProp<*> = props[getMeta().indexOfProp(name)]
+    fun getProp(name: String): PineProp<*> = props[getMeta().indexOfProp(name)!!]
 
     fun dispose() {
         emitUnmount()

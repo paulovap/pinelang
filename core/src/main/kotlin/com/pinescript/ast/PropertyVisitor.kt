@@ -59,7 +59,7 @@ class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: I
 
     override fun visitPropertyDefinition(ctx: PineScript.PropertyDefinitionContext?): Int {
         val propName = ctx!!.Identifier().text
-        val propId = types[ownerType]?.indexOfProp(propName!!) ?: ctx.Identifier().throwPropNotFound(propName, types[ownerType]!!.scriptName)
+        val propId = types[ownerType]?.indexOfProp(propName!!) ?: ctx.throwPropNotFound(propName, types[ownerType]!!.scriptName)
 
         val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
 

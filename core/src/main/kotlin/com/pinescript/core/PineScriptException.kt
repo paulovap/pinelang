@@ -35,13 +35,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class PineScriptParseException(msg: String, cause: Throwable? = null) : java.lang.RuntimeException(msg, cause) {
-    constructor(node : Token, message: String = "", cause: Throwable? = null) :
-            this("\n$message at line: ${node.line} col:${node.charPositionInLine}", cause)
-    constructor(node : TerminalNode, message: String = "", cause: Throwable? = null) :
-            this("\n$message at line: ${node.symbol.line} col:${node.symbol.charPositionInLine}", cause)
-    constructor(node : TerminalNode, cause: Throwable) :
-            this("\n${cause.message} at line: ${node.symbol.line} col:${node.symbol.charPositionInLine}", cause)
+class PineScriptParseException(val startLine: Int, val startCol: Int, val endLine: Int, val endCol: Int, message: String = "", cause: Throwable? = null) :
+    RuntimeException("\n$message at line: $startLine col: $startCol", cause) {
+
+    constructor(startToken: Token, endToken: Token, message: String = "", cause: Throwable? = null):
+            this(startToken.line, startToken.charPositionInLine, endToken.line, endToken.charPositionInLine, message, cause)
 }
 
 class PineScriptException(msg: String, cause: Throwable? = null) :

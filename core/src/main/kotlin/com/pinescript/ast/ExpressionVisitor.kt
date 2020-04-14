@@ -67,22 +67,22 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
             binaryOp != null -> Expr.createExpr(fb, ExprValue.BinaryExpr, createBinaryOperationExp(binaryOp, ctx.expression(0), ctx.expression(1)))
             objPropExpr != null -> Expr.createExpr(fb, ExprValue.PropRefExpr, createPropExpr(objPropExpr))
             callExpr != null -> Expr.createExpr(fb, ExprValue.CallableExpr, visitCallableExpression(callExpr))
-            else -> throw PineScriptParseException(ctx.start, "expression not recognized")
+            else -> throw PineScriptParseException(ctx.start, ctx.stop, "expression not recognized")
         }
     }
 
     private fun createPropExpr(ctx: PineScript.ObjectPropertyExpressionContext): Int {
         val ids = ctx.Identifier()
         return if (ids.size == 1) {
-                val propId = types[ownerType]!!.indexOfProp(ids[0].text)
+                val propId = types[ownerType]!!.indexOfProp(ids[0].text)!!
                 PropRefExpr.createPropRefExpr(fb, ownerId, propId.toUByte())
             } else {
                 val objName = ids[0].text!!
                 val propName = ids[1].text!!
-                val objMeta = compiler.objectMetaData(objName) ?: ids[0].throwObjNotFound(ids[0].text)
+                val objMeta = compiler.objectMetaData(objName) ?: ctx.throwObjNotFound(ids[0].text)
                 val objType = types[objMeta.typeIdx]!!
-                val propIdx = objType.indexOfProp(propName) ?: ids[1].throwPropNotFound(ids[1].text, ids[0].text)
-                PropRefExpr.createPropRefExpr(fb, objMeta.objId, propIdx.toUByte())
+                val propIdx = objType.indexOfProp(propName)
+                PropRefExpr.createPropRefExpr(fb, objMeta.objId, propIdx!!.toUByte())
             }
     }
 
@@ -107,9 +107,8 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
     override fun visitCallableExpression(ctx: PineScript.CallableExpressionContext?): Int {
         val fb = compiler.flatBuilder
         val name = ctx!!.Identifier().text
-        val callIdx =
-            types[ownerType]!!.indexOfCallable(name)
-        return CallableExpr.createCallableExpr(fb, ownerId, callIdx.toUByte())
+        val callIdx = types[ownerType]!!.indexOfCallable(name) ?: ctx.throwCallableNotFound(name, "this")
+        return CallableExpr.createCallableExpr(fb, ownerId, callIdx!!.toUByte())
     }
 
     /*
@@ -142,7 +141,7 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
                 PrimitiveType.Double,
                 ctx.FloatLiteral().text.toDouble(), 0
             )
-            else -> throw PineScriptParseException(ctx.start, "failed to parse primitive expression")
+            else -> throw PineScriptParseException(ctx.start, ctx.stop, "failed to parse primitive expression")
         }
     }
 
@@ -162,7 +161,7 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
             this.REMAINDER() != null -> BinaryOp.REMAINDER
             this.AND() != null -> BinaryOp.AND
             this.OR() != null -> BinaryOp.OR
-            else -> throw PineScriptException("operator $this not recognized")
+            else -> throw PineScriptParseException(this.start, this.stop, "operator $this not recognized")
         }
     }
 }

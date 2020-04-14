@@ -44,7 +44,7 @@
 					"name": "keyword.control.untitled.pine"
 				}
 			},
-			"end": ";?\\s*\\n",
+			"end": "[;\\n]",
 			"endCaptures": {
 				"1": {
 					"name": "variable.language.pine"
@@ -53,10 +53,6 @@
 			"patterns":[
 				{
 					"include": "#identifier"
-				},
-				{
-					"match": ".*",
-					"name": "invalid.illegal.character.escape.pine"
 				}
 			]
 		},

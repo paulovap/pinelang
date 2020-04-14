@@ -22,7 +22,7 @@ enum class LSPMethod(val method: String, val paramType: Class<*>) {
     TextDocumentDocumentSymbol("textDocument/documentSymbol", TextDocumentDocumentSymbolParams::class.java),
     TextDocumentCompletion("textDocument/completion", TextDocumentCompletionParams::class.java),
     Shutdown("shutdown", LSPEmptyParams::class.java),
-    PublishDiagnotics("textDocument/publishDiagnostic", LSPDiagnostic::class.java);
+    PublishDiagnotics("textDocument/publishDiagnostics", LSPDiagnostic::class.java);
 
     companion object {
         fun fromMethod(method: String): LSPMethod {
@@ -35,9 +35,9 @@ interface LSPDelegate {
     fun onInitialize(capabilities: LSPInitializeParams): LSPInitializeServerResult
     fun onInitialized()
     fun onShutdown()
-    fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): LSPDiagnostic
+    fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams
     fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic
-    fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): LSPDiagnostic
+    fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams
     fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams)
 }
 
@@ -118,17 +118,18 @@ class LSPServer(private val delegate: LSPDelegate) {
                         null
                     }
                     LSPMethod.TextDocumentDidOpen -> {
-                        //val diag = delegate.onTextDocumentDidOpen(request.params as TextDocumentDidOpenParams)
-                        //val notify = JsonRPCNotification()
-                        null
+                        val note = delegate.onTextDocumentDidOpen(request.params as TextDocumentDidOpenParams)
+                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
                     }
                     LSPMethod.TextDocumentDidChange -> {
                         val note = delegate.onTextDocumentDidChange(request.params as TextDocumentDidChangeParams)
                         jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
                     }
                     LSPMethod.TextDocumentDocumentSymbol -> {
-                        val note = delegate.onTextDocumentDocumentSymbol(request.params as TextDocumentDocumentSymbolParams)
-                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+//                        val note = delegate.onTextDocumentDocumentSymbol(request.params as TextDocumentDocumentSymbolParams)
+//                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                        val response = LSPResponse(request.id, null,null)
+                        jsonRpc(responseAdapter.toJson(response))
                     }
                     LSPMethod.TextDocumentCompletion -> {
                         delegate.onTextDocumentCompletion(request.params as TextDocumentCompletionParams); null
@@ -141,6 +142,8 @@ class LSPServer(private val delegate: LSPDelegate) {
 
             }
         } catch (e: java.lang.Exception) {
+            println("pvvpvp")
+            e.printStackTrace()
             jsonRpc(responseAdapter.toJson(LSPResponse(request.id, null, ResponseError(ErrorCode.MethodNotFound), request.jsonrpc)))
         }
         println("response: $responseData\n")

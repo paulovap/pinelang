@@ -82,7 +82,17 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
     private val baseErrorListener = object: BaseErrorListener() {
         override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
                                  charPositionInLine: Int, msg: String, e: RecognitionException?) {
-            throw PineScriptParseException("syntax error: line $line:$charPositionInLine $msg")
+            if (offendingSymbol is CommonToken) {
+                throw PineScriptParseException(
+                    offendingSymbol.line,
+                    offendingSymbol.charPositionInLine,
+                    offendingSymbol.line,
+                    offendingSymbol.charPositionInLine,
+                    msg
+                )
+            } else {
+                throw PineScriptException("syntax error: line $line:$charPositionInLine $msg")
+            }
         }
     }
 

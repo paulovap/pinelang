@@ -1,5 +1,8 @@
 package com.pinescript.lsp
 
+/**
+ * Selection range for a document. End position is exclusive
+ */
 data class Range(
     val start: Position,
     val end: Position
@@ -20,6 +23,23 @@ data class DiagnosticRelatedInformation(
      * The message of this related diagnostic information.
      */
     val message: String
+)
+
+data class PublishDiagnosticsParams (
+    /**
+     * The URI for which diagnostic information is reported.
+     */
+    val uri: String,
+    /**
+     * Optional the version number of the document the diagnostics are published for.
+     *
+     * @since 3.15.0
+     */
+    val version: Double? = null,
+    /**
+     * An array of diagnostic information items.
+     */
+    val diagnostics: List<LSPDiagnostic>
 )
 
 data class LSPDiagnostic(

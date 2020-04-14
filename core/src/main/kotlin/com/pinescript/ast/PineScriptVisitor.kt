@@ -37,7 +37,6 @@ import com.pinescript.ast.fbs.Range
 import com.pinescript.core.PineCompiler
 import com.pinescript.core.PineScriptParseException
 import com.pinescript.parser.PineScriptBaseVisitor
-import jdk.nashorn.internal.ir.Terminal
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.TerminalNode
@@ -47,20 +46,24 @@ open class PineScriptVisitor<T>(protected var compiler: PineCompiler, var debug:
     val types = compiler.types
     val fb = compiler.flatBuilder
 
-    fun TerminalNode.throwPropNotFound(propName: String, objName: String): Nothing {
-        throw PineScriptParseException(this, "prop $propName on object $objName not found")
+    fun ParserRuleContext.throwPropNotFound(propName: String, objName: String): Nothing {
+        throw PineScriptParseException(this.start, this.stop, "prop $propName on object $objName not found")
     }
 
-    fun TerminalNode.throwCallableNotFound(callableName: String, objName: String): Nothing {
-        throw PineScriptParseException(this, "callable $callableName on object $objName not found")
+    fun ParserRuleContext.throwCallableNotFound(callableName: String, objName: String): Nothing {
+        throw PineScriptParseException(this.start, this.stop,  "callable $callableName on object $objName not found")
     }
 
-    fun TerminalNode.throwObjNotFound(objName: String): Nothing {
-        throw PineScriptParseException(this, "object with identifier $objName not found")
+    fun ParserRuleContext.throwObjNotFound(objName: String): Nothing {
+        throw PineScriptParseException(this.start, this.stop,  "object with identifier $objName not found")
+    }
+
+    fun ParserRuleContext.throwParseException(msg: String): Nothing {
+        throw PineScriptParseException(this.start, this.stop, msg)
     }
 
     fun TerminalNode.throwParseException(msg: String): Nothing {
-        throw PineScriptParseException(this, msg)
+        throw PineScriptParseException(this.symbol.line, this.symbol.startIndex, this.symbol.line, this.symbol.stopIndex, msg)
     }
 
     fun createDebugInfo(startNode: TerminalNode, endNode: TerminalNode, name: String?, type: String?): Int =
