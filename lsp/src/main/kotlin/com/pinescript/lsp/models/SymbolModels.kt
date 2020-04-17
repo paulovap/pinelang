@@ -1,4 +1,4 @@
-package com.pinescript.lsp
+package com.pinescript.lsp.models
 
 enum class SymbolKind(val value: Int) {
     File(1),

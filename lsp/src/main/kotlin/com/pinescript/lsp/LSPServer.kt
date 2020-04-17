@@ -1,6 +1,7 @@
 package com.pinescript.lsp
 
 import com.pinescript.lsp.LSPMethod.Companion.fromMethod
+import com.pinescript.lsp.models.*
 import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.network.selector.ActorSelectorManager
@@ -38,7 +39,7 @@ interface LSPDelegate {
     fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams
     fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic
     fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams
-    fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams)
+    fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams): LSPCompletionList
 }
 
 fun jsonRPCHeader(data: String): JsonRPCHeader {
@@ -132,7 +133,8 @@ class LSPServer(private val delegate: LSPDelegate) {
                         jsonRpc(responseAdapter.toJson(response))
                     }
                     LSPMethod.TextDocumentCompletion -> {
-                        delegate.onTextDocumentCompletion(request.params as TextDocumentCompletionParams); null
+                        val response = delegate.onTextDocumentCompletion(request.params as TextDocumentCompletionParams)
+                        jsonRpc(responseAdapter.toJson(LSPResponse(request.id, response,null)))
                     }
                    LSPMethod.Shutdown -> {
                         delegate.onShutdown(); null

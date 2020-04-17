@@ -1,4 +1,4 @@
-package com.pinescript.lsp
+package com.pinescript.lsp.models
 
 data class TextDocumentDidOpenParams(val textDocument: TextDocumentItem)
 
@@ -108,4 +108,68 @@ data class CompletionContext (
      */
     val triggerCharacter: String?
 )
+
+fun String.charIndexAtPosition(pos: Position): Int? {
+    var lineRemaining = 0
+    forEachIndexed { i, it ->
+        if (it == '\n') {
+            lineRemaining++
+        }
+
+        if (lineRemaining == pos.line) {
+            val index = i + pos.character
+            return if (index < length) index else null
+        }
+    }
+    return null
+}
+
+fun String.getWordAtPosition(pos: Position): String? {
+    val charPos = this.charIndexAtPosition(pos) ?: return null
+    val pattern = Regex("\\w+")
+    var startIndex = 0
+
+    while (true) {
+        val match = pattern.find(this, startIndex) ?: return null
+
+        if (charPos >= match.range.first && charPos <= match.range.last) {
+            return match.value
+        }
+        startIndex = match.range.last + 1
+    }
+}
+
+fun String.getNextWordToRight(charPos: Int): String? {
+    val pattern = Regex("\\w+")
+    var lastMatch: String? = null
+    var match = pattern.find(this, 0) ?: return null
+    while (true) {
+        lastMatch = when {
+            match.range.last == charPos -> return match.value
+            match.range.last <= charPos -> match.value
+            else -> return lastMatch
+        }
+
+        match = match.next() ?: return null
+    }
+}
+
+/**
+ * If position is inside a object delimited by Type { .. }
+ * This function will return the object type.
+ */
+fun String.getObjectTypeEnclosingPosition(pos: Position): String? {
+    var charPos =  this.charIndexAtPosition(pos) ?: return null
+    var bracketBalance = 0
+    while (charPos >= 0) {
+        val c = this[charPos]
+        when {
+            c == '{' && bracketBalance == 0 -> return getNextWordToRight(charPos-1)
+            c == '{' && bracketBalance != 0 -> bracketBalance++
+            c == '}' -> bracketBalance--
+        }
+        charPos--
+    }
+    return null
+}
 

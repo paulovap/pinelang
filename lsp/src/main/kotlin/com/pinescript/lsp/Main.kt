@@ -3,6 +3,7 @@ import com.pinescript.core.PineObject
 import com.pinescript.core.PineScriptParseException
 import com.pinescript.core.PineValue
 import com.pinescript.lsp.*
+import com.pinescript.lsp.models.*
 import com.pinescript.lsp.ui.Label
 import com.pinescript.lsp.ui.Rectangle
 import io.ktor.util.KtorExperimentalAPI
@@ -33,7 +34,7 @@ are met:
 2. Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-3. Neither the name of Tom Everett nor the names of its contributors
+3. Neither the name of Paulo Pinheiro nor the names of its contributors
    may be used to endorse or promote products derived from this software
    without specific prior written permission.
 
@@ -130,79 +131,126 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
 
     var docItem: TextDocumentItem? = null
 
-    var lastextScript: String = "";
-
     override fun onInitialize(capabilities: LSPInitializeParams): LSPInitializeServerResult {
 
         val workspaceFolders = capabilities.capabilities.workspace?.workspaceFolders == true
-        return LSPInitializeServerResult (
+        return LSPInitializeServerResult(
             capabilities = JsonRPCServerCapabilitiesImpl(
                 textDocumentSync = TextDocumentSyncKind.Full,//TextDocumentSync(),
                 completionProvider = CompletionProvider(resolveProvider = true),
-                workspace = if(workspaceFolders) WorkspaceFoldersServerCapabilities(WorkspaceFoldersCapabilities(true)) else null
+                workspace = if (workspaceFolders) WorkspaceFoldersServerCapabilities(WorkspaceFoldersCapabilities(true)) else null
             ),
             serverInfo = LSPServerInfo("PineLang Server")
         )
     }
 
-    override fun onInitialized() {
-    }
-
-    override fun onShutdown() {
-    }
+    override fun onInitialized() {}
+    override fun onShutdown() {}
 
     override fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams {
         docItem = doc.textDocument
-        println("$doc")
-        try {
-            val ast = pineEngine.compile(doc.textDocument.text)
-            println("AST: $ast")
-        } catch (e: PineScriptParseException) {
-            e.printStackTrace()
-            println("error: ${e.message}")
-            return PublishDiagnosticsParams(
-                uri = docItem!!.uri,
-                diagnostics = listOf(LSPDiagnostic(e.toRange(), 3, severity = 1, message=e.message!!, source = "Pine Compiler")))
-        }
-
-        return PublishDiagnosticsParams(
-            uri = docItem!!.uri,
-            diagnostics = listOf(LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")))
+        return generateDiagnostic(doc.textDocument.text)
     }
 
     override fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic {
-        return LSPDiagnostic(Range(Position(0, 0), Position(0, 0)), 3, "")
+        return LSPDiagnostic(
+            Range(
+                Position(0, 0),
+                Position(0, 0)
+            ), 3, ""
+        )
     }
 
 
     override fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams {
         println("$didChangeTextDoc")
-        try {
-            val ast = pineEngine.compile(didChangeTextDoc.contentChanges[0].text)
-            println("AST: $ast")
-            return PublishDiagnosticsParams(
-                uri = docItem!!.uri,
-                diagnostics = listOf()
-            )
-        } catch (e: PineScriptParseException) {
-            e.printStackTrace()
-            println("error: ${e.message}")
-            return PublishDiagnosticsParams(
-                uri = docItem!!.uri,
-                diagnostics = listOf(LSPDiagnostic(e.toRange(), 3, severity = 1, message=e.message!!, source = "Pine Compiler"))
-                )
-        }
+        docItem = docItem?.copy(text = didChangeTextDoc.contentChanges[0].text)
+        return generateDiagnostic(didChangeTextDoc.contentChanges[0].text)
     }
 
-    override fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams) {
-        println("$documentCompletionParams")
+    override fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams): LSPCompletionList {
+        println("onTextDocumentCompletion")
+        val text = docItem!!.text
+        val incomplete = text.getWordAtPosition(documentCompletionParams.position) ?: ""
+        val objType = text.getObjectTypeEnclosingPosition(documentCompletionParams.position)
+
+        val propertyCompletionList = objType?.run {
+            val type = pineEngine.types[objType] ?: return@run null
+            (type.propNames() + listOf("id"))
+                .filter { it != "children" }
+                .filter { it.contains(incomplete) }
+                .map {
+                    CompletionItem(
+                        label = it,
+                        insertText = "$it:",
+                        detail = "Property",
+                        kind = CompletionItemKind.Field.value
+                    )
+                } +
+                    type.signalNames()
+                        .filter { it.contains(incomplete) }
+                        .map {
+                            CompletionItem(
+                                label = it,
+                                insertText = "on $it:",
+                                detail = "Signal",
+                                kind = CompletionItemKind.Event.value
+                            )
+                        } +
+                    type.callableNames()
+                        .filter { it.contains(incomplete) }
+                        .map {
+                            CompletionItem(
+                                label = it,
+                                insertText = "$it()",
+                                detail = "Function",
+                                kind = CompletionItemKind.Function.value
+                            )
+                        }
+        } ?: listOf()
+
+        val objCompletionList = pineEngine.compiler.types.index.keys
+            .filter { it.contains(incomplete) }
+            .map {
+                CompletionItem(
+                    label = "$it {",
+                    detail = "Type",
+                    kind = CompletionItemKind.Class.value
+                )
+            }
+        return LSPCompletionList(isIncomplete = false, items = propertyCompletionList + objCompletionList)
     }
 
     private fun PineScriptParseException.toRange(): Range {
         return Range(
-            Position(this.startLine -1, this.startCol),
-            Position(this.endLine -1, this.endCol + 1)
+            Position(this.startLine - 1, this.startCol),
+            Position(this.endLine - 1, this.endCol + 1)
         )
+    }
+
+    private fun generateDiagnostic(script: String): PublishDiagnosticsParams {
+        return try {
+            val ast = pineEngine.compile(script)
+            println("AST: $ast")
+            PublishDiagnosticsParams(
+                uri = docItem!!.uri,
+                diagnostics = listOf()
+            )
+        } catch (e: PineScriptParseException) {
+            println("error: ${e.message}")
+            PublishDiagnosticsParams(
+                uri = docItem!!.uri,
+                diagnostics = listOf(
+                    LSPDiagnostic(
+                        e.toRange(),
+                        3,
+                        severity = 1,
+                        message = e.message!!,
+                        source = "Pine Compiler"
+                    )
+                )
+            )
+        }
     }
 }
 

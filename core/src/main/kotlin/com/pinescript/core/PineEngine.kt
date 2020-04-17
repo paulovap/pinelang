@@ -13,7 +13,7 @@ are met:
 2. Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-3. Neither the name of Tom Everett nor the names of its contributors
+3. Neither the name of Paulo Pinheiro nor the names of its contributors
    may be used to endorse or promote products derived from this software
    without specific prior written permission.
 
@@ -51,7 +51,7 @@ class PineItem(id: Int): PineObject(id) {
 
 class PineMetaObject(val scriptName: String,
                           val allocator: Allocator) {
-    val signalNames: Array<String>
+    val allNames: Array<String>
     private val propIndexEnd: Int
     private val signalIndexEnd: Int
     private val callableIndexEnd: Int
@@ -62,7 +62,7 @@ class PineMetaObject(val scriptName: String,
         signalIndexEnd = propIndexEnd + pineObj.signals.size
         callableIndexEnd = signalIndexEnd + pineObj.callables.size
 
-        signalNames = Array(callableIndexEnd + 1) {
+        allNames = Array(callableIndexEnd + 1) {
             when {
                 it <= propIndexEnd -> pineObj.props[it].getScriptName()
                 it <= signalIndexEnd -> pineObj.signals[it - propIndexEnd -1].getScriptName()
@@ -70,6 +70,10 @@ class PineMetaObject(val scriptName: String,
             }
         }
     }
+
+    fun propNames(): List<String> = allNames.slice(0..propIndexEnd)
+    fun signalNames(): List<String> = allNames.slice((propIndexEnd + 1)..signalIndexEnd)
+    fun callableNames(): List<String> = allNames.slice((signalIndexEnd + 1)..callableIndexEnd)
 
     fun indexOfProp(name: String): Int? = findRelative(0, propIndexEnd, name)
 
@@ -81,7 +85,7 @@ class PineMetaObject(val scriptName: String,
 
     private fun findRelative(start: Int, end: Int, name: String): Int? {
         for (i in start..end) {
-            if (signalNames[i] == name)
+            if (allNames[i] == name)
                 return i - start
         }
         return null

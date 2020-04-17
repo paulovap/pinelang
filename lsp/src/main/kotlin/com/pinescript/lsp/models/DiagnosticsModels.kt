@@ -1,4 +1,4 @@
-package com.pinescript.lsp
+package com.pinescript.lsp.models
 
 /**
  * Selection range for a document. End position is exclusive
