@@ -1,13 +1,4 @@
-package com.pinescript.lsp.ui
-
-import com.pinescript.core.PineMetaObject
-import com.pinescript.core.boolProp
-import com.pinescript.core.stringProp
-import com.pinescript.util.toIndexMap
-import java.awt.Color
-import java.awt.Dimension
-import javax.swing.JLabel
-
+package com.pinescript.lsp.sandbox.ui
 
 /*
 BSD License
@@ -41,46 +32,55 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class Label(id: Int) : Item(id) {
+import com.pinescript.core.*
+import com.pinescript.util.toIndexMap
+import java.awt.Color
+import javax.swing.JPanel
+
+class Rectangle(id: Int) : PineObject(id) {
 
     companion object {
-        val meta = PineMetaObject("Label") { Label(it) }
+        val meta = PineMetaObject("Rectangle") { Rectangle(it) }
     }
 
-    val label = JLabel("oh my god")
+    val panel = JPanel(null)
 
-    var text: String by stringProp(::text, initialValue = "")
+    var x: Int by intProp(::x, initialValue = 1)
+    var y: Int by intProp(::y, initialValue = 1)
+    var width: Int by intProp(::width, initialValue = 50)
+    var height: Int by intProp(::height, initialValue = 50)
     var visible: Boolean by boolProp(::visible, initialValue = true)
-    val color: String by stringProp(::color, initialValue = "#000000")
-
-    override fun getMeta(): PineMetaObject = meta
+    val color: String by stringProp(::color, initialValue = "#ffffff")
 
     init {
         connect("x") { resizeSlot() }
         connect("y") { resizeSlot() }
         connect("width") { resizeSlot() }
-        connect("text") { resizeSlot() }
+        connect("height") { resizeSlot() }
         connect("visible") { resizeSlot() }
-        connect("color") { resizeSlot() }
+        connect("color")  { panel.background = Color.decode(color) }
 
-        resizeSlot()
+        panel.background = Color.decode(color)
+
 
         connect("children") {
-            label.removeAll()
+            panel.removeAll()
             for (child in children) {
                 if (child is Rectangle) {
-                    label.add(child.panel)
+                    panel.add(child.panel)
+                }
+                if (child is Label) {
+                    panel.add(child.label)
                 }
             }
         }
+        resizeSlot()
     }
 
+    override fun getMeta(): PineMetaObject = meta
+
     private fun resizeSlot() {
-        label.foreground = Color.decode(color)
-        label.text = text
-        label.size = Dimension(width, height)
-//        label.size = label.preferredSize
-        label.setLocation(x, y)
-        label.isVisible = visible
+        panel.bounds = java.awt.Rectangle(x, y, width, height)
+        panel.isVisible = visible
     }
 }

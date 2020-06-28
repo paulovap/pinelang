@@ -39,6 +39,7 @@ import com.pinescript.parser.PineLexer
 import com.pinescript.parser.PineScript
 import com.pinescript.util.IndexedMap
 import org.antlr.v4.runtime.*
+import org.antlr.v4.runtime.atn.PredictionMode
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -107,7 +108,7 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
 
             val tokens = CommonTokenStream(lexer)
             val parser = PineScript(tokens)
-
+            parser.interpreter.predictionMode = PredictionMode.SLL;
             parser.removeErrorListeners()
             parser.addErrorListener(baseErrorListener)
 

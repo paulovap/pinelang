@@ -57,7 +57,7 @@ class PineMetaObject(val scriptName: String,
     private val callableIndexEnd: Int
 
     init {
-        val pineObj = allocator(-1)
+        val pineObj = allocator(PineObject.INVALID_ID)
         propIndexEnd = pineObj.props.size -1
         signalIndexEnd = propIndexEnd + pineObj.signals.size
         callableIndexEnd = signalIndexEnd + pineObj.callables.size
@@ -203,7 +203,7 @@ class PineEngine private constructor(
             // and allocates unnecessary. One option is to code generate, but for now we keep it
             // in runtime.
             //types["var"] = PineObject.getMeta()
-            registerPineType(PineItem.meta)
+            //registerPineType(PineItem.meta)
         }
 
         fun registerPineType(meta: PineMetaObject): Builder {

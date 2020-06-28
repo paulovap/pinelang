@@ -4,7 +4,6 @@ import com.pinescript.ast.fbs.ObjectDefinition
 import com.pinescript.ast.fbs.PropDefinition
 import com.pinescript.ast.fbs.SignalExpr
 import com.pinescript.core.*
-import io.ktor.util.KtorExperimentalAPI
 import java.lang.Thread.sleep
 import kotlin.system.measureTimeMillis
 
@@ -58,9 +57,8 @@ class Item(id: Int) : PineObject(id) {
 }
 
 
-@KtorExperimentalAPI
 fun main() {
-    //val engine = PineEngine.Builder().registerPineType(Item.meta).build()
+    val engine = PineEngine.Builder().registerPineType(Item.meta).build()
     val script = """
         Item { id: test; int1: 20
             //on mount: printHello()
@@ -171,7 +169,7 @@ fun main() {
     //val obj = engine.load(script, true) as Item
 //    println(obj.a)
 //    obj.dispose()
-//    benchmarkWhole(script, engine)
+    benchmarkWhole(script, engine)
     //println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
     //benchmark(script, engine)
     //benchmarkWalk(script, engine)
@@ -191,8 +189,8 @@ fun main() {
 //        sleep(1000)
 //    }
 //    println(obj)
-    val myList = (0..10000).map { it }.toList()
-    myList.forEach { println(it) }
+//    val myList = (0..10000).map { it }.toList()
+//    myList.forEach { println(it) }
 }
 
 fun benchmarkWhole(script: String, engine: PineEngine) {

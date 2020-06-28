@@ -123,8 +123,8 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
 
     override fun visitPrimitiveExpression(ctx: PineScript.PrimitiveExpressionContext?): Int {
         return when {
-            ctx!!.TRUE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 0.0, 0)
-            ctx.FALSE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 1.0, 0)
+            ctx!!.TRUE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 1.0, 0)
+            ctx.FALSE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 0.0, 0)
             ctx.stringLiteral() != null -> createPrimitiveExpr(
                 fb,
                 PrimitiveType.String,

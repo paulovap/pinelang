@@ -1,8 +1,3 @@
-buildscript {
-    ext.kotlin_version = '1.3.71'
-    ext.ktor_version = '1.3.2'
-}
-
 plugins {
     id 'java'
     id 'antlr'
@@ -32,10 +27,10 @@ kotlin {
 dependencies {
 
     // Ktor
-    implementation "io.ktor:ktor:$ktor_version"
-    implementation "io.ktor:ktor-server-netty:$ktor_version"
-    implementation "io.ktor:ktor-gson:$ktor_version"
-    implementation "io.ktor:ktor-network:$ktor_version"
+//    implementation "io.ktor:ktor:$ktor_version"
+//    implementation "io.ktor:ktor-server-netty:$ktor_version"
+//    implementation "io.ktor:ktor-gson:$ktor_version"
+//    implementation "io.ktor:ktor-network:$ktor_version"
     // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     implementation("com.squareup.moshi:moshi:1.9.2")

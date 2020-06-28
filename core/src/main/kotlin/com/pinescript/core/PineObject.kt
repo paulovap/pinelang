@@ -122,6 +122,7 @@ abstract class PineObject(val id: Int = -1) {
     companion object  {
         const val SIG_MOUNT = "mount"
         const val SIG_UNMOUNT = "unmount"
+        const val INVALID_ID = Int.MIN_VALUE
     }
 
     // All "events" that can be fired by an object to a script
@@ -173,7 +174,13 @@ abstract class PineObject(val id: Int = -1) {
         emit(SIG_UNMOUNT)
     }
 
-    fun connect(signal: String, slot: () -> Unit): Boolean = slots.add(PineConnection(getMeta().indexOfAny(signal)!!, slot))
+    fun connect(signal: String, slot: () -> Unit): Boolean {
+        if (id != INVALID_ID) {
+            return slots.add(PineConnection(getMeta().indexOfAny(signal)!!, slot))
+        }
+        return false
+    }
+
     fun disconnect(signal: String, slot: () -> Unit): Boolean = slots.remove(PineConnection(getMeta().indexOfAny(signal)!!, slot))
 
     fun getProp(name: String): PineProp<*> = props[getMeta().indexOfProp(name)!!]

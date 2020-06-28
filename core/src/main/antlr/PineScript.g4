@@ -43,7 +43,7 @@ options { tokenVocab = PineLexer; }
 ///////////////////////////
 
 program
-    : rootMember
+    : rootMember EOF
     ;
 
 rootMember
