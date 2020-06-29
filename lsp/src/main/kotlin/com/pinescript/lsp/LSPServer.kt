@@ -110,13 +110,13 @@ class LSPServer(private val delegate: LSPDelegate) {
             .build()
 
     private fun jsonRPCRequest(data: String): JsonRPCRequest {
-        val adapter = moshi.adapter(JsonRPCRequest::class.java)
+        val adapter = moshi.adapter(JsonRPCRequest::class.java).lenient()
         return adapter.fromJson(data)!!
     }
 
     private fun handleRequest(request: JsonRPCRequest, output: ChannelHandlerContext) {
-        val responseAdapter = moshi.adapter(LSPResponse::class.java).serializeNulls()
-        val notifyAdapter = moshi.adapter(LSPNotification::class.java)
+        val responseAdapter = moshi.adapter(LSPResponse::class.java).serializeNulls().lenient()
+        val notifyAdapter = moshi.adapter(LSPNotification::class.java).lenient()
         val responseData: String? = try {
             if (!initialized && request.method != "initialize") {
                 com.pinescript.lsp.models.jsonRpc(responseAdapter.toJson(LSPResponse(
@@ -346,7 +346,7 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
                             }
         } ?: listOf()
 
-        val objCompletionList = pineEngine.compiler.types.index.keys
+        val objCompletionList = pineEngine.types.index.keys
                 .filter { it.contains(incomplete) }
                 .map {
                     CompletionItem(

@@ -81,7 +81,7 @@ class MainWindow(val engine: PineEngine, enableEditor: Boolean) : JFrame() {
         try {
             root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
             root?.dispose()
-            val loadTime = measureTimeMillis { root = engine.load(text) }
+            root = engine.load(text)
             outputPanel.removeAll()
             outputPanel.add((root as Rectangle).panel)
             outputPanel.repaint()

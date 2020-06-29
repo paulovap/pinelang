@@ -166,20 +166,21 @@ fun main() {
             Item{ int1: test.int1 + 20; on mount: helloText() }
         }
     """.trimIndent()
-    //val obj = engine.load(script, true) as Item
+     //val obj = engine.load(script, true) as Item
 //    println(obj.a)
 //    obj.dispose()
-    benchmarkWhole(script, engine)
+ //   benchmarkWhole(script, engine)
     //println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
     //benchmark(script, engine)
     //benchmarkWalk(script, engine)
-//    val program = engine.compile(script, false)
-//    val releaseBytes = engine.compiler.flatBuilder.sizedByteArray()
-//    val programDebug = engine.compile(script, true)
-//    val debugBytes = engine.compiler.flatBuilder.sizedByteArray()
-//    println("scriptSize ${script.toByteArray().size/1024} kb")
-//    println("compiledSize ${releaseBytes.size/1024} kb")
-//    println("compiledSizeDebug ${debugBytes.size/1024} kb")
+    val compiler = PineCompiler(engine.types)
+    val program = compiler.compile(script, false)
+    val releaseBytes = compiler.flatBuilder.sizedByteArray()
+    val programDebug = compiler.compile(script, true)
+    val debugBytes = compiler.flatBuilder.sizedByteArray()
+    println("scriptSize ${script.toByteArray().size/1024} kb")
+    println("compiledSize ${releaseBytes.size/1024} kb")
+    println("compiledSizeDebug ${debugBytes.size/1024} kb")
 //    println(measureTimeMillis {
 //        repeat(times) {
 //            engine.compile(script)

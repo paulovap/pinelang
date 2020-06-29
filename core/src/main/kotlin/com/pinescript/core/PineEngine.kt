@@ -41,13 +41,6 @@ import com.pinescript.util.IndexedMap
 
 typealias Allocator = (Int) -> PineObject
 
-class PineItem(id: Int): PineObject(id) {
-    companion object {
-        val meta = PineMetaObject("Item") { PineItem(it) }
-    }
-
-    override fun getMeta(): PineMetaObject = meta
-}
 
 class PineMetaObject(val scriptName: String,
                           val allocator: Allocator) {
@@ -98,14 +91,13 @@ class PineEngine private constructor(
     val dpCalculator: (Int) -> Int) {
 
     private val rootContext: PineContext = PineContext()
-    val compiler: PineCompiler = PineCompiler(types)
 
     fun load(script: String, debugSymbol: Boolean = false): PineObject {
-        return eval(compiler.compile(script, debugSymbol))
+        return eval(PineCompiler(types).compile(script, debugSymbol))
     }
 
     fun compile(script: String, keepDebugSymbols: Boolean = false): Program {
-        return compiler.compile(script, keepDebugSymbols)
+        return PineCompiler(types).compile(script, keepDebugSymbols)
     }
 
     fun eval(program: Program): PineObject {
@@ -161,7 +153,7 @@ class PineEngine private constructor(
                 BOOL -> of(primitiveExpr.value.toInt() > 0)
                 DOUBLE -> of(primitiveExpr.value)
                 STRING -> of(primitiveExpr.stringValue!!)
-                else -> throw PineScriptException("Unable to eval primitive expr $primitiveExpr")
+                else -> throw PineScriptException("Unable to eval primitive expr ${PrimitiveType.name(primitiveExpr.type.toInt())}")
         }
     }
 
@@ -181,17 +173,17 @@ class PineEngine private constructor(
 
     private fun evalPropertyReferenceExp(propRefExpr: PropRefExpr): PineProp<*> {
         val otherObj = rootContext[propRefExpr.objId]!!
-        return otherObj.props[propRefExpr.propId.toInt()]!!
+        return otherObj.props[propRefExpr.propId.toInt()]
     }
 
     private fun <T: PineObject> evalSignal(obj: T, sigExpr: SignalExpr) {
-        val signal = obj.signals[sigExpr.id.toInt()]!!
+        val signal = obj.signals[sigExpr.id.toInt()]
         signal.connect { evalCallableExpression(sigExpr.expr!!)() }
     }
 
     private fun evalCallableExpression(expr: CallableExpr): PineValue<*> {
         val otherObj = rootContext.refs[expr.objId]!!
-        return otherObj.callables[expr.callIdx.toInt()]!!
+        return otherObj.callables[expr.callIdx.toInt()]
     }
 
     class Builder {

@@ -32,6 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.fbs.PropDefinition
 import com.pinescript.core.*
 import com.pinescript.parser.PineScript

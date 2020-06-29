@@ -23,9 +23,9 @@ public class PineScript extends Parser {
 		NULL=9, TRUE=10, FALSE=11, EQ=12, LBRACKET=13, RBRACKET=14, AND_AND=15, 
 		OR_OR=16, QUESTION=17, SEMICOLON=18, COLON=19, LBRACE=20, RBRACE=21, RETURN=22, 
 		IMPORT=23, PLUS=24, MINUS=25, MULTI=26, DIV=27, REMAINDER=28, AND=29, 
-		OR=30, DOUBLE_QUOTE_OPEN=31, Identifier=32, ObjectType=33, IntegerLiteral=34, 
-		FloatLiteral=35, DOUBLE_QUOTE_CLOSE=36, DoubleQuoteString=37, WS=38, COMMENT=39, 
-		LINE_COMMENT=40, LineTerminator=41;
+		OR=30, Identifier=31, ObjectType=32, DOUBLE_QUOTE_OPEN=33, DOUBLE_QUOTE_CLOSE=34, 
+		STRING=35, IntegerLiteral=36, FloatLiteral=37, WS=38, COMMENT=39, LINE_COMMENT=40, 
+		LineTerminator=41;
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
 		RULE_objectIdentifier = 4, RULE_objectMember = 5, RULE_signalAssignement = 6, 
@@ -57,8 +57,8 @@ public class PineScript extends Parser {
 			"COMMA", "NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", 
 			"OR_OR", "QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", 
 			"IMPORT", "PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR", 
-			"DOUBLE_QUOTE_OPEN", "Identifier", "ObjectType", "IntegerLiteral", "FloatLiteral", 
-			"DOUBLE_QUOTE_CLOSE", "DoubleQuoteString", "WS", "COMMENT", "LINE_COMMENT", 
+			"Identifier", "ObjectType", "DOUBLE_QUOTE_OPEN", "DOUBLE_QUOTE_CLOSE", 
+			"STRING", "IntegerLiteral", "FloatLiteral", "WS", "COMMENT", "LINE_COMMENT", 
 			"LineTerminator"
 		};
 	}
@@ -928,7 +928,7 @@ public class PineScript extends Parser {
 
 	public static class StringLiteralContext extends ParserRuleContext {
 		public TerminalNode DOUBLE_QUOTE_OPEN() { return getToken(PineScript.DOUBLE_QUOTE_OPEN, 0); }
-		public TerminalNode DoubleQuoteString() { return getToken(PineScript.DoubleQuoteString, 0); }
+		public TerminalNode STRING() { return getToken(PineScript.STRING, 0); }
 		public TerminalNode DOUBLE_QUOTE_CLOSE() { return getToken(PineScript.DOUBLE_QUOTE_CLOSE, 0); }
 		public StringLiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -958,7 +958,7 @@ public class PineScript extends Parser {
 			setState(110);
 			match(DOUBLE_QUOTE_OPEN);
 			setState(111);
-			match(DoubleQuoteString);
+			match(STRING);
 			setState(112);
 			match(DOUBLE_QUOTE_CLOSE);
 			}
@@ -1171,25 +1171,25 @@ public class PineScript extends Parser {
 		"\32 \3\2\4\5\2\u0084\2\"\3\2\2\2\4%\3\2\2\2\6\'\3\2\2\2\b,\3\2\2\2\n8"+
 		"\3\2\2\2\fA\3\2\2\2\16C\3\2\2\2\20J\3\2\2\2\22T\3\2\2\2\24_\3\2\2\2\26"+
 		"a\3\2\2\2\30n\3\2\2\2\32p\3\2\2\2\34t\3\2\2\2\36v\3\2\2\2 z\3\2\2\2\""+
-		"#\5\4\3\2#$\7\2\2\3$\3\3\2\2\2%&\5\6\4\2&\5\3\2\2\2\'(\7#\2\2(*\5\b\5"+
+		"#\5\4\3\2#$\7\2\2\3$\3\3\2\2\2%&\5\6\4\2&\5\3\2\2\2\'(\7\"\2\2(*\5\b\5"+
 		"\2)+\7\24\2\2*)\3\2\2\2*+\3\2\2\2+\7\3\2\2\2,.\7\26\2\2-/\5\n\6\2.-\3"+
 		"\2\2\2./\3\2\2\2/\63\3\2\2\2\60\62\5\f\7\2\61\60\3\2\2\2\62\65\3\2\2\2"+
 		"\63\61\3\2\2\2\63\64\3\2\2\2\64\66\3\2\2\2\65\63\3\2\2\2\66\67\7\27\2"+
-		"\2\67\t\3\2\2\289\7\6\2\29:\7\25\2\2:<\7\"\2\2;=\7\24\2\2<;\3\2\2\2<="+
-		"\3\2\2\2=\13\3\2\2\2>B\5\6\4\2?B\5\16\b\2@B\5\20\t\2A>\3\2\2\2A?\3\2\2"+
-		"\2A@\3\2\2\2B\r\3\2\2\2CD\7\3\2\2DE\7\"\2\2EF\7\25\2\2FH\5\36\20\2GI\7"+
-		"\24\2\2HG\3\2\2\2HI\3\2\2\2I\17\3\2\2\2JK\7\"\2\2KL\7\25\2\2LN\5\22\n"+
-		"\2MO\7\24\2\2NM\3\2\2\2NO\3\2\2\2O\21\3\2\2\2PQ\b\n\1\2QU\5\30\r\2RU\5"+
-		"\26\f\2SU\5\36\20\2TP\3\2\2\2TR\3\2\2\2TS\3\2\2\2U\\\3\2\2\2VW\f\4\2\2"+
-		"WX\5\24\13\2XY\5\22\n\5Y[\3\2\2\2ZV\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3"+
-		"\2\2\2]\23\3\2\2\2^\\\3\2\2\2_`\t\2\2\2`\25\3\2\2\2ad\7\"\2\2bc\7\7\2"+
-		"\2ce\7\"\2\2db\3\2\2\2de\3\2\2\2e\27\3\2\2\2fo\7\f\2\2go\7\r\2\2hj\7$"+
-		"\2\2ik\5\34\17\2ji\3\2\2\2jk\3\2\2\2ko\3\2\2\2lo\7%\2\2mo\5\32\16\2nf"+
-		"\3\2\2\2ng\3\2\2\2nh\3\2\2\2nl\3\2\2\2nm\3\2\2\2o\31\3\2\2\2pq\7!\2\2"+
-		"qr\7\'\2\2rs\7&\2\2s\33\3\2\2\2tu\t\3\2\2u\35\3\2\2\2vw\7\"\2\2wx\7\b"+
-		"\2\2xy\7\t\2\2y\37\3\2\2\2z\177\5\22\n\2{|\7\n\2\2|~\5\22\n\2}{\3\2\2"+
-		"\2~\u0081\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080!\3\2\2\2\u0081"+
-		"\177\3\2\2\2\17*.\63<AHNT\\djn\177";
+		"\2\67\t\3\2\2\289\7\6\2\29:\7\25\2\2:<\7!\2\2;=\7\24\2\2<;\3\2\2\2<=\3"+
+		"\2\2\2=\13\3\2\2\2>B\5\6\4\2?B\5\16\b\2@B\5\20\t\2A>\3\2\2\2A?\3\2\2\2"+
+		"A@\3\2\2\2B\r\3\2\2\2CD\7\3\2\2DE\7!\2\2EF\7\25\2\2FH\5\36\20\2GI\7\24"+
+		"\2\2HG\3\2\2\2HI\3\2\2\2I\17\3\2\2\2JK\7!\2\2KL\7\25\2\2LN\5\22\n\2MO"+
+		"\7\24\2\2NM\3\2\2\2NO\3\2\2\2O\21\3\2\2\2PQ\b\n\1\2QU\5\30\r\2RU\5\26"+
+		"\f\2SU\5\36\20\2TP\3\2\2\2TR\3\2\2\2TS\3\2\2\2U\\\3\2\2\2VW\f\4\2\2WX"+
+		"\5\24\13\2XY\5\22\n\5Y[\3\2\2\2ZV\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3\2"+
+		"\2\2]\23\3\2\2\2^\\\3\2\2\2_`\t\2\2\2`\25\3\2\2\2ad\7!\2\2bc\7\7\2\2c"+
+		"e\7!\2\2db\3\2\2\2de\3\2\2\2e\27\3\2\2\2fo\7\f\2\2go\7\r\2\2hj\7&\2\2"+
+		"ik\5\34\17\2ji\3\2\2\2jk\3\2\2\2ko\3\2\2\2lo\7\'\2\2mo\5\32\16\2nf\3\2"+
+		"\2\2ng\3\2\2\2nh\3\2\2\2nl\3\2\2\2nm\3\2\2\2o\31\3\2\2\2pq\7#\2\2qr\7"+
+		"%\2\2rs\7$\2\2s\33\3\2\2\2tu\t\3\2\2u\35\3\2\2\2vw\7!\2\2wx\7\b\2\2xy"+
+		"\7\t\2\2y\37\3\2\2\2z\177\5\22\n\2{|\7\n\2\2|~\5\22\n\2}{\3\2\2\2~\u0081"+
+		"\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080!\3\2\2\2\u0081\177\3\2\2"+
+		"\2\17*.\63<AHNT\\djn\177";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

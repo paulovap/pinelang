@@ -4,6 +4,10 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        relase {
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
@@ -15,6 +19,7 @@ android {
             versionName '1.0'
             vectorDrawables.useSupportLibrary = true
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {

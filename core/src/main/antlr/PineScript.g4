@@ -110,7 +110,7 @@ primitiveExpression
     ;
 
 stringLiteral
-    : DOUBLE_QUOTE_OPEN DoubleQuoteString DOUBLE_QUOTE_CLOSE
+    : DOUBLE_QUOTE_OPEN STRING DOUBLE_QUOTE_CLOSE
     ;
 
 integerSuffix

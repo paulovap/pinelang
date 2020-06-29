@@ -1,5 +1,6 @@
 package com.pinescript.ast
 
+import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.fbs.*
 import com.pinescript.ast.fbs.BinaryOp
 import com.pinescript.ast.fbs.ExprValue
@@ -98,17 +99,15 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         left: PineScript.ExpressionContext,
         right: PineScript.ExpressionContext
     ): Int {
-        val fb = compiler.flatBuilder
         val leftIdx = visit(left)
         val rightIdx = visit(right)
         return BinaryExpr.createBinaryExpr(fb, opCtx.getOp(), leftIdx, rightIdx)
     }
 
     override fun visitCallableExpression(ctx: PineScript.CallableExpressionContext?): Int {
-        val fb = compiler.flatBuilder
         val name = ctx!!.Identifier().text
         val callIdx = types[ownerType]!!.indexOfCallable(name) ?: ctx.throwCallableNotFound(name, "this")
-        return CallableExpr.createCallableExpr(fb, ownerId, callIdx!!.toUByte())
+        return CallableExpr.createCallableExpr(fb, ownerId, callIdx.toUByte())
     }
 
     /*
@@ -125,12 +124,14 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         return when {
             ctx!!.TRUE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 1.0, 0)
             ctx.FALSE() != null -> createPrimitiveExpr(fb, PrimitiveType.Boolean, 0.0, 0)
-            ctx.stringLiteral() != null -> createPrimitiveExpr(
-                fb,
-                PrimitiveType.String,
-                0.0,
-                visit(ctx.stringLiteral())
-            )
+            ctx.stringLiteral() != null -> {
+                val strIdx = fb.createString(ctx.stringLiteral().STRING().text)
+                createPrimitiveExpr(
+                        fb,
+                        PrimitiveType.String,
+                        0.0, strIdx
+                )
+            }
             ctx.IntegerLiteral() != null -> createPrimitiveExpr(
                 fb,
                 PrimitiveType.Int,
@@ -143,10 +144,6 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
             )
             else -> throw PineScriptParseException(ctx.start, ctx.stop, "failed to parse primitive expression")
         }
-    }
-
-    override fun visitStringLiteral(ctx: PineScript.StringLiteralContext?): Int {
-        return fb.createString(ctx!!.DoubleQuoteString().text)
     }
 
     private fun Int.dp(shouldApply: Boolean): Int = this

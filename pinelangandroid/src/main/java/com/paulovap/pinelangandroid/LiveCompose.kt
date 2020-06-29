@@ -49,25 +49,24 @@ class LiveCompose : AppCompatActivity() {
     }
 
     fun runScript(text: String) {
-        var error: String? = null
-        try {
-            root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
-            root?.dispose()
-            var program: Program? = null
-            val compileTime = measureTimeMillis {
-                program = engine.compile(text)
-            }
-            val evalTime = measureTimeMillis {
-                root = engine.eval(program!!) as PineComposable
-            }
-            Log.d("LiveCompose", "Script Compile in $compileTime ms, eval $evalTime ms")
-
-
-        } catch (e: Exception) {
-            error = e.message
-        }
-
         runOnUiThread {
+            var error: String? = null
+            try {
+                root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
+                root?.dispose()
+                var program: Program? = null
+                val compileTime = measureTimeMillis {
+                    program = engine.compile(text)
+                }
+                val evalTime = measureTimeMillis {
+                    root = engine.eval(program!!) as PineComposable
+                }
+                Log.d("LiveCompose", "Script Compile in $compileTime ms, eval $evalTime ms")
+
+
+            } catch (e: Exception) {
+                error = e.message
+            }
             setContent {
                 FlexscriptTheme {
                     if (error == null) {

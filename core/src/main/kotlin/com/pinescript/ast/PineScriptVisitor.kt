@@ -74,15 +74,14 @@ open class PineScriptVisitor<T>(protected var compiler: PineCompiler, var debug:
 
     fun createDebugInfo(startToken: Token, endToken: Token, name: String?, type: String?): Int {
 
-        val rangePos = Range.createRange(fb,
-            startToken.line,
-            startToken.charPositionInLine,
-            endToken.line,
-            endToken.charPositionInLine)
         val namePos: Int? = name?.run { fb.createString(name) }
         val typePos: Int? = type?.run { fb.createString(type) }
         DebugInfo.startDebugInfo(fb)
-        DebugInfo.addRange(fb, rangePos)
+        DebugInfo.addRange(fb, Range.createRange(fb,
+                startToken.line,
+                startToken.charPositionInLine,
+                endToken.line,
+                endToken.charPositionInLine))
         namePos?.run { DebugInfo.addDebugName(fb, namePos) }
         typePos?.run { DebugInfo.addDebugType(fb, typePos) }
         return DebugInfo.endDebugInfo(fb)
