@@ -59,7 +59,7 @@ data class LSPInitializeParams(
      * The process Id of the parent process that started
      * the server.
      */
-    val processId: Double,
+    val processId: Double?,
         /**
      * Information about the client
      *
@@ -92,7 +92,7 @@ data class LSPInitializeParams(
         /**
      * The initial trace setting. If omitted trace is disabled ('off').
      */
-    val trace: String
+    val trace: String?
 )
 
 data class LSPClientCapabilities(
@@ -458,7 +458,7 @@ data class LSPCompletionItem(
      * Client supports the follow content formats for the documentation
      * property. The order describes the preferred format of the client.
      */
-    val documentationFormat: Array<String>,
+    val documentationFormat: Array<String>?,
     /**
      * Client supports the deprecated property on a completion item.
      */
@@ -485,7 +485,6 @@ data class LSPCompletionItem(
 
         if (snippetSupport != other.snippetSupport) return false
         if (commitCharactersSupport != other.commitCharactersSupport) return false
-        if (!documentationFormat.contentEquals(other.documentationFormat)) return false
         if (deprecatedSupport != other.deprecatedSupport) return false
         if (preselectSupport != other.preselectSupport) return false
         if (tagSupport != other.tagSupport) return false
@@ -496,7 +495,6 @@ data class LSPCompletionItem(
     override fun hashCode(): Int {
         var result = snippetSupport?.hashCode() ?: 0
         result = 31 * result + (commitCharactersSupport?.hashCode() ?: 0)
-        result = 31 * result + documentationFormat.contentHashCode()
         result = 31 * result + (deprecatedSupport?.hashCode() ?: 0)
         result = 31 * result + (preselectSupport?.hashCode() ?: 0)
         result = 31 * result + (tagSupport?.hashCode() ?: 0)
@@ -574,7 +572,7 @@ data class WorkspaceEditClientCapabilities(
      *
      * @since 3.13.0
      */
-    val resourceOperations: List<LSPResourceOperation>,
+    val resourceOperations: List<LSPResourceOperation>?,
         /**
      * The failure handling strategy of a client if applying the workspace edit
      * fails.
@@ -588,7 +586,7 @@ data class WorkspaceSymbolClientCapabilities(
     /**
      * Symbol request supports dynamic registration.
      */
-    val dynamicRegistration: Boolean,
+    val dynamicRegistration: Boolean?,
     /**
      * Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
      */
@@ -632,7 +630,7 @@ data class ConfigurationClientCapabilities(
     val dynamicRegistration: Boolean?
 )
 
-data class CompletionProvider(val triggerCharacters: List<String>? = null, val resolveProvider: Boolean = false)
+data class CompletionProvider(val triggerCharacters: List<String>? = null, val resolveProvider: Boolean = true)
 
 //change: 1 is non-incremental, 2 is incremental
 data class TextDocumentSync(
@@ -685,7 +683,7 @@ enum class TextDocumentSyncKind(val int: Int) {
 }
 
 data class JsonRPCServerCapabilitiesImpl(
-        val completionProvider: CompletionProvider = CompletionProvider(listOf("."), false),
+        val completionProvider: CompletionProvider = CompletionProvider( ),
         val definitionProvider: Boolean = true,
         val textDocumentSync: TextDocumentSyncKind = TextDocumentSyncKind.Full,//TextDocumentSync = TextDocumentSync(),
         val hoverProvider: Boolean = true,

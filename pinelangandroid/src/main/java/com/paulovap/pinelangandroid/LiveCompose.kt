@@ -7,10 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.*
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Text
+import androidx.ui.material.Scaffold
+import androidx.ui.material.TopAppBar
+import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
-import com.paulovap.pinelangandroid.components.compose.PineColumn
-import com.paulovap.pinelangandroid.components.compose.PineComposable
-import com.paulovap.pinelangandroid.components.compose.PineText
+import com.paulovap.pinelangandroid.components.compose.*
 import com.paulovap.pinelangandroid.ui.FlexscriptTheme
 import com.pinescript.ast.fbs.Program
 import com.pinescript.core.*
@@ -28,9 +29,14 @@ class LiveCompose : AppCompatActivity() {
     var root: PineComposable? = null
     var err: String? = null
     val engine = PineEngine.Builder()
-            .registerPineType(PineText.meta)
-            .registerPineType(PineColumn.meta)
-            .build()
+        .registerPineType(PineText.meta)
+        .registerPineType(PineColumn.meta)
+        .registerPineType(PineRow.meta)
+        .registerPineType(PineVScroller.meta)
+        .registerPineType(PineHScroller.meta)
+        .registerPineType(PineRectangle.meta)
+        .registerPineType(PineImage.meta)
+        .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +49,15 @@ class LiveCompose : AppCompatActivity() {
         }
 
         setContent {
-            FlexscriptTheme {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text(text = stringResource(R.string.title_activity_live_compose)) }
+                    )
+                }
+            ) {
+                FlexscriptTheme {
+                }
             }
         }
     }
@@ -68,11 +82,19 @@ class LiveCompose : AppCompatActivity() {
                 error = e.message
             }
             setContent {
-                FlexscriptTheme {
-                    if (error == null) {
-                        root!!.ComposeComponent()
-                    } else {
-                        Text(text = "Error: $error")
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { Text(text = stringResource(R.string.title_activity_live_compose)) }
+                        )
+                    }
+                ) {
+                    FlexscriptTheme {
+                        if (error == null) {
+                            root!!.ComposeComponent()
+                        } else {
+                            Text(text = "Error: $error")
+                        }
                     }
                 }
             }

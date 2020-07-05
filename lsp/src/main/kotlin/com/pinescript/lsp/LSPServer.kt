@@ -27,7 +27,6 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.util.CharsetUtil
-import java.lang.StringBuilder
 import java.net.InetSocketAddress
 
 
@@ -39,6 +38,7 @@ enum class LSPMethod(val method: String, val paramType: Class<*>) {
     TextDocumentDidChange("textDocument/didChange", TextDocumentDidChangeParams::class.java),
     TextDocumentDocumentSymbol("textDocument/documentSymbol", TextDocumentDocumentSymbolParams::class.java),
     TextDocumentCompletion("textDocument/completion", TextDocumentCompletionParams::class.java),
+    Hover("textDocument/hover", HoverParams::class.java),
     Shutdown("shutdown", LSPEmptyParams::class.java),
     PublishDiagnotics("textDocument/publishDiagnostics", LSPDiagnostic::class.java);
 
@@ -53,6 +53,7 @@ interface LSPDelegate {
     fun onInitialize(capabilities: LSPInitializeParams): LSPInitializeServerResult
     fun onInitialized()
     fun onShutdown()
+    fun onHover(hover: HoverParams): HoverResponse?
     fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams
     fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic
     fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams
@@ -119,7 +120,7 @@ class LSPServer(private val delegate: LSPDelegate) {
         val notifyAdapter = moshi.adapter(LSPNotification::class.java).lenient()
         val responseData: String? = try {
             if (!initialized && request.method != "initialize") {
-                com.pinescript.lsp.models.jsonRpc(responseAdapter.toJson(LSPResponse(
+                jsonRpc(responseAdapter.toJson(LSPResponse(
                         request.id,
                         null,
                         ResponseError(ErrorCode.ServerNotInitialized, "call initialize first")
@@ -130,7 +131,7 @@ class LSPServer(private val delegate: LSPDelegate) {
                         initialized = true
                         val result = delegate.onInitialize(request.params as LSPInitializeParams)
                         val response = LSPResponse(request.id, result, null)
-                        com.pinescript.lsp.models.jsonRpc(responseAdapter.toJson(response))
+                        jsonRpc(responseAdapter.toJson(response))
                     }
                     LSPMethod.Initialized -> {
                         delegate.onInitialized()
@@ -138,21 +139,25 @@ class LSPServer(private val delegate: LSPDelegate) {
                     }
                     LSPMethod.TextDocumentDidOpen -> {
                         val note = delegate.onTextDocumentDidOpen(request.params as TextDocumentDidOpenParams)
-                        com.pinescript.lsp.models.jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
                     }
                     LSPMethod.TextDocumentDidChange -> {
                         val note = delegate.onTextDocumentDidChange(request.params as TextDocumentDidChangeParams)
-                        com.pinescript.lsp.models.jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
                     }
                     LSPMethod.TextDocumentDocumentSymbol -> {
 //                        val note = delegate.onTextDocumentDocumentSymbol(request.params as TextDocumentDocumentSymbolParams)
 //                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
                         val response = LSPResponse(request.id, null, null)
-                        com.pinescript.lsp.models.jsonRpc(responseAdapter.toJson(response))
+                        jsonRpc(responseAdapter.toJson(response))
                     }
                     LSPMethod.TextDocumentCompletion -> {
                         val response = delegate.onTextDocumentCompletion(request.params as TextDocumentCompletionParams)
-                        com.pinescript.lsp.models.jsonRpc(responseAdapter.toJson(LSPResponse(request.id, response, null)))
+                        jsonRpc(responseAdapter.toJson(LSPResponse(request.id, response, null)))
+                    }
+                    LSPMethod.Hover -> {
+                        val response = delegate.onHover(request.params as HoverParams)
+                        jsonRpc(responseAdapter.toJson(LSPResponse(request.id, response, null)))
                     }
                     LSPMethod.Shutdown -> {
                         delegate.onShutdown(); null
@@ -163,7 +168,7 @@ class LSPServer(private val delegate: LSPDelegate) {
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
-            com.pinescript.lsp.models.jsonRpc(responseAdapter.toJson(LSPResponse(request.id, null, ResponseError(ErrorCode.MethodNotFound), request.jsonrpc)))
+            jsonRpc(responseAdapter.toJson(LSPResponse(request.id, null, ResponseError(ErrorCode.MethodNotFound), request.jsonrpc)))
         }
         println("response: $responseData\n")
         responseData?.run {
@@ -199,56 +204,61 @@ class LSPServer(private val delegate: LSPDelegate) {
 
     inner class RpcJsonHandler : ChannelInboundHandlerAdapter() {
 
-        private val builder = StringBuilder()
+        private val builder = Unpooled.compositeBuffer()
         private var state = RpcJsonState.Header
         private var contentSize = 0
 
         @Throws(java.lang.Exception::class)
         override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
             val inBuffer: ByteBuf = msg as ByteBuf
-            builder.append(inBuffer.toString(CharsetUtil.UTF_8))
+            builder.addComponent(true, inBuffer)
         }
 
         @OptIn(ExperimentalStdlibApi::class)
         @Throws(java.lang.Exception::class)
         override fun channelReadComplete(ctx: ChannelHandlerContext) {
-            println("Server received complete size: ${builder.length}")
-            loop@ while (builder.isNotEmpty()) {
+            println("Server received complete size: ${builder.readableBytes()}")
+            loop@ while (builder.readableBytes() > 0) {
                 when (state) {
                     RpcJsonState.Header -> {
-                        val idx = builder.indexOfFirst { it == '\n' } + 1
+                        val idx = builder.bytesBefore('\n'.toByte()) + 1
                         if (idx > 0) {
-                            val data = builder.substring(0, idx)
-                            builder.deleteRange(0, idx)
-                            println("HEADER: $data")
+                            val bytes = ByteArray(idx)
+                            builder.readBytes(bytes)
+                            println("HEADER: ${String(bytes)}")
                             state = RpcJsonState.Empty
-                            contentSize = jsonRPCHeader(data.toString()).contentLength
+                            try {
+                                contentSize = jsonRPCHeader(String(bytes)).contentLength
+                            } catch (e: Exception) {
+                                //e.printStackTrace()
+                            }
                         } else {
                             break@loop
                         }
                     }
                     RpcJsonState.Empty -> {
-                        val idx = builder.indexOfFirst { it == '\n' } + 1
+                        val idx = builder.bytesBefore('\n'.toByte()) + 1
                         if (idx > 0) {
-                            builder.deleteRange(0, idx)
                             println("EMPTY: $idx")
+                            builder.skipBytes(idx)
                             state = RpcJsonState.Request
                         } else {
                             break@loop
                         }
                     }
                     RpcJsonState.Request -> {
-                        if (contentSize <= builder.length) {
-                            val data = builder.substring(0, contentSize)
-                            builder.deleteRange(0, contentSize)
-                            println("REQUEST: $data")
+                        if (builder.readableBytes() >= contentSize) {
+                            val data = ByteArray(contentSize)
+                            builder.readBytes(data)
+                            println("REQUEST size: ${data.size} data: ${String(data)}")
                             state = RpcJsonState.Header
-                            handleRequest(jsonRPCRequest(data.toString()), ctx)
+                            handleRequest(jsonRPCRequest(String(data)), ctx)
                         } else {
                             break@loop
                         }
                     }
                 }
+                builder.discardReadComponents()
             }
         }
 
@@ -272,7 +282,7 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
         return LSPInitializeServerResult(
                 capabilities = JsonRPCServerCapabilitiesImpl(
                         textDocumentSync = TextDocumentSyncKind.Full,//TextDocumentSync(),
-                        completionProvider = CompletionProvider(resolveProvider = true),
+                        completionProvider = CompletionProvider( triggerCharacters = listOf("."), resolveProvider = true),
                         workspace = if (workspaceFolders) WorkspaceFoldersServerCapabilities(WorkspaceFoldersCapabilities(true)) else null
                 ),
                 serverInfo = LSPServerInfo("PineLang Server")
@@ -283,6 +293,7 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
     override fun onShutdown() {}
 
     override fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams {
+        println("$doc")
         docItem = doc.textDocument
         textChangeListener?.let { it(doc.textDocument.text) }
         return generateDiagnostic(doc.textDocument.text)
@@ -300,7 +311,11 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
 
     override fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams {
         println("$didChangeTextDoc")
-        docItem = docItem?.copy(text = didChangeTextDoc.contentChanges[0].text)
+        docItem = TextDocumentItem(
+            uri = didChangeTextDoc.textDocument.uri,
+            languageId = "pine",
+            text = didChangeTextDoc.contentChanges[0].text,
+            version = didChangeTextDoc.textDocument.version)
         textChangeListener?.let { it(didChangeTextDoc.contentChanges[0].text) }
         return generateDiagnostic(didChangeTextDoc.contentChanges[0].text)
     }
@@ -356,6 +371,37 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
                     )
                 }
         return LSPCompletionList(isIncomplete = false, items = propertyCompletionList + objCompletionList)
+    }
+
+    override fun onHover(hover: HoverParams): HoverResponse? {
+        println("onTextDocumentCompletion")
+        if (docItem == null)
+            return null
+        val text = docItem!!.text
+        val incomplete = text.getWordAtPosition(hover.position) ?: return null
+
+        println("hovering on $incomplete")
+        val range = Range(
+            start = hover.position, end = hover.position
+        )
+        if (incomplete[0].isUpperCase()) {
+            // This mean its a type
+            val type = pineEngine.types[incomplete]
+            if (type != null) {
+                return HoverResponse(contents = MarkupContent(type.docString), range = range)
+            }
+        } else {
+            // Means its a prop
+            val objType = text.getObjectTypeEnclosingPosition(hover.position) ?: return null
+            println("found $objType")
+            val type = pineEngine.types[objType] ?: return null
+            println("found $type")
+            val prop = type.props.firstOrNull { it.name == incomplete } ?: return null
+            println("found $prop")
+            return HoverResponse(contents = MarkupContent("Property ${prop.name} of type ${prop.type.typeName}"), range = range)
+        }
+
+        return HoverResponse(MarkupContent("Don't know"), range = range)
     }
 
     private fun PineScriptParseException.toRange(): Range {

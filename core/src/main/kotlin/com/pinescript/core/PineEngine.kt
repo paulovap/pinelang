@@ -42,9 +42,13 @@ import com.pinescript.util.IndexedMap
 typealias Allocator = (Int) -> PineObject
 
 
+data class MetaProp(val name: String, val type: PineType)
+
 class PineMetaObject(val scriptName: String,
-                          val allocator: Allocator) {
+                     val docString: String = "",
+                     val allocator: Allocator) {
     val allNames: Array<String>
+    val props: Array<MetaProp>
     private val propIndexEnd: Int
     private val signalIndexEnd: Int
     private val callableIndexEnd: Int
@@ -54,7 +58,7 @@ class PineMetaObject(val scriptName: String,
         propIndexEnd = pineObj.props.size -1
         signalIndexEnd = propIndexEnd + pineObj.signals.size
         callableIndexEnd = signalIndexEnd + pineObj.callables.size
-
+        props = pineObj.props.map { MetaProp(it.name, it.pineType) }.toTypedArray()
         allNames = Array(callableIndexEnd + 1) {
             when {
                 it <= propIndexEnd -> pineObj.props[it].getScriptName()
