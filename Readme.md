@@ -1,6 +1,6 @@
 # Pinelang
 
-[![paulovap](https://circleci.com/gh/paulovap/pinelang.svg?style=svg)](https://github.com/paulovap/pinelang)
+[![paulovap](https://circleci.com/gh/paulovap/pinelang.svg?style=shield)](https://app.circleci.com/pipelines/github/paulovap/pinelang?branch=master)
 
 Pinelang or just "Pine" is a scripting language inspired in QML
 that sits on top of Kotlin/JVM. The objective is to represent
