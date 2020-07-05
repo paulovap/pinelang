@@ -63,7 +63,6 @@ class TestLang {
 
     @Test
     fun testBinaryExpression() {
-        val itmm = Item(-1)
         val item = engine.load("""
             Item {
                 myInt: 0.1 + 25
