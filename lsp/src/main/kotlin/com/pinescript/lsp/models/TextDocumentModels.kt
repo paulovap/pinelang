@@ -2,6 +2,40 @@ package com.pinescript.lsp.models
 
 data class TextDocumentDidOpenParams(val textDocument: TextDocumentItem)
 
+data class HoverParams(
+    /**
+     * The text document.
+     */
+    val textDocument: TextDocumentIdentifier,
+
+    /**
+     * The position inside the text document.
+     */
+    val position: Position
+)
+
+/**
+ * The result of a hover request.
+ */
+data class HoverResponse(
+    /**
+     * The hover's content
+     */
+    val contents: MarkupContent,
+
+    /**
+     * An optional range is a range inside a text document
+     * that is used to visualize a hover, e.g. by changing the background color.
+     */
+    val range: Range
+)
+
+data class MarkupContent(
+    val value: String,
+    //export type MarkupKind = 'plaintext' | 'markdown';
+    val kind: String = "markdown"
+)
+
 data class TextDocumentItem(
     /**
      * The text document's URI.

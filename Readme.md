@@ -150,7 +150,111 @@ x2 is 50
 x3 is 50
 ```
 
-### Try it
+# Ideas to Evaluate
 
-## Playground
+## Context-aware scopes
+
+Adds the ability to define context-aware scopes. E.g
+
+Define property for specific version of a type:
+```
+Text {
+    text: "Hello World"
+
+    v1.1 { //multiline block
+        elipsize: Text.ElipsizeEnd
+    }
+    // or
+
+    [v1.1] elipsize: Text.ElipsizeEnd
+
+    //by platform
+
+    ios {
+        opacity: 0.5
+    }
+
+    // maybe it could be nested.
+
+    ios {
+        v1.1 {
+             elipsize: Text.ElipsizeStart
+        }
+    }
+}
+```
+
+We could even have user-defined scopes, that could be resolved at runtime. One use case would be a/b testing.
+
+```
+Text {
+    [a] text: "This is my A string"
+    [b] text: "This is my B String"
+}
+```
+
+On native size you would define the context: 
+
+```
+val engine PineEngine(...)
+engine.enableContext("a")
+engine.load(script)
+```
+
+## Code Generation for properties & Meta
+
+Currently, There is a lot of boilerplate code to make an new Type surface into Pinelang. We could think of additional library to code-genearate those boilerplate code,
+probably using annotations on kotlin. Example:
+
+```
+class PineText(id: Int) : PineComposable(id) {
+
+    companion object {
+        val meta = PineMetaObject(
+            "Text",
+            docString = """
+        ### Type: Text
+        The best type there is. Just write something like this:
+        
+
+        Text { 
+            text: "My incredible text"
+            size: 18
+            color: "#ff00ff"
+        }
+        That is it.
+    """.trimIndent()) { PineText(it) }
+    }
+    override fun getMeta(): PineMetaObject = meta
+
+    var text: String by stringProp(::text, initialValue = "")
+    val color: String by stringProp(::color, initialValue = "#000000")
+    val size: Int by intProp(::size, initialValue = 12)
+ ```
+
+ Would change to:
+
+ ```
+ /**!Pinelag
+    ### Type: Text
+    The best type there is. Just write something like this:
+        
+
+    Text { 
+        text: "My incredible text"
+        size: 18
+        color: "#ff00ff"
+    }
+    That is it.
+ */
+ @ScriptName("Text")
+ class PineText(id: Int) : PineComposable(id) {
+    
+    @StringProp("") var text: String
+    
+    @StringProp("#000000") val color: String
+    
+    @IntProp(12) val size: Int
+ }
+ ```
 

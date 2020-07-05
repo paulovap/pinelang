@@ -13,24 +13,27 @@ import {
 	TransportKind,
 	SocketTransport,
 	createServerSocketTransport,
-	MessageTransports
+	MessageTransports,
+	CloseAction,
+	Message,
+	ErrorAction,
+	ResponseError,
+	InitializeError
 } from 'vscode-languageclient';
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-	// The server is implemented in node
-	let serverModule = context.asAbsolutePath(
-		path.join('server', 'out', 'server.js')
-	);
+	
 	// The debug options for the server
 	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
 	let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
-	let [reader, writer] = createServerSocketTransport(8080)
-	let serverOptions: ServerOptions = () =>  {
+	let [reader, writer] = createServerSocketTransport(20001)
+	
+	let serverOptionsBase: ServerOptions = () =>  {
 		return Promise.resolve({
 				reader: reader,
 				writer: writer,
@@ -38,30 +41,49 @@ export function activate(context: ExtensionContext) {
 			})
 	}
 
-	// let serverOptions: ServerOptions = {
-	// 	run: { module: serverModule, transport: TransportKind.ipc },
-	// 	debug: {
-	// 		module: serverModule,
-	// 		transport: TransportKind.ipc,
-	// 		options: debugOptions
-	// 	}
-	// };
-	
+	let serverOptions: ServerOptions = {
+		command: "/Users/ppinheiro/git_tree/pinelang/lsp/server/daemon.py"
+	}
+
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
+		outputChannelName: 'Pine Language Server',
 		documentSelector: [{ scheme: 'file', language: 'pine' }],
 		synchronize: {
 			// Notify the server about file changes to '.clientrc files contained in the workspace
 			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
+		},
+		initializationFailedHandler: function handler(error: ResponseError<InitializeError> | Error | any): boolean {
+			if (client) {
+				window.setTimeout(window.alert, 2*1000, 'That was really slow!');
+				client.info("PV error", error)
+			}
+			return true
+		},
+		errorHandler: {
+			error: function(error: Error, message: Message, count: number): ErrorAction {
+				if (client) {
+					client.info("PV FAILED SERVER")				
+				}
+				return ErrorAction.Shutdown
+			},
+			/**
+			 * The connection to the server got closed.
+			 */
+			closed: function(): CloseAction {
+				if (client) {
+					client.info("PV SERVER CLOSED")
+				}
+				return CloseAction.Restart
+			}
 		}
 	};
-
 	// Create the language client and start the client.
 	client = new LanguageClient(
 		'languageServerExample',
 		'languageServerExample',
-		serverOptions,
+		serverOptionsBase,
 		clientOptions
 	);
 	// Start the client. This will also launch the server
@@ -69,7 +91,9 @@ export function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
+	
 	if (!client) {
+		client.info("Deactivate")
 		return undefined;
 	}
 	return client.stop();

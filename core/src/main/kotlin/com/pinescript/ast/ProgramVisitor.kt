@@ -39,7 +39,7 @@ import com.pinescript.parser.PineScript
 @ExperimentalUnsignedTypes
 class ProgramVisitor(compiler: PineCompiler, debug: Boolean) : PineScriptVisitor<Program>(compiler, debug) {
 
-    val objectDefinitionVisitor = ObjectDefinitionVisitor(compiler, debug)
+    private val objectDefinitionVisitor = ObjectDefinitionVisitor(compiler, debug)
 
     override fun visitProgram(ctx: PineScript.ProgramContext): Program {
         val objPos = objectDefinitionVisitor.visit(ctx.rootMember().objectDefinition())

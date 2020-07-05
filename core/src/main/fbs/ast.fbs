@@ -7,7 +7,7 @@ struct Position {
 
 struct Range {
     start: Position;
-    end:Position;
+    end: Position;
 }
 
 table DebugInfo {

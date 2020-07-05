@@ -19,24 +19,42 @@
 	"activationEvents": [
 		"onLanguage:pine"
 	],
-	"languages": [{
-        "id": "pine",
-        "extensions": [ ".pine", ".pn" ],
-        "aliases": [ "Pine", "pine" ]
-    }],
+	"languages": [
+		{
+			"id": "pine",
+			"extensions": [
+				".pine",
+				".pn"
+			],
+			"aliases": [
+				"Pine",
+				"pine"
+			]
+		}
+	],
 	"languageServerExample.trace.server": "verbose",
 	"main": "./client/out/extension",
 	"contributes": {
-		"languages": [{
-			"id": "pine",
-			"aliases": ["Pine", "pine"],
-			"extensions": [".pine",".pn"]
-		}],
-		"grammars": [{
-			"language": "pine",
-			"scopeName": "source.pine",
-			"path": "./syntaxes/pine.tmLanguage.json"
-		}],
+		"languages": [
+			{
+				"id": "pine",
+				"aliases": [
+					"Pine",
+					"pine"
+				],
+				"extensions": [
+					".pine",
+					".pn"
+				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "pine",
+				"scopeName": "source.pine",
+				"path": "./syntaxes/pine.tmLanguage.json"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",
@@ -70,10 +88,10 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
-		"mocha": "^6.2.2",
-		"@types/node": "^12.11.7",
+		"@types/node": "^12.12.44",
+		"@typescript-eslint/parser": "^2.34.0",
 		"eslint": "^6.4.0",
-		"@typescript-eslint/parser": "^2.3.0",
-		"typescript": "^3.8.3"
+		"mocha": "^6.2.2",
+		"typescript": "^3.9.5"
 	}
 }

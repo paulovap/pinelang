@@ -41,6 +41,7 @@ import com.pinescript.util.IndexedMap
 import org.antlr.v4.runtime.*
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -63,12 +64,29 @@ class PineContext {
 
 data class CompileObjectMetaData(val typeIdx: Int, val objId: Int, val objName: String)
 
+class CustomFlatBufferBuilder(initialSize: Int) : FlatBufferBuilder(initialSize) {
+    private val stringCache = mutableMapOf<CharSequence, Int>()
+
+    override fun createString(s: CharSequence?): Int {
+        if (s == null) return 0
+        if (!stringCache.containsKey(s)) {
+            return super.createString(s).also { stringCache[s] = it }
+        }
+        return stringCache[s]!!
+    }
+
+    override fun clear() {
+        super.clear()
+        stringCache.clear()
+    }
+}
 @ExperimentalUnsignedTypes
 class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
 
     private var incrementalId: Int = 0
     private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
-    val flatBuilder: FlatBufferBuilder = FlatBufferBuilder(1024)
+    val flatBuilder = CustomFlatBufferBuilder(2048)
+
 
     fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
 
@@ -96,9 +114,9 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
         }
     }
 
-    fun compile(unit: String, keepDebugSymbols: Boolean = true): Program {
+    fun compile(unit: String, keepDebugSymbols: Boolean = false): Program {
         try {
-            this.flatBuilder.clear()
+            flatBuilder.clear()
             val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
             val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
 
@@ -117,33 +135,4 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
             throw PineScriptException("unable to load unit", e)
         }
     }
-
-//    private fun loadAst(unit: String): PineObject {
-//        try {
-//            val context = PineContext()
-//
-//            val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
-//            val lexer = PineScriptLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
-//
-//            lexer.removeErrorListeners()
-//            lexer.addErrorListener(baseErrorListener)
-//
-//            val tokens = CommonTokenStream(lexer)
-//            val parser = PineScriptParser(tokens)
-//
-//            parser.removeErrorListeners()
-//            parser.addErrorListener(baseErrorListener)
-//
-//            val tree = parser.program()
-//
-//            val programVisitor = ProgramVisitor(engine, context)
-//
-//            val clazz = String::class
-//            val props = clazz.memberProperties
-//            return programVisitor.visit(tree)
-//        } catch (e: IOException) {
-//            throw PineScriptException("unable to load unit", e)
-//        }
-//
-//    }
 }

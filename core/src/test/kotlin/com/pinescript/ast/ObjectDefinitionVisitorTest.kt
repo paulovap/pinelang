@@ -81,11 +81,13 @@ class ObjectDefinitionVisitorTest {
 
     @Test
     fun myTest() {
-        val engine = PineEngine.Builder().build()
-        println( measureTimeMillis { engine.compile("Object { id: test }") })
-        println( measureTimeMillis { engine.compile("Object { id: test }") })
-        println( measureTimeMillis { engine.compile("Object { id: test }") })
-        println( measureTimeMillis { engine.compile("Object { id: test Object { }  Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { } Object { }}") })
+        val engine = PineEngine.Builder()
+            .registerPineType(TestObject.meta)
+            .build()
+        println( measureTimeMillis { engine.compile("TestObject { id: test }") })
+        println( measureTimeMillis { engine.compile("TestObject { id: test }") })
+        println( measureTimeMillis { engine.compile("TestObject { id: test }") })
+        println( measureTimeMillis { engine.compile("TestObject { id: test TestObject { }  TestObject { } TestObject { } TestObject { } TestObject { } TestObject { } }") })
     }
 
 //    @Test

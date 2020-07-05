@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.pinescript.ast
 
+import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.fbs.ObjectDefinition
 import com.pinescript.ast.fbs.ObjectDefinition.Companion.createChildrenVector
 import com.pinescript.ast.fbs.ObjectDefinition.Companion.createPropsVector

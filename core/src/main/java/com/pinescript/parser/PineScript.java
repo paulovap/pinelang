@@ -23,9 +23,9 @@ public class PineScript extends Parser {
 		NULL=9, TRUE=10, FALSE=11, EQ=12, LBRACKET=13, RBRACKET=14, AND_AND=15, 
 		OR_OR=16, QUESTION=17, SEMICOLON=18, COLON=19, LBRACE=20, RBRACE=21, RETURN=22, 
 		IMPORT=23, PLUS=24, MINUS=25, MULTI=26, DIV=27, REMAINDER=28, AND=29, 
-		OR=30, DOUBLE_QUOTE_OPEN=31, Identifier=32, ObjectType=33, IntegerLiteral=34, 
-		FloatLiteral=35, DOUBLE_QUOTE_CLOSE=36, DoubleQuoteString=37, WS=38, COMMENT=39, 
-		LINE_COMMENT=40, LineTerminator=41;
+		OR=30, Identifier=31, ObjectType=32, DOUBLE_QUOTE_OPEN=33, DOUBLE_QUOTE_CLOSE=34, 
+		STRING=35, IntegerLiteral=36, FloatLiteral=37, WS=38, COMMENT=39, LINE_COMMENT=40, 
+		LineTerminator=41;
 	public static final int
 		RULE_program = 0, RULE_rootMember = 1, RULE_objectDefinition = 2, RULE_objectInitializer = 3, 
 		RULE_objectIdentifier = 4, RULE_objectMember = 5, RULE_signalAssignement = 6, 
@@ -57,8 +57,8 @@ public class PineScript extends Parser {
 			"COMMA", "NULL", "TRUE", "FALSE", "EQ", "LBRACKET", "RBRACKET", "AND_AND", 
 			"OR_OR", "QUESTION", "SEMICOLON", "COLON", "LBRACE", "RBRACE", "RETURN", 
 			"IMPORT", "PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR", 
-			"DOUBLE_QUOTE_OPEN", "Identifier", "ObjectType", "IntegerLiteral", "FloatLiteral", 
-			"DOUBLE_QUOTE_CLOSE", "DoubleQuoteString", "WS", "COMMENT", "LINE_COMMENT", 
+			"Identifier", "ObjectType", "DOUBLE_QUOTE_OPEN", "DOUBLE_QUOTE_CLOSE", 
+			"STRING", "IntegerLiteral", "FloatLiteral", "WS", "COMMENT", "LINE_COMMENT", 
 			"LineTerminator"
 		};
 	}
@@ -117,6 +117,7 @@ public class PineScript extends Parser {
 		public RootMemberContext rootMember() {
 			return getRuleContext(RootMemberContext.class,0);
 		}
+		public TerminalNode EOF() { return getToken(PineScript.EOF, 0); }
 		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -144,6 +145,8 @@ public class PineScript extends Parser {
 			{
 			setState(32);
 			rootMember();
+			setState(33);
+			match(EOF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -186,7 +189,7 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(34);
+			setState(35);
 			objectDefinition();
 			}
 		}
@@ -233,16 +236,16 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(36);
-			match(ObjectType);
 			setState(37);
+			match(ObjectType);
+			setState(38);
 			objectInitializer();
-			setState(39);
+			setState(40);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(38);
+				setState(39);
 				match(SEMICOLON);
 				}
 			}
@@ -298,33 +301,33 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(41);
+			setState(42);
 			match(LBRACE);
-			setState(43);
+			setState(44);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(42);
+				setState(43);
 				objectIdentifier();
 				}
 			}
 
-			setState(48);
+			setState(49);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ON) | (1L << Identifier) | (1L << ObjectType))) != 0)) {
 				{
 				{
-				setState(45);
+				setState(46);
 				objectMember();
 				}
 				}
-				setState(50);
+				setState(51);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(51);
+			setState(52);
 			match(RBRACE);
 			}
 		}
@@ -370,18 +373,18 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
-			match(ID);
 			setState(54);
-			match(COLON);
+			match(ID);
 			setState(55);
+			match(COLON);
+			setState(56);
 			match(Identifier);
-			setState(57);
+			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(56);
+				setState(57);
 				match(SEMICOLON);
 				}
 			}
@@ -432,27 +435,27 @@ public class PineScript extends Parser {
 		ObjectMemberContext _localctx = new ObjectMemberContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_objectMember);
 		try {
-			setState(62);
+			setState(63);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ObjectType:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(59);
+				setState(60);
 				objectDefinition();
 				}
 				break;
 			case ON:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(60);
+				setState(61);
 				signalAssignement();
 				}
 				break;
 			case Identifier:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(61);
+				setState(62);
 				propertyDefinition();
 				}
 				break;
@@ -505,20 +508,20 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
-			match(ON);
 			setState(65);
-			match(Identifier);
+			match(ON);
 			setState(66);
-			match(COLON);
+			match(Identifier);
 			setState(67);
+			match(COLON);
+			setState(68);
 			callableExpression();
-			setState(69);
+			setState(70);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(68);
+				setState(69);
 				match(SEMICOLON);
 				}
 			}
@@ -569,18 +572,18 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(71);
-			match(Identifier);
 			setState(72);
-			match(COLON);
+			match(Identifier);
 			setState(73);
+			match(COLON);
+			setState(74);
 			expression(0);
-			setState(75);
+			setState(76);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMICOLON) {
 				{
-				setState(74);
+				setState(75);
 				match(SEMICOLON);
 				}
 			}
@@ -651,30 +654,30 @@ public class PineScript extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(81);
+			setState(82);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 			case 1:
 				{
-				setState(78);
+				setState(79);
 				primitiveExpression();
 				}
 				break;
 			case 2:
 				{
-				setState(79);
+				setState(80);
 				objectPropertyExpression();
 				}
 				break;
 			case 3:
 				{
-				setState(80);
+				setState(81);
 				callableExpression();
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(89);
+			setState(90);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -685,16 +688,16 @@ public class PineScript extends Parser {
 					{
 					_localctx = new ExpressionContext(_parentctx, _parentState);
 					pushNewRecursionContext(_localctx, _startState, RULE_expression);
-					setState(83);
-					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 					setState(84);
-					binaryOperation();
+					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 					setState(85);
+					binaryOperation();
+					setState(86);
 					expression(3);
 					}
 					} 
 				}
-				setState(91);
+				setState(92);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			}
@@ -745,7 +748,7 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(92);
+			setState(93);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << MULTI) | (1L << DIV) | (1L << REMAINDER) | (1L << AND) | (1L << OR))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -799,16 +802,16 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(94);
+			setState(95);
 			match(Identifier);
-			setState(97);
+			setState(98);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
 			case 1:
 				{
-				setState(95);
-				match(DOT);
 				setState(96);
+				match(DOT);
+				setState(97);
 				match(Identifier);
 				}
 				break;
@@ -860,34 +863,34 @@ public class PineScript extends Parser {
 		PrimitiveExpressionContext _localctx = new PrimitiveExpressionContext(_ctx, getState());
 		enterRule(_localctx, 22, RULE_primitiveExpression);
 		try {
-			setState(107);
+			setState(108);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case TRUE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(99);
+				setState(100);
 				match(TRUE);
 				}
 				break;
 			case FALSE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(100);
+				setState(101);
 				match(FALSE);
 				}
 				break;
 			case IntegerLiteral:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(101);
+				setState(102);
 				match(IntegerLiteral);
-				setState(103);
+				setState(104);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
 				case 1:
 					{
-					setState(102);
+					setState(103);
 					integerSuffix();
 					}
 					break;
@@ -897,14 +900,14 @@ public class PineScript extends Parser {
 			case FloatLiteral:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(105);
+				setState(106);
 				match(FloatLiteral);
 				}
 				break;
 			case DOUBLE_QUOTE_OPEN:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(106);
+				setState(107);
 				stringLiteral();
 				}
 				break;
@@ -925,7 +928,7 @@ public class PineScript extends Parser {
 
 	public static class StringLiteralContext extends ParserRuleContext {
 		public TerminalNode DOUBLE_QUOTE_OPEN() { return getToken(PineScript.DOUBLE_QUOTE_OPEN, 0); }
-		public TerminalNode DoubleQuoteString() { return getToken(PineScript.DoubleQuoteString, 0); }
+		public TerminalNode STRING() { return getToken(PineScript.STRING, 0); }
 		public TerminalNode DOUBLE_QUOTE_CLOSE() { return getToken(PineScript.DOUBLE_QUOTE_CLOSE, 0); }
 		public StringLiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -952,11 +955,11 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(109);
-			match(DOUBLE_QUOTE_OPEN);
 			setState(110);
-			match(DoubleQuoteString);
+			match(DOUBLE_QUOTE_OPEN);
 			setState(111);
+			match(STRING);
+			setState(112);
 			match(DOUBLE_QUOTE_CLOSE);
 			}
 		}
@@ -1000,7 +1003,7 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(113);
+			setState(114);
 			_la = _input.LA(1);
 			if ( !(_la==SUFFIX_DP || _la==SUFFIX_PX) ) {
 			_errHandler.recoverInline(this);
@@ -1052,11 +1055,11 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(115);
-			match(Identifier);
 			setState(116);
-			match(LPAREN);
+			match(Identifier);
 			setState(117);
+			match(LPAREN);
+			setState(118);
 			match(RPAREN);
 			}
 		}
@@ -1108,21 +1111,21 @@ public class PineScript extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(119);
+			setState(120);
 			expression(0);
-			setState(124);
+			setState(125);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(120);
-				match(COMMA);
 				setState(121);
+				match(COMMA);
+				setState(122);
 				expression(0);
 				}
 				}
-				setState(126);
+				setState(127);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1155,37 +1158,38 @@ public class PineScript extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3+\u0082\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3+\u0083\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\3\2\3\2\3"+
-		"\3\3\3\3\4\3\4\3\4\5\4*\n\4\3\5\3\5\5\5.\n\5\3\5\7\5\61\n\5\f\5\16\5\64"+
-		"\13\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6<\n\6\3\7\3\7\3\7\5\7A\n\7\3\b\3\b\3"+
-		"\b\3\b\3\b\5\bH\n\b\3\t\3\t\3\t\3\t\5\tN\n\t\3\n\3\n\3\n\3\n\5\nT\n\n"+
-		"\3\n\3\n\3\n\3\n\7\nZ\n\n\f\n\16\n]\13\n\3\13\3\13\3\f\3\f\3\f\5\fd\n"+
-		"\f\3\r\3\r\3\r\3\r\5\rj\n\r\3\r\3\r\5\rn\n\r\3\16\3\16\3\16\3\16\3\17"+
-		"\3\17\3\20\3\20\3\20\3\20\3\21\3\21\3\21\7\21}\n\21\f\21\16\21\u0080\13"+
-		"\21\3\21\2\3\22\22\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \2\4\3\2\32"+
-		" \3\2\4\5\2\u0083\2\"\3\2\2\2\4$\3\2\2\2\6&\3\2\2\2\b+\3\2\2\2\n\67\3"+
-		"\2\2\2\f@\3\2\2\2\16B\3\2\2\2\20I\3\2\2\2\22S\3\2\2\2\24^\3\2\2\2\26`"+
-		"\3\2\2\2\30m\3\2\2\2\32o\3\2\2\2\34s\3\2\2\2\36u\3\2\2\2 y\3\2\2\2\"#"+
-		"\5\4\3\2#\3\3\2\2\2$%\5\6\4\2%\5\3\2\2\2&\'\7#\2\2\')\5\b\5\2(*\7\24\2"+
-		"\2)(\3\2\2\2)*\3\2\2\2*\7\3\2\2\2+-\7\26\2\2,.\5\n\6\2-,\3\2\2\2-.\3\2"+
-		"\2\2.\62\3\2\2\2/\61\5\f\7\2\60/\3\2\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62"+
-		"\63\3\2\2\2\63\65\3\2\2\2\64\62\3\2\2\2\65\66\7\27\2\2\66\t\3\2\2\2\67"+
-		"8\7\6\2\289\7\25\2\29;\7\"\2\2:<\7\24\2\2;:\3\2\2\2;<\3\2\2\2<\13\3\2"+
-		"\2\2=A\5\6\4\2>A\5\16\b\2?A\5\20\t\2@=\3\2\2\2@>\3\2\2\2@?\3\2\2\2A\r"+
-		"\3\2\2\2BC\7\3\2\2CD\7\"\2\2DE\7\25\2\2EG\5\36\20\2FH\7\24\2\2GF\3\2\2"+
-		"\2GH\3\2\2\2H\17\3\2\2\2IJ\7\"\2\2JK\7\25\2\2KM\5\22\n\2LN\7\24\2\2ML"+
-		"\3\2\2\2MN\3\2\2\2N\21\3\2\2\2OP\b\n\1\2PT\5\30\r\2QT\5\26\f\2RT\5\36"+
-		"\20\2SO\3\2\2\2SQ\3\2\2\2SR\3\2\2\2T[\3\2\2\2UV\f\4\2\2VW\5\24\13\2WX"+
-		"\5\22\n\5XZ\3\2\2\2YU\3\2\2\2Z]\3\2\2\2[Y\3\2\2\2[\\\3\2\2\2\\\23\3\2"+
-		"\2\2][\3\2\2\2^_\t\2\2\2_\25\3\2\2\2`c\7\"\2\2ab\7\7\2\2bd\7\"\2\2ca\3"+
-		"\2\2\2cd\3\2\2\2d\27\3\2\2\2en\7\f\2\2fn\7\r\2\2gi\7$\2\2hj\5\34\17\2"+
-		"ih\3\2\2\2ij\3\2\2\2jn\3\2\2\2kn\7%\2\2ln\5\32\16\2me\3\2\2\2mf\3\2\2"+
-		"\2mg\3\2\2\2mk\3\2\2\2ml\3\2\2\2n\31\3\2\2\2op\7!\2\2pq\7\'\2\2qr\7&\2"+
-		"\2r\33\3\2\2\2st\t\3\2\2t\35\3\2\2\2uv\7\"\2\2vw\7\b\2\2wx\7\t\2\2x\37"+
-		"\3\2\2\2y~\5\22\n\2z{\7\n\2\2{}\5\22\n\2|z\3\2\2\2}\u0080\3\2\2\2~|\3"+
-		"\2\2\2~\177\3\2\2\2\177!\3\2\2\2\u0080~\3\2\2\2\17)-\62;@GMS[cim~";
+		"\2\3\3\3\3\3\4\3\4\3\4\5\4+\n\4\3\5\3\5\5\5/\n\5\3\5\7\5\62\n\5\f\5\16"+
+		"\5\65\13\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6=\n\6\3\7\3\7\3\7\5\7B\n\7\3\b\3"+
+		"\b\3\b\3\b\3\b\5\bI\n\b\3\t\3\t\3\t\3\t\5\tO\n\t\3\n\3\n\3\n\3\n\5\nU"+
+		"\n\n\3\n\3\n\3\n\3\n\7\n[\n\n\f\n\16\n^\13\n\3\13\3\13\3\f\3\f\3\f\5\f"+
+		"e\n\f\3\r\3\r\3\r\3\r\5\rk\n\r\3\r\3\r\5\ro\n\r\3\16\3\16\3\16\3\16\3"+
+		"\17\3\17\3\20\3\20\3\20\3\20\3\21\3\21\3\21\7\21~\n\21\f\21\16\21\u0081"+
+		"\13\21\3\21\2\3\22\22\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \2\4\3\2"+
+		"\32 \3\2\4\5\2\u0084\2\"\3\2\2\2\4%\3\2\2\2\6\'\3\2\2\2\b,\3\2\2\2\n8"+
+		"\3\2\2\2\fA\3\2\2\2\16C\3\2\2\2\20J\3\2\2\2\22T\3\2\2\2\24_\3\2\2\2\26"+
+		"a\3\2\2\2\30n\3\2\2\2\32p\3\2\2\2\34t\3\2\2\2\36v\3\2\2\2 z\3\2\2\2\""+
+		"#\5\4\3\2#$\7\2\2\3$\3\3\2\2\2%&\5\6\4\2&\5\3\2\2\2\'(\7\"\2\2(*\5\b\5"+
+		"\2)+\7\24\2\2*)\3\2\2\2*+\3\2\2\2+\7\3\2\2\2,.\7\26\2\2-/\5\n\6\2.-\3"+
+		"\2\2\2./\3\2\2\2/\63\3\2\2\2\60\62\5\f\7\2\61\60\3\2\2\2\62\65\3\2\2\2"+
+		"\63\61\3\2\2\2\63\64\3\2\2\2\64\66\3\2\2\2\65\63\3\2\2\2\66\67\7\27\2"+
+		"\2\67\t\3\2\2\289\7\6\2\29:\7\25\2\2:<\7!\2\2;=\7\24\2\2<;\3\2\2\2<=\3"+
+		"\2\2\2=\13\3\2\2\2>B\5\6\4\2?B\5\16\b\2@B\5\20\t\2A>\3\2\2\2A?\3\2\2\2"+
+		"A@\3\2\2\2B\r\3\2\2\2CD\7\3\2\2DE\7!\2\2EF\7\25\2\2FH\5\36\20\2GI\7\24"+
+		"\2\2HG\3\2\2\2HI\3\2\2\2I\17\3\2\2\2JK\7!\2\2KL\7\25\2\2LN\5\22\n\2MO"+
+		"\7\24\2\2NM\3\2\2\2NO\3\2\2\2O\21\3\2\2\2PQ\b\n\1\2QU\5\30\r\2RU\5\26"+
+		"\f\2SU\5\36\20\2TP\3\2\2\2TR\3\2\2\2TS\3\2\2\2U\\\3\2\2\2VW\f\4\2\2WX"+
+		"\5\24\13\2XY\5\22\n\5Y[\3\2\2\2ZV\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3\2"+
+		"\2\2]\23\3\2\2\2^\\\3\2\2\2_`\t\2\2\2`\25\3\2\2\2ad\7!\2\2bc\7\7\2\2c"+
+		"e\7!\2\2db\3\2\2\2de\3\2\2\2e\27\3\2\2\2fo\7\f\2\2go\7\r\2\2hj\7&\2\2"+
+		"ik\5\34\17\2ji\3\2\2\2jk\3\2\2\2ko\3\2\2\2lo\7\'\2\2mo\5\32\16\2nf\3\2"+
+		"\2\2ng\3\2\2\2nh\3\2\2\2nl\3\2\2\2nm\3\2\2\2o\31\3\2\2\2pq\7#\2\2qr\7"+
+		"%\2\2rs\7$\2\2s\33\3\2\2\2tu\t\3\2\2u\35\3\2\2\2vw\7!\2\2wx\7\b\2\2xy"+
+		"\7\t\2\2y\37\3\2\2\2z\177\5\22\n\2{|\7\n\2\2|~\5\22\n\2}{\3\2\2\2~\u0081"+
+		"\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080!\3\2\2\2\u0081\177\3\2\2"+
+		"\2\17*.\63<AHNT\\djn\177";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

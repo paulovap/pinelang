@@ -1,4 +1,4 @@
-package com.pinescript.lsp.ui
+package com.pinescript.lsp.sandbox.ui
 
 import com.pinescript.core.PineMetaObject
 import com.pinescript.core.PineObject
