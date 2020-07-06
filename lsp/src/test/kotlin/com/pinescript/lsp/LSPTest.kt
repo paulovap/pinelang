@@ -3,10 +3,10 @@ package com.pinescript.lsp
 class LSPTest {
 
 //    @Test fun testCapabilities() {
-////        val server = LSPServer()
-////        assertEquals(ErrorCode.ServerNotInitialized, server.handleRequest(JsonRPCRequest(1, "test")).error!!.code)
-////        val result = server.handleRequest(JsonRPCRequest(1, "initialize"))
-////        assertEquals(JsonRPCClientInfoCapabilities(), result.result)
+// //        val server = LSPServer()
+// //        assertEquals(ErrorCode.ServerNotInitialized, server.handleRequest(JsonRPCRequest(1, "test")).error!!.code)
+// //        val result = server.handleRequest(JsonRPCRequest(1, "initialize"))
+// //        assertEquals(JsonRPCClientInfoCapabilities(), result.result)
 //    }
 //
 //    @KtorExperimentalAPI

@@ -2,7 +2,7 @@ package com.pinescript.util
 
 import com.pinescript.core.PineSignal
 
-fun <K, V>MutableMap<K, MutableSet<V>>.safeAdd(key: K, value: V) {
+fun <K, V> MutableMap<K, MutableSet<V>>.safeAdd(key: K, value: V) {
     var list = this[key]
     if (list == null) {
         list = mutableSetOf()
@@ -11,7 +11,7 @@ fun <K, V>MutableMap<K, MutableSet<V>>.safeAdd(key: K, value: V) {
     list.add(value)
 }
 
-fun <K, V>MutableMap<K, MutableSet<V>>.safeGet(key: K): MutableSet<V> {
+fun <K, V> MutableMap<K, MutableSet<V>>.safeGet(key: K): MutableSet<V> {
     var list = this[key]
 
     if (list == null) {
@@ -22,6 +22,6 @@ fun <K, V>MutableMap<K, MutableSet<V>>.safeGet(key: K): MutableSet<V> {
 }
 
 fun List<PineSignal>.toIndexMap(): Map<String, Int> {
-    var count = 0;
-    return this.associateBy({it.getScriptName()}, {count++})
+    var count = 0
+    return this.associateBy({ it.getScriptName() }, { count++ })
 }

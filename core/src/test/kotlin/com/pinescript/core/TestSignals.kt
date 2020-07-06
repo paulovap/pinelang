@@ -1,10 +1,9 @@
 package com.pinescript.core
 
+import junit.framework.Assert.assertEquals
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /*
 BSD License
@@ -54,8 +53,8 @@ class TestSignals {
         val root = Item(-1)
         var count = 0
         val slot: () -> Unit = { count++ }
-        root.connect("myInt" , slot)
-        root.connect("myInt" , slot)
+        root.connect("myInt", slot)
+        root.connect("myInt", slot)
         root.myInt = 1
         root.myInt = 2
         root.myInt = 3
@@ -63,10 +62,9 @@ class TestSignals {
         root.disconnect("myInt", slot)
         root.myInt = 4
         assertEquals(7, count)
-        root.connect("myInt" , slot)
+        root.connect("myInt", slot)
         root.myInt = 5
         assertEquals(9, count)
         assertEquals(9, count)
     }
-
 }

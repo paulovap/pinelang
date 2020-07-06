@@ -37,7 +37,8 @@ import com.pinescript.core.PineCompiler
 import com.pinescript.parser.PineScript
 
 @ExperimentalUnsignedTypes
-class ProgramVisitor(compiler: PineCompiler, debug: Boolean) : PineScriptVisitor<Program>(compiler, debug) {
+class ProgramVisitor(compiler: PineCompiler, debug: Boolean) :
+    PineScriptVisitor<Program>(compiler, debug) {
 
     private val objectDefinitionVisitor = ObjectDefinitionVisitor(compiler, debug)
 

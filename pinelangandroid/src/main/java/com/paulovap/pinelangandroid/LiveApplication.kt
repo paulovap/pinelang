@@ -7,7 +7,6 @@ import coil.ImageLoaderFactory
 import coil.util.CoilUtils
 import okhttp3.OkHttpClient
 
-
 class LiveApplication : Application() {
 
     override fun onCreate() {
@@ -30,7 +29,7 @@ class LiveApplication : Application() {
     companion object {
         private var instance: LiveApplication? = null
 
-        fun instance (): LiveApplication {
+        fun instance(): LiveApplication {
             return instance!!
         }
     }

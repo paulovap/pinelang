@@ -2,27 +2,32 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class Range : Struct() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : Range {
+    fun __assign(_i: Int, _bb: ByteBuffer): Range {
         __init(_i, _bb)
         return this
     }
-    val start : com.pinescript.ast.fbs.Position? get() = start(com.pinescript.ast.fbs.Position())
-    fun start(obj: com.pinescript.ast.fbs.Position) : com.pinescript.ast.fbs.Position? = obj.__assign(bb_pos + 0, bb)
-    val end : com.pinescript.ast.fbs.Position? get() = end(com.pinescript.ast.fbs.Position())
-    fun end(obj: com.pinescript.ast.fbs.Position) : com.pinescript.ast.fbs.Position? = obj.__assign(bb_pos + 8, bb)
+    val start: com.pinescript.ast.fbs.Position? get() = start(com.pinescript.ast.fbs.Position())
+    fun start(obj: com.pinescript.ast.fbs.Position): com.pinescript.ast.fbs.Position? = obj.__assign(bb_pos + 0, bb)
+    val end: com.pinescript.ast.fbs.Position? get() = end(com.pinescript.ast.fbs.Position())
+    fun end(obj: com.pinescript.ast.fbs.Position): com.pinescript.ast.fbs.Position? = obj.__assign(bb_pos + 8, bb)
     companion object {
-        fun createRange(builder: FlatBufferBuilder, start_line: Int, start_char: Int, end_line: Int, end_char: Int) : Int {
+        fun createRange(
+            builder: FlatBufferBuilder,
+            start_line: Int,
+            start_char: Int,
+            end_line: Int,
+            end_char: Int
+        ): Int {
             builder.prep(4, 16)
             builder.prep(4, 8)
             builder.putInt(end_char)

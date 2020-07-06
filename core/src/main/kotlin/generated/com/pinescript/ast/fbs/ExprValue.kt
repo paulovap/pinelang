@@ -11,7 +11,7 @@ class ExprValue private constructor() {
         const val BinaryExpr: UByte = 2u
         const val PrimitiveExpr: UByte = 3u
         const val PropRefExpr: UByte = 4u
-        val names : Array<String> = arrayOf("NONE", "CallableExpr", "BinaryExpr", "PrimitiveExpr", "PropRefExpr")
-        fun name(e: Int) : String = names[e]
+        val names: Array<String> = arrayOf("NONE", "CallableExpr", "BinaryExpr", "PrimitiveExpr", "PropRefExpr")
+        fun name(e: Int): String = names[e]
     }
 }

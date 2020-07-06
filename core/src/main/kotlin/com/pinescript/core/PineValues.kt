@@ -33,7 +33,7 @@ data class PineType(val typeName: String, val type: Int) {
         val LAMBDA = PineType("Lambda", 6)
 
         fun fromUByte(type: UByte): PineType {
-            return when(type.toInt()) {
+            return when (type.toInt()) {
                 VOID.type -> VOID
                 INT.type -> INT
                 BOOL.type -> BOOL
@@ -47,7 +47,6 @@ data class PineType(val typeName: String, val type: Int) {
             }
         }
     }
-
 }
 
 abstract class PineValue<T> {
@@ -65,11 +64,18 @@ abstract class PineValue<T> {
     fun isFunction() = getPineType() == PineType.FUNCTION
     fun isList() = getPineType() == PineType.LIST
 
-    open operator fun invoke(): T = throw PineScriptException("Value of type ${getPineType()} is not invokable")
+    open operator fun invoke(): T =
+        throw PineScriptException("Value of type ${getPineType()} is not invokable")
+
     open operator fun invoke(arg: PineValue<*>): T = this()
     open operator fun invoke(arg: PineValue<*>, arg1: PineValue<*>): T = this()
     open operator fun invoke(arg: PineValue<*>, arg1: PineValue<*>, arg2: PineValue<*>): T = this()
-    open operator fun invoke(arg: PineValue<*>, arg1: PineValue<*>, arg2: PineValue<*>, arg3: PineValue<*>): T = this()
+    open operator fun invoke(
+        arg: PineValue<*>,
+        arg1: PineValue<*>,
+        arg2: PineValue<*>,
+        arg3: PineValue<*>
+    ): T = this()
 
     companion object {
         fun of(value: Int) = PineInt(value)
@@ -93,7 +99,7 @@ abstract class PineValue<T> {
     }
 
     fun toPineDouble(): PineDouble {
-        return if (isNumber()){
+        return if (isNumber()) {
             if (isInt()) {
                 of((this as PineInt).getValue().toDouble())
             } else {
@@ -101,8 +107,9 @@ abstract class PineValue<T> {
             }
         } else throw PineScriptException("$this cannot be cast to PineDouble")
     }
+
     fun toPineInt(): PineInt {
-        return if (isNumber()){
+        return if (isNumber()) {
             if (isDouble()) {
                 of((this as PineDouble).getValue().toInt())
             } else {
@@ -118,12 +125,15 @@ data class PineInt(private val value: Int) : PineNumber<Int>, PineValue<Int>() {
     override fun getValue(): Int = value
     override operator fun invoke(): Int = value
 
-
     override fun plus(other: PineValue<*>): PineValue<Int> {
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineInt(value + (other as PineDouble).getValue().toInt())
             PineType.INT -> PineInt(value + (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                PLUS,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -131,7 +141,11 @@ data class PineInt(private val value: Int) : PineNumber<Int>, PineValue<Int>() {
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineInt(value - (other as PineDouble).getValue().toInt())
             PineType.INT -> PineInt(value - (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MINUS,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -139,7 +153,11 @@ data class PineInt(private val value: Int) : PineNumber<Int>, PineValue<Int>() {
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineInt(value * (other as PineDouble).getValue().toInt())
             PineType.INT -> PineInt(value * (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MULTI,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -147,7 +165,11 @@ data class PineInt(private val value: Int) : PineNumber<Int>, PineValue<Int>() {
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineInt(value / (other as PineDouble).getValue().toInt())
             PineType.INT -> PineInt(value / (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                DIV,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -155,13 +177,16 @@ data class PineInt(private val value: Int) : PineNumber<Int>, PineValue<Int>() {
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineInt(value % (other as PineDouble).getValue().toInt())
             PineType.INT -> PineInt(value % (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                REMAINDER,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
     override fun toDouble(): PineValue<Double> = of(value.toDouble())
     override fun toInt(): PineValue<Int> = of(value)
-
 }
 
 data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue<Double>() {
@@ -175,7 +200,11 @@ data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineDouble(value + (other as PineDouble).value)
             PineType.INT -> PineDouble(value + (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                PLUS,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -183,7 +212,11 @@ data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineDouble(value - (other as PineDouble).value)
             PineType.INT -> PineDouble(value - (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MINUS,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -191,7 +224,11 @@ data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineDouble(value * (other as PineDouble).value)
             PineType.INT -> PineDouble(value * (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MULTI,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -199,7 +236,11 @@ data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineDouble(value / (other as PineDouble).value)
             PineType.INT -> PineDouble(value / (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                DIV,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -207,7 +248,11 @@ data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue
         return when (other.getPineType()) {
             PineType.DOUBLE -> PineDouble(value % (other as PineDouble).value)
             PineType.INT -> PineDouble(value % (other as PineInt).getValue())
-            else -> throw PineScriptException("unable to apply operator plus with types ${getPineType()} and ${other.getPineType()}")
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                REMAINDER,
+                getPineType(),
+                other.getPineType()
+            )
         }
     }
 
@@ -221,12 +266,20 @@ data class PineBoolean(val value: Boolean) : PineValue<Boolean>() {
 
     fun and(other: PineValue<*>) = when (other.getPineType()) {
         PineType.BOOL -> of(value && (other as PineValue<Boolean>).getValue())
-        else -> throw PineScriptException("unable to apply operator 'and' with types ${getPineType()} and ${other.getPineType()}")
+        else -> throw BinaryOpTypeMismatchPineScriptException(
+            AND,
+            getPineType(),
+            other.getPineType()
+        )
     }
 
     fun or(other: PineValue<*>) = when (other.getPineType()) {
         PineType.BOOL -> of(value || (other as PineValue<Boolean>).getValue())
-        else -> throw PineScriptException("unable to apply operator 'or' with types ${getPineType()} and ${other.getPineType()}")
+        else -> throw BinaryOpTypeMismatchPineScriptException(
+            OR,
+            getPineType(),
+            other.getPineType()
+        )
     }
 
     operator fun not(): PineBoolean = of(!value)
@@ -249,43 +302,44 @@ class BinaryExprValue<T>(
     owner: PineObject,
     name: String,
     val op: UByte,
-    val leftHandValue: PineValue<T>,
-    val rightHandValue: PineValue<*>
+    val lhv: PineValue<T>,
+    val rhv: PineValue<*>
 ) : PineCallable<T>(owner, name, {
     val pineValue = if (op.isNumberOp()) {
-        if (leftHandValue.isDouble() || rightHandValue.isDouble()) {
-            val left = leftHandValue.toPineDouble()
+        if (lhv.isDouble() || rhv.isDouble()) {
+            val left = lhv.toPineDouble()
             when (op) {
-                PLUS -> (left + rightHandValue)
-                MINUS -> (left - rightHandValue)
-                MULTI -> (left * rightHandValue)
-                DIV -> (left / rightHandValue)
-                REMAINDER -> (left % rightHandValue)
-                else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+                PLUS -> (left + rhv)
+                MINUS -> (left - rhv)
+                MULTI -> (left * rhv)
+                DIV -> (left / rhv)
+                REMAINDER -> (left % rhv)
+                else -> throw BinaryOpNotSupportedPineScriptException(op, lhv.getPineType())
             }
         } else {
-            val left = leftHandValue.toPineInt()
+            val left = lhv.toPineInt()
             when (op) {
-                PLUS -> (left + rightHandValue)
-                MINUS -> (left - rightHandValue)
-                MULTI -> (left * rightHandValue)
-                DIV -> (left / rightHandValue)
-                REMAINDER -> (left % rightHandValue)
-                else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+                PLUS -> (left + rhv)
+                MINUS -> (left - rhv)
+                MULTI -> (left * rhv)
+                DIV -> (left / rhv)
+                REMAINDER -> (left % rhv)
+                else -> throw BinaryOpNotSupportedPineScriptException(op, lhv.getPineType())
             }
         }
     } else {
-        val left = leftHandValue as PineBoolean
+        val left = lhv as PineBoolean
         when (op) {
-            AND -> left.and(rightHandValue)
-            OR -> left.or(rightHandValue)
-            else -> throw PineScriptException("operation $op not supported for ${leftHandValue.getPineType()}")
+            AND -> left.and(rhv)
+            OR -> left.or(rhv)
+            else -> throw BinaryOpNotSupportedPineScriptException(op, lhv.getPineType())
         }
     } as PineValue<T>
     pineValue.getValue()
 })
 
-open class PineCallable<T>(val owner: PineObject, val name: String, val lambda: () -> T) : PineSignal, PineValue<T>() {
+open class PineCallable<T>(val owner: PineObject, val name: String, val lambda: () -> T) :
+    PineSignal, PineValue<T>() {
 
     override fun getPineType(): PineType = PineType.FUNCTION
     override operator fun invoke(): T = getValue()
@@ -301,5 +355,7 @@ fun Float.toPineValue() = of(this)
 fun Long.toPineValue() = of(this)
 fun Boolean.toPineValue() = of(this)
 
-private fun UByte.isNumberOp() = this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
+private fun UByte.isNumberOp() =
+    this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
+
 private fun UByte.isBooleanOp() = this == AND || this == OR

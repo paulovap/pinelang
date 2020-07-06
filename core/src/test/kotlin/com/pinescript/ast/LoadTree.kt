@@ -32,18 +32,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.pinescript.ast
 
-import com.pinescript.core.PineEngine
 import com.pinescript.parser.PineLexer
 import com.pinescript.parser.PineScript
-import org.antlr.v4.runtime.BailErrorStrategy
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.junit.Test
-
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import kotlin.system.measureTimeMillis
+import org.antlr.v4.runtime.BailErrorStrategy
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 
 object LoadTree {
 

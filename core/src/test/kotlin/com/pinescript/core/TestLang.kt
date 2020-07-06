@@ -1,13 +1,12 @@
 package com.pinescript.core
 
-import com.pinescript.util.toIndexMap
+import kotlin.test.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
-class Item(id: Int): PineObject(id) {
+class Item(id: Int) : PineObject(id) {
     companion object {
-        val meta = PineMetaObject("Item") {Item(it)}
+        val meta = PineMetaObject("Item") { Item(it) }
     }
     var myInt: Int by intProp(::myInt)
     var myDouble: Double by doubleProp(::myDouble)
@@ -18,12 +17,11 @@ class Item(id: Int): PineObject(id) {
 class TestLang {
 
     val engine = PineEngine.Builder()
-        .registerPineType(PineMetaObject("Item") {Item(it)})
+        .registerPineType(PineMetaObject("Item") { Item(it) })
         .build()
 
         @Before
     fun setup() {
-
     }
 
     @Test

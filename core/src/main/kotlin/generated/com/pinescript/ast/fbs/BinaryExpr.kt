@@ -2,28 +2,27 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class BinaryExpr : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : BinaryExpr {
+    fun __assign(_i: Int, _bb: ByteBuffer): BinaryExpr {
         __init(_i, _bb)
         return this
     }
-    val op : UByte
+    val op: UByte
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
+            return if (o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
-    val left : com.pinescript.ast.fbs.Expr? get() = left(com.pinescript.ast.fbs.Expr())
-    fun left(obj: com.pinescript.ast.fbs.Expr) : com.pinescript.ast.fbs.Expr? {
+    val left: com.pinescript.ast.fbs.Expr? get() = left(com.pinescript.ast.fbs.Expr())
+    fun left(obj: com.pinescript.ast.fbs.Expr): com.pinescript.ast.fbs.Expr? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -31,8 +30,8 @@ class BinaryExpr : Table() {
             null
         }
     }
-    val right : com.pinescript.ast.fbs.Expr? get() = right(com.pinescript.ast.fbs.Expr())
-    fun right(obj: com.pinescript.ast.fbs.Expr) : com.pinescript.ast.fbs.Expr? {
+    val right: com.pinescript.ast.fbs.Expr? get() = right(com.pinescript.ast.fbs.Expr())
+    fun right(obj: com.pinescript.ast.fbs.Expr): com.pinescript.ast.fbs.Expr? {
         val o = __offset(8)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -47,7 +46,12 @@ class BinaryExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createBinaryExpr(builder: FlatBufferBuilder, op: UByte, leftOffset: Int, rightOffset: Int) : Int {
+        fun createBinaryExpr(
+            builder: FlatBufferBuilder,
+            op: UByte,
+            leftOffset: Int,
+            rightOffset: Int
+        ): Int {
             builder.startTable(3)
             addRight(builder, rightOffset)
             addLeft(builder, leftOffset)
@@ -58,7 +62,7 @@ class BinaryExpr : Table() {
         fun addOp(builder: FlatBufferBuilder, op: UByte) = builder.addByte(0, op.toByte(), 0)
         fun addLeft(builder: FlatBufferBuilder, left: Int) = builder.addOffset(1, left, 0)
         fun addRight(builder: FlatBufferBuilder, right: Int) = builder.addOffset(2, right, 0)
-        fun endBinaryExpr(builder: FlatBufferBuilder) : Int {
+        fun endBinaryExpr(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

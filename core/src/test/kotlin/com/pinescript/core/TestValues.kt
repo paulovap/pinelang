@@ -1,11 +1,11 @@
 package com.pinescript.core
 
 import com.pinescript.core.PineValue.Companion.of
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class TestValues {
     @Before
@@ -18,7 +18,7 @@ class TestValues {
     fun tearDown() {
     }
 
-    @Test fun testIntValue(){
+    @Test fun testIntValue() {
         val data = 10
         val a = PineInt(data)
         assertEquals(data, a.getValue())
@@ -37,16 +37,16 @@ class TestValues {
         // div
         assertEquals(data / data, (a / a).getValue())
         // remainder
-        assertEquals(data % (data -1), (a % (a + of(-1))).getValue())
+        assertEquals(data % (data - 1), (a % (a + of(-1))).getValue())
 
-        assertFailsWith(PineScriptException::class) {a + of("test")}
-        assertFailsWith(PineScriptException::class) {a - of("test")}
-        assertFailsWith(PineScriptException::class) {a * of("test")}
-        assertFailsWith(PineScriptException::class) {a / of("test")}
-        assertFailsWith(PineScriptException::class) {a % of("test")}
+        assertFailsWith(PineScriptException::class) { a + of("test") }
+        assertFailsWith(PineScriptException::class) { a - of("test") }
+        assertFailsWith(PineScriptException::class) { a * of("test") }
+        assertFailsWith(PineScriptException::class) { a / of("test") }
+        assertFailsWith(PineScriptException::class) { a % of("test") }
     }
 
-    @Test fun testDoubleValue(){
+    @Test fun testDoubleValue() {
         val data = 12.5
         val a = PineDouble(data)
         assertEquals(data, a.getValue())
@@ -63,13 +63,13 @@ class TestValues {
         // div
         assertEquals(data / data, (a / a).getValue())
         // remainder
-        assertEquals(data % (data -1), (a % (a + of(-1))).getValue())
+        assertEquals(data % (data - 1), (a % (a + of(-1))).getValue())
 
-        assertFailsWith(PineScriptException::class) {a + of("test")}
-        assertFailsWith(PineScriptException::class) {a - of("test")}
-        assertFailsWith(PineScriptException::class) {a * of("test")}
-        assertFailsWith(PineScriptException::class) {a / of("test")}
-        assertFailsWith(PineScriptException::class) {a % of("test")}
+        assertFailsWith(PineScriptException::class) { a + of("test") }
+        assertFailsWith(PineScriptException::class) { a - of("test") }
+        assertFailsWith(PineScriptException::class) { a * of("test") }
+        assertFailsWith(PineScriptException::class) { a / of("test") }
+        assertFailsWith(PineScriptException::class) { a % of("test") }
     }
 
     @Test fun testNumberOperators() {
@@ -92,7 +92,7 @@ class TestValues {
         assertEquals(0.0, (doubleVal % intVal).getValue())
     }
 
-    @Test fun testBooleanValue(){
+    @Test fun testBooleanValue() {
         val trueValue = of(true)
         val falseValue = of(false)
         assertEquals(true, falseValue.isBool())
@@ -117,7 +117,7 @@ class TestValues {
         assertEquals(true, trueValue.or(trueValue)())
     }
 
-    @Test fun testStringValue(){
+    @Test fun testStringValue() {
         val data = "My String"
         val data2 = "Another String"
         val a = of(data)

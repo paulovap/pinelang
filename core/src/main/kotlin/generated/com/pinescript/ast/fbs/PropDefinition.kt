@@ -2,28 +2,27 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class PropDefinition : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : PropDefinition {
+    fun __assign(_i: Int, _bb: ByteBuffer): PropDefinition {
         __init(_i, _bb)
         return this
     }
-    val id : UByte
+    val id: UByte
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
+            return if (o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
-    val value : com.pinescript.ast.fbs.Expr? get() = value(com.pinescript.ast.fbs.Expr())
-    fun value(obj: com.pinescript.ast.fbs.Expr) : com.pinescript.ast.fbs.Expr? {
+    val value: com.pinescript.ast.fbs.Expr? get() = value(com.pinescript.ast.fbs.Expr())
+    fun value(obj: com.pinescript.ast.fbs.Expr): com.pinescript.ast.fbs.Expr? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -31,8 +30,8 @@ class PropDefinition : Table() {
             null
         }
     }
-    val debug : com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
-    fun debug(obj: com.pinescript.ast.fbs.DebugInfo) : com.pinescript.ast.fbs.DebugInfo? {
+    val debug: com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
+    fun debug(obj: com.pinescript.ast.fbs.DebugInfo): com.pinescript.ast.fbs.DebugInfo? {
         val o = __offset(8)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -47,7 +46,12 @@ class PropDefinition : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createPropDefinition(builder: FlatBufferBuilder, id: UByte, valueOffset: Int, debugOffset: Int) : Int {
+        fun createPropDefinition(
+            builder: FlatBufferBuilder,
+            id: UByte,
+            valueOffset: Int,
+            debugOffset: Int
+        ): Int {
             builder.startTable(3)
             addDebug(builder, debugOffset)
             addValue(builder, valueOffset)
@@ -58,7 +62,7 @@ class PropDefinition : Table() {
         fun addId(builder: FlatBufferBuilder, id: UByte) = builder.addByte(0, id.toByte(), 0)
         fun addValue(builder: FlatBufferBuilder, value: Int) = builder.addOffset(1, value, 0)
         fun addDebug(builder: FlatBufferBuilder, debug: Int) = builder.addOffset(2, debug, 0)
-        fun endPropDefinition(builder: FlatBufferBuilder) : Int {
+        fun endPropDefinition(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

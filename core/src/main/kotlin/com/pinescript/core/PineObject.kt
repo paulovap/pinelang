@@ -1,8 +1,6 @@
 package com.pinescript.core
 
 import com.pinescript.core.PineValue.Companion.of
-import com.pinescript.util.safeGet
-import com.pinescript.util.safeAdd
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -46,7 +44,8 @@ open class PineProp<T>(
     val name: String,
     val pineType: PineType,
     val kProp: KProperty<*>,
-    initialValue: PineValue<T>) : PineSignal, ReadWriteProperty<PineObject, T> {
+    initialValue: PineValue<T>
+) : PineSignal, ReadWriteProperty<PineObject, T> {
 
     var value: PineValue<T> = initialValue
         set(value) {
@@ -72,26 +71,42 @@ open class PineProp<T>(
     fun bind(otherProp: PineProp<*>) {
         checkType(otherProp)
         when (pineType) {
-            PineType.DOUBLE -> otherProp.connect { this.asType<Double>().value = otherProp.asType<Double>().value }
-            PineType.STRING -> otherProp.connect { this.asType<String>().value = otherProp.asType<String>().value }
-            PineType.INT -> otherProp.connect { this.asType<Int>().value = otherProp.asType<Int>().value }
-            PineType.OBJECT -> otherProp.connect { this.asType<Any>().value = otherProp.asType<Any>().value }
+            PineType.DOUBLE -> otherProp.connect {
+                this.asType<Double>().value = otherProp.asType<Double>().value
+            }
+            PineType.STRING -> otherProp.connect {
+                this.asType<String>().value = otherProp.asType<String>().value
+            }
+            PineType.INT -> otherProp.connect {
+                this.asType<Int>().value = otherProp.asType<Int>().value
+            }
+            PineType.OBJECT -> otherProp.connect {
+                this.asType<Any>().value = otherProp.asType<Any>().value
+            }
         }
         otherProp.emit()
     }
 
     private fun checkType(other: PineProp<*>): PineProp<*> {
         if (other.pineType != this.pineType)
-            throw PineScriptException("unable to bind prop $other into ${this}. Incompatible types}")
+            throw PineScriptException("unable to bind prop $other into $this. Incompatible types}")
         return this
     }
 
     fun <T> asType(): PineProp<T> = this as PineProp<T>
 }
 
-open class ChildrenListPineProp(private val pineObject: PineObject,
-                                kProp: KProperty<*>) :
-    PineProp<MutableList<PineObject>>(pineObject, "children", PineType.LIST, kProp, of(mutableListOf<PineObject>()) as PineValue<MutableList<PineObject>>), Iterable<PineObject> {
+open class ChildrenListPineProp(
+    private val pineObject: PineObject,
+    kProp: KProperty<*>
+) :
+    PineProp<MutableList<PineObject>>(
+        pineObject,
+        "children",
+        PineType.LIST,
+        kProp,
+        of(mutableListOf<PineObject>()) as PineValue<MutableList<PineObject>>
+    ), Iterable<PineObject> {
 
     var props = mutableListOf<PineObject>()
 
@@ -107,7 +122,11 @@ open class ChildrenListPineProp(private val pineObject: PineObject,
 
     override fun getScriptName(): String = "children"
 
-    override operator fun getValue(thisRef: PineObject, property: KProperty<*>): MutableList<PineObject> = value.getValue()
+    override operator fun getValue(
+        thisRef: PineObject,
+        property: KProperty<*>
+    ): MutableList<PineObject> = value.getValue()
+
     override fun iterator(): Iterator<PineObject> = ListPinePropIterator()
 
     inner class ListPinePropIterator : Iterator<PineObject> {
@@ -119,7 +138,7 @@ open class ChildrenListPineProp(private val pineObject: PineObject,
 
 abstract class PineObject(val id: Int = -1) {
 
-    companion object  {
+    companion object {
         const val SIG_MOUNT = "mount"
         const val SIG_UNMOUNT = "unmount"
         const val INVALID_ID = Int.MIN_VALUE
@@ -140,18 +159,16 @@ abstract class PineObject(val id: Int = -1) {
 
     // All functions that can be called from script
     val callables: MutableList<PineCallable<*>> = mutableListOf()
- //       makeCallable("printHello") { println("Hello world") },
- //       makeCallable("helloText")  { "Hello world" }
-  //  )
-
-
+    //       makeCallable("printHello") { println("Hello world") },
+    //       makeCallable("helloText")  { "Hello world" }
+    //  )
 
     init {
-        makeSignal(SIG_MOUNT) //.connect { println("Did mount for object $this") }
-        makeSignal(SIG_UNMOUNT) //.connect { println("Did unmount for object $this") }
+        makeSignal(SIG_MOUNT) // .connect { println("Did mount for object $this") }
+        makeSignal(SIG_UNMOUNT) // .connect { println("Did unmount for object $this") }
 
         makeCallable("printHello") { println("Hello world") }
-        makeCallable("helloText")  { "Hello world" }
+        makeCallable("helloText") { "Hello world" }
     }
 
     abstract fun getMeta(): PineMetaObject
@@ -163,12 +180,14 @@ abstract class PineObject(val id: Int = -1) {
             if (connection.signalIdx == sigIdx)
                 connection.slot()
         }
-         //slots[getMeta().indexOfAny(signal)]?.forEach { it() }
+        // slots[getMeta().indexOfAny(signal)]?.forEach { it() }
     }
+
     fun emitMount() {
         emit(SIG_MOUNT)
         children.forEach { it.emitMount() }
     }
+
     fun emitUnmount() {
         children.forEach { it.dispose() }
         emit(SIG_UNMOUNT)
@@ -181,7 +200,8 @@ abstract class PineObject(val id: Int = -1) {
         return false
     }
 
-    fun disconnect(signal: String, slot: () -> Unit): Boolean = slots.remove(PineConnection(getMeta().indexOfAny(signal)!!, slot))
+    fun disconnect(signal: String, slot: () -> Unit): Boolean =
+        slots.remove(PineConnection(getMeta().indexOfAny(signal)!!, slot))
 
     fun getProp(name: String): PineProp<*> = props[getMeta().indexOfProp(name)!!]
 
@@ -195,7 +215,7 @@ abstract class PineObject(val id: Int = -1) {
         return sig
     }
 
-    fun <T>makeCallable(name: String, lambda: () -> T): PineCallable<T> {
+    fun <T> makeCallable(name: String, lambda: () -> T): PineCallable<T> {
         val callable = PineCallable(this, name, lambda)
         callables.add(callable)
         return callable
@@ -224,7 +244,7 @@ fun PineObject.doubleProp(
 
 private fun PineObject.childrenProp(
     kProp: KProperty<MutableList<PineObject>>
-    ): ChildrenListPineProp = registerProp(ChildrenListPineProp(this, kProp)) as ChildrenListPineProp
+): ChildrenListPineProp = registerProp(ChildrenListPineProp(this, kProp)) as ChildrenListPineProp
 
 fun <T> PineObject.registerProp(prop: PineProp<T>): PineProp<T> {
     props.add(prop)

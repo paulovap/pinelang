@@ -2,23 +2,22 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class DebugInfo : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : DebugInfo {
+    fun __assign(_i: Int, _bb: ByteBuffer): DebugInfo {
         __init(_i, _bb)
         return this
     }
-    val range : com.pinescript.ast.fbs.Range? get() = range(com.pinescript.ast.fbs.Range())
-    fun range(obj: com.pinescript.ast.fbs.Range) : com.pinescript.ast.fbs.Range? {
+    val range: com.pinescript.ast.fbs.Range? get() = range(com.pinescript.ast.fbs.Range())
+    fun range(obj: com.pinescript.ast.fbs.Range): com.pinescript.ast.fbs.Range? {
         val o = __offset(4)
         return if (o != 0) {
             obj.__assign(o + bb_pos, bb)
@@ -26,20 +25,20 @@ class DebugInfo : Table() {
             null
         }
     }
-    val debugName : String?
+    val debugName: String?
         get() {
             val o = __offset(6)
             return if (o != 0) __string(o + bb_pos) else null
         }
-    val debugNameAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(6, 1)
-    fun debugNameInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 6, 1)
-    val debugType : String?
+    val debugNameAsByteBuffer: ByteBuffer get() = __vector_as_bytebuffer(6, 1)
+    fun debugNameInByteBuffer(_bb: ByteBuffer): ByteBuffer = __vector_in_bytebuffer(_bb, 6, 1)
+    val debugType: String?
         get() {
             val o = __offset(8)
             return if (o != 0) __string(o + bb_pos) else null
         }
-    val debugTypeAsByteBuffer : ByteBuffer get() = __vector_as_bytebuffer(8, 1)
-    fun debugTypeInByteBuffer(_bb: ByteBuffer) : ByteBuffer = __vector_in_bytebuffer(_bb, 8, 1)
+    val debugTypeAsByteBuffer: ByteBuffer get() = __vector_as_bytebuffer(8, 1)
+    fun debugTypeInByteBuffer(_bb: ByteBuffer): ByteBuffer = __vector_in_bytebuffer(_bb, 8, 1)
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
         fun getRootAsDebugInfo(_bb: ByteBuffer): DebugInfo = getRootAsDebugInfo(_bb, DebugInfo())
@@ -51,7 +50,7 @@ class DebugInfo : Table() {
         fun addRange(builder: FlatBufferBuilder, range: Int) = builder.addStruct(0, range, 0)
         fun addDebugName(builder: FlatBufferBuilder, debugName: Int) = builder.addOffset(1, debugName, 0)
         fun addDebugType(builder: FlatBufferBuilder, debugType: Int) = builder.addOffset(2, debugType, 0)
-        fun endDebugInfo(builder: FlatBufferBuilder) : Int {
+        fun endDebugInfo(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

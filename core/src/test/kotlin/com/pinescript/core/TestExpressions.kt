@@ -1,6 +1,5 @@
 package com.pinescript.core
 
-import com.pinescript.ast.fbs.BinaryOp
 import com.pinescript.ast.fbs.BinaryOp.Companion.AND
 import com.pinescript.ast.fbs.BinaryOp.Companion.DIV
 import com.pinescript.ast.fbs.BinaryOp.Companion.MINUS
@@ -10,19 +9,20 @@ import com.pinescript.ast.fbs.BinaryOp.Companion.PLUS
 import com.pinescript.ast.fbs.BinaryOp.Companion.REMAINDER
 import com.pinescript.core.PineType.Companion.FUNCTION
 import com.pinescript.core.PineValue.Companion.of
-import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import org.junit.Test
 
 class TestExpressions {
 
-    class Item: PineObject(-1) {
+    class Item : PineObject(-1) {
         companion object {
-            val meta = PineMetaObject("Item") {Item()}
+            val meta = PineMetaObject("Item") { Item() }
         }
 
         override fun getMeta(): PineMetaObject = meta
     }
+
     @Test
     fun testBinaryMathExpressions() {
 
@@ -49,6 +49,14 @@ class TestExpressions {
 
         assertEquals(true, BinaryExprValue(root, "anon", AND, vTrue, vTrue)())
         assertEquals(true, BinaryExprValue(root, "anon", OR, vTrue, vFalse)())
-        assertFailsWith(PineScriptException::class) { BinaryExprValue(root, "anon", PLUS, of(10), vFalse)() }
+        assertFailsWith(PineScriptException::class) {
+            BinaryExprValue(
+                root,
+                "anon",
+                PLUS,
+                of(10),
+                vFalse
+            )()
+        }
     }
 }

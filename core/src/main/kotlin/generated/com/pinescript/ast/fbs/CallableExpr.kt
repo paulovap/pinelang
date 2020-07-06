@@ -2,30 +2,29 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class CallableExpr : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : CallableExpr {
+    fun __assign(_i: Int, _bb: ByteBuffer): CallableExpr {
         __init(_i, _bb)
         return this
     }
-    val objId : Int
+    val objId: Int
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.getInt(o + bb_pos) else 0
+            return if (o != 0) bb.getInt(o + bb_pos) else 0
         }
-    val callIdx : UByte
+    val callIdx: UByte
         get() {
             val o = __offset(6)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
+            return if (o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
@@ -34,7 +33,7 @@ class CallableExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createCallableExpr(builder: FlatBufferBuilder, objId: Int, callIdx: UByte) : Int {
+        fun createCallableExpr(builder: FlatBufferBuilder, objId: Int, callIdx: UByte): Int {
             builder.startTable(2)
             addObjId(builder, objId)
             addCallIdx(builder, callIdx)
@@ -43,7 +42,7 @@ class CallableExpr : Table() {
         fun startCallableExpr(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addObjId(builder: FlatBufferBuilder, objId: Int) = builder.addInt(0, objId, 0)
         fun addCallIdx(builder: FlatBufferBuilder, callIdx: UByte) = builder.addByte(1, callIdx.toByte(), 0)
-        fun endCallableExpr(builder: FlatBufferBuilder) : Int {
+        fun endCallableExpr(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

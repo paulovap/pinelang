@@ -31,7 +31,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package com.pinescript.core
 
-import com.pinescript.ast.fbs.*
+import com.pinescript.ast.fbs.BinaryExpr
+import com.pinescript.ast.fbs.CallableExpr
+import com.pinescript.ast.fbs.Expr
+import com.pinescript.ast.fbs.ExprValue
+import com.pinescript.ast.fbs.ObjectDefinition
+import com.pinescript.ast.fbs.PrimitiveExpr
+import com.pinescript.ast.fbs.PrimitiveType
+import com.pinescript.ast.fbs.Program
+import com.pinescript.ast.fbs.PropDefinition
+import com.pinescript.ast.fbs.PropRefExpr
+import com.pinescript.ast.fbs.SignalExpr
 import com.pinescript.core.PineType.Companion.BOOL
 import com.pinescript.core.PineType.Companion.DOUBLE
 import com.pinescript.core.PineType.Companion.INT
@@ -41,12 +51,13 @@ import com.pinescript.util.IndexedMap
 
 typealias Allocator = (Int) -> PineObject
 
-
 data class MetaProp(val name: String, val type: PineType)
 
-class PineMetaObject(val scriptName: String,
-                     val docString: String = "",
-                     val allocator: Allocator) {
+class PineMetaObject(
+    val scriptName: String,
+    val docString: String = "",
+    val allocator: Allocator
+) {
     val allNames: Array<String>
     val props: Array<MetaProp>
     private val propIndexEnd: Int
@@ -55,15 +66,15 @@ class PineMetaObject(val scriptName: String,
 
     init {
         val pineObj = allocator(PineObject.INVALID_ID)
-        propIndexEnd = pineObj.props.size -1
+        propIndexEnd = pineObj.props.size - 1
         signalIndexEnd = propIndexEnd + pineObj.signals.size
         callableIndexEnd = signalIndexEnd + pineObj.callables.size
         props = pineObj.props.map { MetaProp(it.name, it.pineType) }.toTypedArray()
         allNames = Array(callableIndexEnd + 1) {
             when {
                 it <= propIndexEnd -> pineObj.props[it].getScriptName()
-                it <= signalIndexEnd -> pineObj.signals[it - propIndexEnd -1].getScriptName()
-                else -> pineObj.callables[it - signalIndexEnd -1].getScriptName()
+                it <= signalIndexEnd -> pineObj.signals[it - propIndexEnd - 1].getScriptName()
+                else -> pineObj.callables[it - signalIndexEnd - 1].getScriptName()
             }
         }
     }
@@ -76,7 +87,8 @@ class PineMetaObject(val scriptName: String,
 
     fun indexOfSignal(name: String): Int? = findRelative(propIndexEnd + 1, signalIndexEnd, name)
 
-    fun indexOfCallable(name: String): Int? = findRelative(signalIndexEnd + 1, callableIndexEnd, name)
+    fun indexOfCallable(name: String): Int? =
+        findRelative(signalIndexEnd + 1, callableIndexEnd, name)
 
     fun indexOfAny(name: String): Int? = findRelative(0, callableIndexEnd, name)
 
@@ -92,7 +104,8 @@ class PineMetaObject(val scriptName: String,
 @ExperimentalUnsignedTypes
 class PineEngine private constructor(
     val types: IndexedMap<PineMetaObject>,
-    val dpCalculator: (Int) -> Int) {
+    val dpCalculator: (Int) -> Int
+) {
 
     private val rootContext: PineContext = PineContext()
 
@@ -138,10 +151,11 @@ class PineEngine private constructor(
     private fun evalProp(obj: PineObject, propDef: PropDefinition) {
         val prop = obj.props[propDef.id.toInt()]
 
-        //ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
+        // ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
         val exprValue = propDef.value!!
         val value = if (exprValue.expValueType == ExprValue.PropRefExpr) {
-            val otherProp = evalPropertyReferenceExp(exprValue.expValue(PropRefExpr())!! as PropRefExpr)
+            val otherProp =
+                evalPropertyReferenceExp(exprValue.expValue(PropRefExpr())!! as PropRefExpr)
             otherProp.connect { prop.setPineValue(otherProp.value) }
             otherProp.value
         } else {
@@ -152,27 +166,48 @@ class PineEngine private constructor(
     }
 
     private fun evalPrimitiveExpr(primitiveExpr: PrimitiveExpr): PineValue<*> {
-        return when(PineType.fromUByte(primitiveExpr.type)) {
-                INT -> of(primitiveExpr.value.toInt())
-                BOOL -> of(primitiveExpr.value.toInt() > 0)
-                DOUBLE -> of(primitiveExpr.value)
-                STRING -> of(primitiveExpr.stringValue!!)
-                else -> throw PineScriptException("Unable to eval primitive expr ${PrimitiveType.name(primitiveExpr.type.toInt())}")
+        return when (PineType.fromUByte(primitiveExpr.type)) {
+            INT -> of(primitiveExpr.value.toInt())
+            BOOL -> of(primitiveExpr.value.toInt() > 0)
+            DOUBLE -> of(primitiveExpr.value)
+            STRING -> of(primitiveExpr.stringValue!!)
+            else -> throw PineScriptException(
+                "Unable to eval primitive expr ${PrimitiveType.name(
+                    primitiveExpr.type.toInt()
+                )}"
+            )
         }
     }
 
     private fun evalExpr(owner: PineObject, expr: Expr): PineValue<*> {
 
         return when (expr.expValueType) {
-            ExprValue.PrimitiveExpr -> evalPrimitiveExpr(expr.expValue(PrimitiveExpr()) as PrimitiveExpr)
-            ExprValue.CallableExpr -> evalCallableExpression(expr.expValue(CallableExpr()) as CallableExpr)
-            ExprValue.BinaryExpr -> evalBinaryExpr(owner, expr.expValue(BinaryExpr())!! as BinaryExpr)
-            ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
-            else -> throw PineScriptException("Unable to evaluate expression of type ${ExprValue.name(expr.expValueType.toInt())}")
+            ExprValue.PrimitiveExpr ->
+                evalPrimitiveExpr(expr.expValue(PrimitiveExpr()) as PrimitiveExpr)
+            ExprValue.CallableExpr ->
+                evalCallableExpression(expr.expValue(CallableExpr()) as CallableExpr)
+            ExprValue.BinaryExpr -> evalBinaryExpr(
+                owner,
+                expr.expValue(BinaryExpr())!! as BinaryExpr
+            )
+            ExprValue.PropRefExpr ->
+                evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
+            else -> throw PineScriptException(
+                "Unable to evaluate expression of type ${ExprValue.name(
+                    expr.expValueType.toInt()
+                )}"
+            )
         }
     }
+
     private fun evalBinaryExpr(owner: PineObject, binaryExpr: BinaryExpr): BinaryExprValue<*> {
-        return BinaryExprValue(owner, "anon" ,binaryExpr.op, evalExpr(owner, binaryExpr.left!!), evalExpr(owner, binaryExpr.right!!))
+        return BinaryExprValue(
+            owner,
+            "anon",
+            binaryExpr.op,
+            evalExpr(owner, binaryExpr.left!!),
+            evalExpr(owner, binaryExpr.right!!)
+        )
     }
 
     private fun evalPropertyReferenceExp(propRefExpr: PropRefExpr): PineProp<*> {
@@ -180,7 +215,7 @@ class PineEngine private constructor(
         return otherObj.props[propRefExpr.propId.toInt()]
     }
 
-    private fun <T: PineObject> evalSignal(obj: T, sigExpr: SignalExpr) {
+    private fun <T : PineObject> evalSignal(obj: T, sigExpr: SignalExpr) {
         val signal = obj.signals[sigExpr.id.toInt()]
         signal.connect { evalCallableExpression(sigExpr.expr!!)() }
     }
@@ -193,13 +228,14 @@ class PineEngine private constructor(
     class Builder {
         private val types = IndexedMap<PineMetaObject>()
         private var dpCalc: (Int) -> Int = { it }
+
         init {
             // @TODO We need to allocate an registered object at least once, so we
             // can populate the PineMetaObject at runtime. This can be really error-prone
             // and allocates unnecessary. One option is to code generate, but for now we keep it
             // in runtime.
-            //types["var"] = PineObject.getMeta()
-            //registerPineType(PineItem.meta)
+            // types["var"] = PineObject.getMeta()
+            // registerPineType(PineItem.meta)
         }
 
         fun registerPineType(meta: PineMetaObject): Builder {
@@ -215,5 +251,4 @@ class PineEngine private constructor(
             return PineEngine(types, dpCalc)
         }
     }
-
 }

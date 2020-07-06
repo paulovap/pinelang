@@ -2,28 +2,27 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class SignalExpr : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : SignalExpr {
+    fun __assign(_i: Int, _bb: ByteBuffer): SignalExpr {
         __init(_i, _bb)
         return this
     }
-    val id : UByte
+    val id: UByte
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
+            return if (o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
-    val expr : com.pinescript.ast.fbs.CallableExpr? get() = expr(com.pinescript.ast.fbs.CallableExpr())
-    fun expr(obj: com.pinescript.ast.fbs.CallableExpr) : com.pinescript.ast.fbs.CallableExpr? {
+    val expr: com.pinescript.ast.fbs.CallableExpr? get() = expr(com.pinescript.ast.fbs.CallableExpr())
+    fun expr(obj: com.pinescript.ast.fbs.CallableExpr): com.pinescript.ast.fbs.CallableExpr? {
         val o = __offset(6)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -31,8 +30,8 @@ class SignalExpr : Table() {
             null
         }
     }
-    val debug : com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
-    fun debug(obj: com.pinescript.ast.fbs.DebugInfo) : com.pinescript.ast.fbs.DebugInfo? {
+    val debug: com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
+    fun debug(obj: com.pinescript.ast.fbs.DebugInfo): com.pinescript.ast.fbs.DebugInfo? {
         val o = __offset(8)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -47,7 +46,12 @@ class SignalExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createSignalExpr(builder: FlatBufferBuilder, id: UByte, exprOffset: Int, debugOffset: Int) : Int {
+        fun createSignalExpr(
+            builder: FlatBufferBuilder,
+            id: UByte,
+            exprOffset: Int,
+            debugOffset: Int
+        ): Int {
             builder.startTable(3)
             addDebug(builder, debugOffset)
             addExpr(builder, exprOffset)
@@ -58,7 +62,7 @@ class SignalExpr : Table() {
         fun addId(builder: FlatBufferBuilder, id: UByte) = builder.addByte(0, id.toByte(), 0)
         fun addExpr(builder: FlatBufferBuilder, expr: Int) = builder.addOffset(1, expr, 0)
         fun addDebug(builder: FlatBufferBuilder, debug: Int) = builder.addOffset(2, debug, 0)
-        fun endSignalExpr(builder: FlatBufferBuilder) : Int {
+        fun endSignalExpr(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

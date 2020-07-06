@@ -1,11 +1,12 @@
 package com.pinescript.util
 
-import com.pinescript.core.PineObject
 import com.pinescript.core.PineScriptException
 
-class IndexedMap<V>(initialCapacity: Int = 10,
-                    val index: MutableMap<String, Int> = HashMap(initialCapacity),
-                    private val props: MutableList<V> = ArrayList(initialCapacity)) {
+class IndexedMap<V>(
+    initialCapacity: Int = 10,
+    val index: MutableMap<String, Int> = HashMap(initialCapacity),
+    private val props: MutableList<V> = ArrayList(initialCapacity)
+) {
 
     val size: Int
         get() = props.size
@@ -22,10 +23,8 @@ class IndexedMap<V>(initialCapacity: Int = 10,
     operator fun set(key: String, value: V): IndexedMap<V> {
         if (index.containsKey(key))
             throw PineScriptException("key $key already exists")
-        //synchronized(props) {
-            props.add(value)
-            index[key] = props.size - 1
-        //}
+        props.add(value)
+        index[key] = props.size - 1
         return this
     }
 

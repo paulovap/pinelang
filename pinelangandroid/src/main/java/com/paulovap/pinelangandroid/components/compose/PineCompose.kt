@@ -16,7 +16,11 @@ import androidx.ui.layout.Row
 import androidx.ui.layout.preferredSize
 import androidx.ui.unit.TextUnit.Companion.Sp
 import androidx.ui.unit.dp
-import com.pinescript.core.*
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.PineObject
+import com.pinescript.core.boolProp
+import com.pinescript.core.intProp
+import com.pinescript.core.stringProp
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 
 abstract class PineComposable(id: Int) : PineObject(id) {
@@ -29,13 +33,13 @@ abstract class PineComposable(id: Int) : PineObject(id) {
     @Composable
     open fun ComposeComponent(invalidate: () -> Unit, children: @Composable() () -> Unit) {
         val framer = {
-            FrameManager.framed  {
+            FrameManager.framed {
                 invalidate()
             }
         }
 
         onActive(callback = {
-            //TODO: for compose we are connection all props,
+            // TODO: for compose we are connection all props,
             // but this might not be necessary for non-ui props
             for (prop in props) {
                 connect(prop.name, framer)
@@ -70,8 +74,10 @@ class PineText(id: Int) : PineComposable(id) {
         }
         ```
         That is it.
-    """.trimIndent()) { PineText(it) }
+    """.trimIndent()
+        ) { PineText(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     var text: String by stringProp(::text, initialValue = "")
@@ -81,10 +87,11 @@ class PineText(id: Int) : PineComposable(id) {
     @Composable
     override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
-            Text(text,
+            Text(
+                text,
                 color = color.parseColor(),
                 fontSize = Sp(size)
-             )
+            )
         }
     }
 }
@@ -93,11 +100,11 @@ class PineColumn(id: Int) : PineComposable(id) {
     companion object {
         val meta = PineMetaObject("Column") { PineColumn(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     @Composable
-    override fun ComposeComponent()
-    {
+    override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
             Column {
                 for (child in children) {
@@ -114,11 +121,11 @@ class PineRow(id: Int) : PineComposable(id) {
     companion object {
         val meta = PineMetaObject("Row") { PineRow(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     @Composable
-    override fun ComposeComponent()
-    {
+    override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
             Row {
                 for (child in children) {
@@ -135,11 +142,11 @@ class PineVScroller(id: Int) : PineComposable(id) {
     companion object {
         val meta = PineMetaObject("VScroller") { PineVScroller(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     @Composable
-    override fun ComposeComponent()
-    {
+    override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
             VerticalScroller {
                 for (child in children) {
@@ -156,11 +163,11 @@ class PineHScroller(id: Int) : PineComposable(id) {
     companion object {
         val meta = PineMetaObject("HScroller") { PineHScroller(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     @Composable
-    override fun ComposeComponent()
-    {
+    override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
             HorizontalScroller {
                 for (child in children) {
@@ -177,13 +184,13 @@ class PineImage(id: Int) : PineComposable(id) {
     companion object {
         val meta = PineMetaObject("Image") { PineImage(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     val source: String by stringProp(::source, initialValue = "https://loremflickr.com/300/300")
 
     @Composable
-    override fun ComposeComponent()
-    {
+    override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
             CoilImageWithCrossfade(
                 data = source,
@@ -197,13 +204,13 @@ class PineRectangle(id: Int) : PineComposable(id) {
     companion object {
         val meta = PineMetaObject("Rectangle") { PineRectangle(it) }
     }
+
     override fun getMeta(): PineMetaObject = meta
 
     val color: String by stringProp(::color, initialValue = "#000000")
 
     @Composable
-    override fun ComposeComponent()
-    {
+    override fun ComposeComponent() {
         super.ComposeComponent(invalidate = invalidate) {
             Box(
                 backgroundColor = color.parseColor()

@@ -1,6 +1,10 @@
 package com.pinescript.lsp.models
 
-import com.squareup.moshi.*
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.ToJson
 
 enum class ErrorCode(val err: Int) {
     ParseError(-32700),
@@ -16,23 +20,28 @@ enum class ErrorCode(val err: Int) {
     ContentModified(-32801)
 }
 
-fun jsonRpc(data: String): String = "Content-Length: ${data.length}\r\n\r\n${data}"
+fun jsonRpc(data: String): String = "Content-Length: ${data.length}\r\n\r\n$data"
 
 data class ResponseError(
-        val code: ErrorCode,
-        val message: String? = null,
-        val data: Any? = null
+    val code: ErrorCode,
+    val message: String? = null,
+    val data: Any? = null
 )
 
 data class JsonRPCHeader(val contentLength: Int)
 
-data class JsonRPCRequest(val jsonrpc: String, val id: Int? = null, val method: String, val params: Any? = null)
+data class JsonRPCRequest(
+    val jsonrpc: String,
+    val id: Int? = null,
+    val method: String,
+    val params: Any? = null
+)
 
 data class LSPResponse(
-        val id: Int?,
-        val result: Any?,
-        val error: ResponseError? = null,
-        val jsonrpc: String = "2.0"
+    val id: Int?,
+    val result: Any?,
+    val error: ResponseError? = null,
+    val jsonrpc: String = "2.0"
 )
 
 data class LSPNotification(
@@ -55,25 +64,25 @@ data class LSPClientInfo(val name: String, val version: String?)
 class LSPEmptyParams
 
 data class LSPInitializeParams(
-        /**
+    /**
      * The process Id of the parent process that started
      * the server.
      */
     val processId: Double?,
-        /**
+    /**
      * Information about the client
      *
      * @since 3.15.0
      */
     val clientInfo: LSPClientInfo?,
-        /**
+    /**
      * The rootPath of the workspace. Is null
      * if no folder is open.
      *
      * @deprecated in favour of rootUri.
      */
     val rootPath: String?,
-        /**
+    /**
      * The rootUri of the workspace. Is null if no
      * folder is open. If both `rootPath` and `rootUri` are set
      * `rootUri` wins.
@@ -81,34 +90,34 @@ data class LSPInitializeParams(
      * @deprecated in favour of workspaceFolders.
      */
     val rootUri: String?,
-        /**
+    /**
      * The capabilities provided by the client (editor or tool)
      */
     val capabilities: LSPClientCapabilities,
-        /**
+    /**
      * User provided initialization options.
      */
     val initializationOptions: Map<String, Any>?,
-        /**
+    /**
      * The initial trace setting. If omitted trace is disabled ('off').
      */
     val trace: String?
 )
 
 data class LSPClientCapabilities(
-        /**
+    /**
      * Workspace specific client capabilities.
      */
     val workspace: WorkspaceClientCapabilities?,
-        /**
+    /**
      * Text document specific client capabilities.
      */
     val textDocument: TextDocumentClientCapabilities?,
-        /**
+    /**
      * Window specific client capabilities.
      */
     val window: Any?,
-        /**
+    /**
      * Experimental client capabilities.
      */
     val experimental: Map<String, Any>?
@@ -118,119 +127,119 @@ data class LSPClientCapabilities(
  * Text document specific client capabilities.
  */
 data class TextDocumentClientCapabilities(
-        /**
+    /**
      * Defines which synchronization capabilities the client supports.
      */
     val synchronization: TextDocumentSyncClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/completion`
      */
     val completion: CompletionClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/hover`
      */
     val hover: HoverClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/signatureHelp`
      */
     val signatureHelp: SignatureHelpClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/declaration`
      *
      * @since 3.14.0
      */
     val declaration: DeclarationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/definition`
      */
     val definition: DeclarationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/typeDefinition`
      *
      * @since 3.6.0
      */
     val typeDefinition: DeclarationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/implementation`
      *
      * @since 3.6.0
      */
     val implementation: DeclarationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/references`
      */
     val references: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/documentHighlight`
      */
     val documentHighlight: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/documentSymbol`
      */
     val documentSymbol: DocumentSymbolClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/codeAction`
      */
     val codeAction: CodeActionClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/codeLens`
      */
     val codeLens: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/documentLink`
      */
     val documentLink: DocumentLinkClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/documentColor`
      */
     val colorProvider: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/formatting`
      */
     val formatting: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/rangeFormatting`
      */
     val rangeFormatting: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/onTypeFormatting`
      */
     val onTypeFormatting: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `textDocument/rename`
      */
     val rename: RenameClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to `textDocument/foldingRange` requests.
      *
      * @since 3.10.0
      */
     val foldingRange: FoldingRangeClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to `textDocument/selectionRange` requests
      *
      * @since 3.15.0
      */
     val selectionRange: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to `textDocument/publishDiagnostics`.
      */
     val publishDiagnostics: PublishDiagnosticsClientCapabilities?
 )
 
 data class PublishDiagnosticsClientCapabilities(
-        /**
+    /**
      * Whether the clients accepts diagnostics with related information.
      */
     val relatedInformation: Boolean?,
-        /**
+    /**
      * Client supports the tag property to provide meta data about a diagnostic.
      * Clients supporting tags have to handle unknown tags gracefully.
      *
      * @since 3.15.0
      */
     val tagSupport: ValueSet?,
-        /**
+    /**
      * Whether the client interprets the version property of the
      * `textDocument/publishDiagnostics` notification`s parameter.
      *
@@ -286,18 +295,18 @@ data class DocumentLinkClientCapabilities(
 )
 
 data class CodeActionClientCapabilities(
-        /**
+    /**
      * Whether code action supports dynamic registration.
      */
     val dynamicRegistration: Boolean?,
-        /**
+    /**
      * The client support code action literals as a valid
      * response of the `textDocument/codeAction` request.
      *
      * @since 3.8.0
      */
     val codeActionLiteralSupport: CodeActionLiteralSupport?,
-        /**
+    /**
      * Whether code action supports the `isPreferred` property.
      * @since 3.15.0
      */
@@ -313,15 +322,15 @@ data class CodeActionLiteralSupport(
 )
 
 data class DocumentSymbolClientCapabilities(
-        /**
+    /**
      * Whether document symbol supports dynamic registration.
      */
     val dynamicRegistration: Boolean?,
-        /**
+    /**
      * Specific capabilities for the `SymbolKind`.
      */
     val symbolKind: ValueSet?,
-        /**
+    /**
      * The client support hierarchical document symbols.
      */
     val hierarchicalDocumentSymbolSupport: Boolean?
@@ -344,16 +353,16 @@ data class DeclarationClientCapabilities(
  * Client Capabilities for a [SignatureHelpRequest](#SignatureHelpRequest).
  */
 data class SignatureHelpClientCapabilities(
-        /**
+    /**
      * Whether signature help supports dynamic registration.
      */
     val dynamicRegistration: Boolean?,
-        /**
+    /**
      * The client supports the following `SignatureInformation`
      * specific properties.
      */
     val signatureInformation: SignatureInformation?,
-        /**
+    /**
      * The client supports to send additional context information for a
      * `textDocument/signatureHelp` request. A client that opts into
      * contextSupport will also support the `retriggerCharacters` on
@@ -364,7 +373,10 @@ data class SignatureHelpClientCapabilities(
     val contextSupport: Boolean?
 )
 
-data class SignatureInformation(val documentFormat: IntArray?, val parameterInformation: ParameterInformation) {
+data class SignatureInformation(
+    val documentFormat: IntArray?,
+    val parameterInformation: ParameterInformation
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -423,17 +435,17 @@ data class HoverClientCapabilities(
 }
 
 data class CompletionClientCapabilities(
-        /**
+    /**
      * Whether completion supports dynamic registration.
      */
     val dynamicRegistration: Boolean?,
-        /**
+    /**
      * The client supports the following `CompletionItem` specific
      * capabilities.
      */
     val completionItem: LSPCompletionItem?,
-        val completionItemKind: ValueSet?,
-        /**
+    val completionItemKind: ValueSet?,
+    /**
      * The client supports to send additional context information for a
      * `textDocument/completion` requestion.
      */
@@ -524,34 +536,34 @@ data class TextDocumentSyncClientCapabilities(
 )
 
 data class WorkspaceClientCapabilities(
-        /**
+    /**
      * The client supports applying batch edits
      * to the workspace by supporting the request
      * 'workspace/applyEdit'
      */
     val applyEdit: Boolean?,
-        /**
+    /**
      * Capabilities specific to `WorkspaceEdit`s
      */
     val workspaceEdit: WorkspaceEditClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `workspace/didChangeConfiguration` notification.
      */
     val didChangeConfiguration: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `workspace/didChangeWatchedFiles` notification.
      */
     val didChangeWatchedFiles: ConfigurationClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `workspace/symbol` request.
      */
     val symbol: WorkspaceSymbolClientCapabilities?,
-        /**
+    /**
      * Capabilities specific to the `workspace/executeCommand` request.
      */
     val executeCommand: ConfigurationClientCapabilities?,
 
-        /**
+    /**
      * The client has support for workspace folders
      */
     val workspaceFolders: Boolean?
@@ -562,18 +574,18 @@ enum class LSPResourceOperation { create, rename, delete }
 enum class LSPFailureHandling { abort, transactional, undo, textOnlyTransactional }
 
 data class WorkspaceEditClientCapabilities(
-        /**
+    /**
      * The client supports versioned document changes in `WorkspaceEdit`s
      */
     val documentChanges: Boolean,
-        /**
+    /**
      * The resource operations the client supports. Clients should at least
      * support 'create', 'rename' and 'delete' files and folders.
      *
      * @since 3.13.0
      */
     val resourceOperations: List<LSPResourceOperation>?,
-        /**
+    /**
      * The failure handling strategy of a client if applying the workspace edit
      * fails.
      *
@@ -630,9 +642,12 @@ data class ConfigurationClientCapabilities(
     val dynamicRegistration: Boolean?
 )
 
-data class CompletionProvider(val triggerCharacters: List<String>? = null, val resolveProvider: Boolean = true)
+data class CompletionProvider(
+    val triggerCharacters: List<String>? = null,
+    val resolveProvider: Boolean = true
+)
 
-//change: 1 is non-incremental, 2 is incremental
+// change: 1 is non-incremental, 2 is incremental
 data class TextDocumentSync(
     val openClose: Boolean = true,
     val change: Int = 1,
@@ -640,12 +655,16 @@ data class TextDocumentSync(
 )
 
 data class LSPServerInfo(val name: String, val version: String? = null)
-data class LSPInitializeServerResult(val capabilities: JsonRPCServerCapabilitiesImpl, val serverInfo: LSPServerInfo)
+data class LSPInitializeServerResult(
+    val capabilities: JsonRPCServerCapabilitiesImpl,
+    val serverInfo: LSPServerInfo
+)
 
-class TextDocumentSyncKindAdapter: JsonAdapter<TextDocumentSyncKind>() {
+class TextDocumentSyncKindAdapter : JsonAdapter<TextDocumentSyncKind>() {
 
-    @FromJson override fun fromJson(reader: JsonReader): TextDocumentSyncKind? {
-        return when(reader.nextInt()) {
+    @FromJson
+    override fun fromJson(reader: JsonReader): TextDocumentSyncKind? {
+        return when (reader.nextInt()) {
             0 -> TextDocumentSyncKind.None
             1 -> TextDocumentSyncKind.Full
             2 -> TextDocumentSyncKind.Incremental
@@ -653,27 +672,31 @@ class TextDocumentSyncKindAdapter: JsonAdapter<TextDocumentSyncKind>() {
         }
     }
 
-    @ToJson override fun toJson(writer: JsonWriter, value: TextDocumentSyncKind?) {
-        writer.value(when(value) {
-            TextDocumentSyncKind.None -> 0
-            TextDocumentSyncKind.Full -> 1
-            TextDocumentSyncKind.Incremental -> 2
-            else -> 0
-        })
+    @ToJson
+    override fun toJson(writer: JsonWriter, value: TextDocumentSyncKind?) {
+        writer.value(
+            when (value) {
+                TextDocumentSyncKind.None -> 0
+                TextDocumentSyncKind.Full -> 1
+                TextDocumentSyncKind.Incremental -> 2
+                else -> 0
+            }
+        )
     }
-
 }
 
 enum class TextDocumentSyncKind(val int: Int) {
     /**
-    * Documents should not be synced at all.
-    */
+     * Documents should not be synced at all.
+     */
     None(0),
+
     /**
      * Documents are synced by always sending the full content
      * of the document.
      */
     Full(1),
+
     /**
      * Documents are synced by sending the full content on open.
      * After that only incremental updates to the document are
@@ -683,14 +706,19 @@ enum class TextDocumentSyncKind(val int: Int) {
 }
 
 data class JsonRPCServerCapabilitiesImpl(
-        val completionProvider: CompletionProvider = CompletionProvider( ),
-        val definitionProvider: Boolean = true,
-        val textDocumentSync: TextDocumentSyncKind = TextDocumentSyncKind.Full,//TextDocumentSync = TextDocumentSync(),
-        val hoverProvider: Boolean = true,
-        val documentSymbolProvider: Boolean = true,
-        val workspace: WorkspaceFoldersServerCapabilities? = null
+    val completionProvider: CompletionProvider = CompletionProvider(),
+    val definitionProvider: Boolean = true,
+    val textDocumentSync: TextDocumentSyncKind = TextDocumentSyncKind.Full,
+    val hoverProvider: Boolean = true,
+    val documentSymbolProvider: Boolean = true,
+    val workspace: WorkspaceFoldersServerCapabilities? = null
 )
 
-data class WorkspaceFoldersServerCapabilities(val workspaceFolders: WorkspaceFoldersCapabilities? = null)
+data class WorkspaceFoldersServerCapabilities(
+    val workspaceFolders: WorkspaceFoldersCapabilities? = null
+)
 
-data class WorkspaceFoldersCapabilities(val supported: Boolean = false, val changeNotification: String? = null)
+data class WorkspaceFoldersCapabilities(
+    val supported: Boolean = false,
+    val changeNotification: String? = null
+)

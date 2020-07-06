@@ -3,32 +3,60 @@ package com.pinescript.lsp
 import com.pinescript.core.PineEngine
 import com.pinescript.core.PineScriptParseException
 import com.pinescript.lsp.LSPMethod.Companion.fromMethod
-import com.pinescript.lsp.models.*
+import com.pinescript.lsp.models.CompletionItem
+import com.pinescript.lsp.models.CompletionItemKind
 import com.pinescript.lsp.models.CompletionProvider
 import com.pinescript.lsp.models.ErrorCode
+import com.pinescript.lsp.models.HoverParams
+import com.pinescript.lsp.models.HoverResponse
 import com.pinescript.lsp.models.JsonRPCHeader
 import com.pinescript.lsp.models.JsonRPCRequest
+import com.pinescript.lsp.models.JsonRPCServerCapabilitiesImpl
+import com.pinescript.lsp.models.LSPCompletionList
+import com.pinescript.lsp.models.LSPDiagnostic
 import com.pinescript.lsp.models.LSPEmptyParams
 import com.pinescript.lsp.models.LSPInitializeParams
 import com.pinescript.lsp.models.LSPInitializeServerResult
 import com.pinescript.lsp.models.LSPNotification
 import com.pinescript.lsp.models.LSPResponse
 import com.pinescript.lsp.models.LSPServerInfo
+import com.pinescript.lsp.models.MarkupContent
+import com.pinescript.lsp.models.Position
+import com.pinescript.lsp.models.PublishDiagnosticsParams
+import com.pinescript.lsp.models.Range
+import com.pinescript.lsp.models.ResponseError
+import com.pinescript.lsp.models.TextDocumentCompletionParams
+import com.pinescript.lsp.models.TextDocumentDidChangeParams
+import com.pinescript.lsp.models.TextDocumentDidOpenParams
+import com.pinescript.lsp.models.TextDocumentItem
+import com.pinescript.lsp.models.TextDocumentSymbolParams
 import com.pinescript.lsp.models.TextDocumentSyncKind
 import com.pinescript.lsp.models.TextDocumentSyncKindAdapter
 import com.pinescript.lsp.models.WorkspaceFoldersCapabilities
-import com.squareup.moshi.*
+import com.pinescript.lsp.models.WorkspaceFoldersServerCapabilities
+import com.pinescript.lsp.models.getObjectTypeEnclosingPosition
+import com.pinescript.lsp.models.getWordAtPosition
+import com.pinescript.lsp.models.jsonRpc
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
-import io.netty.channel.*
+import io.netty.channel.ChannelFuture
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.ChannelInboundHandlerAdapter
+import io.netty.channel.ChannelInitializer
+import io.netty.channel.EventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.util.CharsetUtil
 import java.net.InetSocketAddress
-
 
 enum class LSPMethod(val method: String, val paramType: Class<*>) {
     Ignore("$", LSPEmptyParams::class.java),
@@ -36,7 +64,10 @@ enum class LSPMethod(val method: String, val paramType: Class<*>) {
     Initialized("initialized", LSPEmptyParams::class.java),
     TextDocumentDidOpen("textDocument/didOpen", TextDocumentDidOpenParams::class.java),
     TextDocumentDidChange("textDocument/didChange", TextDocumentDidChangeParams::class.java),
-    TextDocumentDocumentSymbol("textDocument/documentSymbol", TextDocumentDocumentSymbolParams::class.java),
+    TextDocumentDocumentSymbol(
+        "textDocument/documentSymbol",
+        TextDocumentSymbolParams::class.java
+    ),
     TextDocumentCompletion("textDocument/completion", TextDocumentCompletionParams::class.java),
     Hover("textDocument/hover", HoverParams::class.java),
     Shutdown("shutdown", LSPEmptyParams::class.java),
@@ -55,9 +86,12 @@ interface LSPDelegate {
     fun onShutdown()
     fun onHover(hover: HoverParams): HoverResponse?
     fun onTextDocumentDidOpen(doc: TextDocumentDidOpenParams): PublishDiagnosticsParams
-    fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic
-    fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams
-    fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams): LSPCompletionList
+    fun onTextDocumentDocumentSymbol(doc: TextDocumentSymbolParams): LSPDiagnostic
+    fun onTextDocumentDidChange(doc: TextDocumentDidChangeParams):
+            PublishDiagnosticsParams
+
+    fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams):
+            LSPCompletionList
 }
 
 fun jsonRPCHeader(data: String): JsonRPCHeader {
@@ -72,7 +106,8 @@ fun jsonRPCHeader(data: String): JsonRPCHeader {
 
 class LSPRequestAdapter : JsonAdapter<JsonRPCRequest>() {
 
-    private val moshi = Moshi.Builder().add(TextDocumentSyncKindAdapter()).add(KotlinJsonAdapterFactory()).build()
+    private val moshi =
+        Moshi.Builder().add(TextDocumentSyncKindAdapter()).add(KotlinJsonAdapterFactory()).build()
 
     @FromJson
     override fun fromJson(reader: JsonReader): JsonRPCRequest? {
@@ -105,10 +140,10 @@ class LSPServer(private val delegate: LSPDelegate) {
     val group: EventLoopGroup = NioEventLoopGroup()
 
     private val moshi = Moshi.Builder()
-            .add(TextDocumentSyncKindAdapter())
-            .add(LSPRequestAdapter())
-            .add(KotlinJsonAdapterFactory())
-            .build()
+        .add(TextDocumentSyncKindAdapter())
+        .add(LSPRequestAdapter())
+        .add(KotlinJsonAdapterFactory())
+        .build()
 
     private fun jsonRPCRequest(data: String): JsonRPCRequest {
         val adapter = moshi.adapter(JsonRPCRequest::class.java).lenient()
@@ -116,59 +151,92 @@ class LSPServer(private val delegate: LSPDelegate) {
     }
 
     private fun handleRequest(request: JsonRPCRequest, output: ChannelHandlerContext) {
-        val responseAdapter = moshi.adapter(LSPResponse::class.java).serializeNulls().lenient()
+        val adapter = moshi.adapter(LSPResponse::class.java).serializeNulls().lenient()
         val notifyAdapter = moshi.adapter(LSPNotification::class.java).lenient()
         val responseData: String? = try {
             if (!initialized && request.method != "initialize") {
-                jsonRpc(responseAdapter.toJson(LSPResponse(
-                        request.id,
-                        null,
-                        ResponseError(ErrorCode.ServerNotInitialized, "call initialize first")
-                )))
+                jsonRpc(
+                    adapter.toJson(
+                        LSPResponse(
+                            request.id,
+                            null,
+                            ResponseError(ErrorCode.ServerNotInitialized, "call initialize first")
+                        )
+                    )
+                )
             } else {
                 when (fromMethod(request.method)) {
                     LSPMethod.Initialize -> {
                         initialized = true
                         val result = delegate.onInitialize(request.params as LSPInitializeParams)
                         val response = LSPResponse(request.id, result, null)
-                        jsonRpc(responseAdapter.toJson(response))
+                        jsonRpc(adapter.toJson(response))
                     }
                     LSPMethod.Initialized -> {
                         delegate.onInitialized()
                         null
                     }
                     LSPMethod.TextDocumentDidOpen -> {
-                        val note = delegate.onTextDocumentDidOpen(request.params as TextDocumentDidOpenParams)
-                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                        val note =
+                            delegate.onTextDocumentDidOpen(
+                                request.params as TextDocumentDidOpenParams)
+                        jsonRpc(
+                            notifyAdapter.toJson(
+                                LSPNotification(
+                                    LSPMethod.PublishDiagnotics.method,
+                                    note
+                                )
+                            )
+                        )
                     }
                     LSPMethod.TextDocumentDidChange -> {
-                        val note = delegate.onTextDocumentDidChange(request.params as TextDocumentDidChangeParams)
-                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
+                        val note =
+                            delegate.onTextDocumentDidChange(
+                                request.params as TextDocumentDidChangeParams)
+                        jsonRpc(
+                            notifyAdapter.toJson(
+                                LSPNotification(
+                                    LSPMethod.PublishDiagnotics.method,
+                                    note
+                                )
+                            )
+                        )
                     }
                     LSPMethod.TextDocumentDocumentSymbol -> {
 //                        val note = delegate.onTextDocumentDocumentSymbol(request.params as TextDocumentDocumentSymbolParams)
 //                        jsonRpc(notifyAdapter.toJson(LSPNotification(LSPMethod.PublishDiagnotics.method, note)))
                         val response = LSPResponse(request.id, null, null)
-                        jsonRpc(responseAdapter.toJson(response))
+                        jsonRpc(adapter.toJson(response))
                     }
                     LSPMethod.TextDocumentCompletion -> {
-                        val response = delegate.onTextDocumentCompletion(request.params as TextDocumentCompletionParams)
-                        jsonRpc(responseAdapter.toJson(LSPResponse(request.id, response, null)))
+                        val response =
+                            delegate.onTextDocumentCompletion(
+                                request.params as TextDocumentCompletionParams)
+                        jsonRpc(adapter.toJson(LSPResponse(request.id, response, null)))
                     }
                     LSPMethod.Hover -> {
-                        val response = delegate.onHover(request.params as HoverParams)
-                        jsonRpc(responseAdapter.toJson(LSPResponse(request.id, response, null)))
+                        val response = delegate.onHover(
+                            request.params as HoverParams)
+                        jsonRpc(adapter.toJson(LSPResponse(request.id, response, null)))
                     }
                     LSPMethod.Shutdown -> {
                         delegate.onShutdown(); null
                     }
                     else -> null
                 }
-
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
-            jsonRpc(responseAdapter.toJson(LSPResponse(request.id, null, ResponseError(ErrorCode.MethodNotFound), request.jsonrpc)))
+            jsonRpc(
+                adapter.toJson(
+                    LSPResponse(
+                        request.id,
+                        null,
+                        ResponseError(ErrorCode.MethodNotFound),
+                        request.jsonrpc
+                    )
+                )
+            )
         }
         println("response: $responseData\n")
         responseData?.run {
@@ -196,7 +264,7 @@ class LSPServer(private val delegate: LSPDelegate) {
         channelFuture?.channel()?.closeFuture()?.sync()
         group.shutdownGracefully().sync()
     }
-    //fun response(method: String, params: Any?) = JsonRPCRequest(id++, method, params)
+    // fun response(method: String, params: Any?) = JsonRPCRequest(id++, method, params)
 
     enum class RpcJsonState {
         Header, Empty, Request
@@ -230,7 +298,7 @@ class LSPServer(private val delegate: LSPDelegate) {
                             try {
                                 contentSize = jsonRPCHeader(String(bytes)).contentLength
                             } catch (e: Exception) {
-                                //e.printStackTrace()
+                                // e.printStackTrace()
                             }
                         } else {
                             break@loop
@@ -280,12 +348,17 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
 
         val workspaceFolders = capabilities.capabilities.workspace?.workspaceFolders == true
         return LSPInitializeServerResult(
-                capabilities = JsonRPCServerCapabilitiesImpl(
-                        textDocumentSync = TextDocumentSyncKind.Full,//TextDocumentSync(),
-                        completionProvider = CompletionProvider( triggerCharacters = listOf("."), resolveProvider = true),
-                        workspace = if (workspaceFolders) WorkspaceFoldersServerCapabilities(WorkspaceFoldersCapabilities(true)) else null
+            capabilities = JsonRPCServerCapabilitiesImpl(
+                textDocumentSync = TextDocumentSyncKind.Full, // TextDocumentSync(),
+                completionProvider = CompletionProvider(
+                    triggerCharacters = listOf("."),
+                    resolveProvider = true
                 ),
-                serverInfo = LSPServerInfo("PineLang Server")
+                workspace = if (workspaceFolders) WorkspaceFoldersServerCapabilities(
+                    WorkspaceFoldersCapabilities(true)
+                ) else null
+            ),
+            serverInfo = LSPServerInfo("PineLang Server")
         )
     }
 
@@ -299,28 +372,32 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
         return generateDiagnostic(doc.textDocument.text)
     }
 
-    override fun onTextDocumentDocumentSymbol(docIdentifier: TextDocumentDocumentSymbolParams): LSPDiagnostic {
+    override fun onTextDocumentDocumentSymbol(doc: TextDocumentSymbolParams): LSPDiagnostic {
         return LSPDiagnostic(
-                Range(
-                        Position(0, 0),
-                        Position(0, 0)
-                ), 3, ""
+            Range(
+                Position(0, 0),
+                Position(0, 0)
+            ), 3, ""
         )
     }
 
-
-    override fun onTextDocumentDidChange(didChangeTextDoc: TextDocumentDidChangeParams): PublishDiagnosticsParams {
-        println("$didChangeTextDoc")
+    override fun onTextDocumentDidChange(
+        doc: TextDocumentDidChangeParams
+    ): PublishDiagnosticsParams {
+        println("$doc")
         docItem = TextDocumentItem(
-            uri = didChangeTextDoc.textDocument.uri,
+            uri = doc.textDocument.uri,
             languageId = "pine",
-            text = didChangeTextDoc.contentChanges[0].text,
-            version = didChangeTextDoc.textDocument.version)
-        textChangeListener?.let { it(didChangeTextDoc.contentChanges[0].text) }
-        return generateDiagnostic(didChangeTextDoc.contentChanges[0].text)
+            text = doc.contentChanges[0].text,
+            version = doc.textDocument.version
+        )
+        textChangeListener?.let { it(doc.contentChanges[0].text) }
+        return generateDiagnostic(doc.contentChanges[0].text)
     }
 
-    override fun onTextDocumentCompletion(documentCompletionParams: TextDocumentCompletionParams): LSPCompletionList {
+    override fun onTextDocumentCompletion(
+        documentCompletionParams: TextDocumentCompletionParams
+    ): LSPCompletionList {
         println("onTextDocumentCompletion")
         val text = docItem!!.text
         val incomplete = text.getWordAtPosition(documentCompletionParams.position) ?: ""
@@ -329,48 +406,51 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
         val propertyCompletionList = objType?.run {
             val type = pineEngine.types[objType] ?: return@run null
             (type.propNames() + listOf("id"))
-                    .filter { it != "children" }
-                    .filter { it.contains(incomplete) }
-                    .map {
-                        CompletionItem(
-                                label = it,
-                                insertText = "$it:",
-                                detail = "Property",
-                                kind = CompletionItemKind.Field.value
-                        )
-                    } +
-                    type.signalNames()
-                            .filter { it.contains(incomplete) }
-                            .map {
-                                CompletionItem(
-                                        label = it,
-                                        insertText = "on $it:",
-                                        detail = "Signal",
-                                        kind = CompletionItemKind.Event.value
-                                )
-                            } +
-                    type.callableNames()
-                            .filter { it.contains(incomplete) }
-                            .map {
-                                CompletionItem(
-                                        label = it,
-                                        insertText = "$it()",
-                                        detail = "Function",
-                                        kind = CompletionItemKind.Function.value
-                                )
-                            }
-        } ?: listOf()
-
-        val objCompletionList = pineEngine.types.index.keys
+                .filter { it != "children" }
                 .filter { it.contains(incomplete) }
                 .map {
                     CompletionItem(
-                            label = "$it {",
-                            detail = "Type",
-                            kind = CompletionItemKind.Class.value
+                        label = it,
+                        insertText = "$it:",
+                        detail = "Property",
+                        kind = CompletionItemKind.Field.value
                     )
-                }
-        return LSPCompletionList(isIncomplete = false, items = propertyCompletionList + objCompletionList)
+                } +
+                    type.signalNames()
+                        .filter { it.contains(incomplete) }
+                        .map {
+                            CompletionItem(
+                                label = it,
+                                insertText = "on $it:",
+                                detail = "Signal",
+                                kind = CompletionItemKind.Event.value
+                            )
+                        } +
+                    type.callableNames()
+                        .filter { it.contains(incomplete) }
+                        .map {
+                            CompletionItem(
+                                label = it,
+                                insertText = "$it()",
+                                detail = "Function",
+                                kind = CompletionItemKind.Function.value
+                            )
+                        }
+        } ?: listOf()
+
+        val objCompletionList = pineEngine.types.index.keys
+            .filter { it.contains(incomplete) }
+            .map {
+                CompletionItem(
+                    label = "$it {",
+                    detail = "Type",
+                    kind = CompletionItemKind.Class.value
+                )
+            }
+        return LSPCompletionList(
+            isIncomplete = false,
+            items = propertyCompletionList + objCompletionList
+        )
     }
 
     override fun onHover(hover: HoverParams): HoverResponse? {
@@ -398,7 +478,10 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
             println("found $type")
             val prop = type.props.firstOrNull { it.name == incomplete } ?: return null
             println("found $prop")
-            return HoverResponse(contents = MarkupContent("Property ${prop.name} of type ${prop.type.typeName}"), range = range)
+            return HoverResponse(
+                contents = MarkupContent("Property ${prop.name} of type ${prop.type.typeName}"),
+                range = range
+            )
         }
 
         return HoverResponse(MarkupContent("Don't know"), range = range)
@@ -406,8 +489,8 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
 
     private fun PineScriptParseException.toRange(): Range {
         return Range(
-                Position(this.startLine - 1, this.startCol),
-                Position(this.endLine - 1, this.endCol + 1)
+            Position(this.startLine - 1, this.startCol),
+            Position(this.endLine - 1, this.endCol + 1)
         )
     }
 
@@ -416,22 +499,22 @@ class ServerImpl(private val pineEngine: PineEngine) : LSPDelegate {
             val ast = pineEngine.compile(script)
             println("AST: $ast")
             PublishDiagnosticsParams(
-                    uri = docItem!!.uri,
-                    diagnostics = listOf()
+                uri = docItem!!.uri,
+                diagnostics = listOf()
             )
         } catch (e: PineScriptParseException) {
             println("error: ${e.message}")
             PublishDiagnosticsParams(
-                    uri = docItem!!.uri,
-                    diagnostics = listOf(
-                            LSPDiagnostic(
-                                    e.toRange(),
-                                    3,
-                                    severity = 1,
-                                    message = e.message!!,
-                                    source = "Pine Compiler"
-                            )
+                uri = docItem!!.uri,
+                diagnostics = listOf(
+                    LSPDiagnostic(
+                        e.toRange(),
+                        3,
+                        severity = 1,
+                        message = e.message!!,
+                        source = "Pine Compiler"
                     )
+                )
             )
         }
     }

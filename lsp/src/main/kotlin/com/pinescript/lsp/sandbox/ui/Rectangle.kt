@@ -32,8 +32,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.pinescript.core.*
-import com.pinescript.util.toIndexMap
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.PineObject
+import com.pinescript.core.boolProp
+import com.pinescript.core.intProp
+import com.pinescript.core.stringProp
 import java.awt.Color
 import javax.swing.JPanel
 
@@ -58,10 +61,9 @@ class Rectangle(id: Int) : PineObject(id) {
         connect("width") { resizeSlot() }
         connect("height") { resizeSlot() }
         connect("visible") { resizeSlot() }
-        connect("color")  { panel.background = Color.decode(color) }
+        connect("color") { panel.background = Color.decode(color) }
 
         panel.background = Color.decode(color)
-
 
         connect("children") {
             panel.removeAll()

@@ -32,7 +32,7 @@ data class HoverResponse(
 
 data class MarkupContent(
     val value: String,
-    //export type MarkupKind = 'plaintext' | 'markdown';
+    // export type MarkupKind = 'plaintext' | 'markdown';
     val kind: String = "markdown"
 )
 
@@ -59,16 +59,16 @@ data class TextDocumentItem(
     val text: String
 )
 
-data class TextDocumentDocumentSymbolParams(val textDocument: TextDocumentIdentifier)
+data class TextDocumentSymbolParams(val textDocument: TextDocumentIdentifier)
 
-data class TextDocumentIdentifier (
+data class TextDocumentIdentifier(
     /**
      * The text document's URI.
      */
     val uri: String
 )
 
-data class TextDocumentDidChangeParams (
+data class TextDocumentDidChangeParams(
     /**
      * The document that did change. The version number points
      * to the version after all provided content changes have
@@ -126,7 +126,7 @@ data class TextDocumentCompletionParams(
 
 data class Position(val line: Int, val character: Int)
 
-data class CompletionContext (
+data class CompletionContext(
     /**
      * How the completion was triggered.
      * 1: Completion was triggered by typing an identifier (24x7 code
@@ -193,12 +193,12 @@ fun String.getNextWordToRight(charPos: Int): String? {
  * This function will return the object type.
  */
 fun String.getObjectTypeEnclosingPosition(pos: Position): String? {
-    var charPos =  this.charIndexAtPosition(pos) ?: return null
+    var charPos = this.charIndexAtPosition(pos) ?: return null
     var bracketBalance = 0
     while (charPos >= 0) {
         val c = this[charPos]
         when {
-            c == '{' && bracketBalance == 0 -> return getNextWordToRight(charPos-1)
+            c == '{' && bracketBalance == 0 -> return getNextWordToRight(charPos - 1)
             c == '{' && bracketBalance != 0 -> bracketBalance++
             c == '}' -> bracketBalance--
         }
@@ -206,4 +206,3 @@ fun String.getObjectTypeEnclosingPosition(pos: Position): String? {
     }
     return null
 }
-

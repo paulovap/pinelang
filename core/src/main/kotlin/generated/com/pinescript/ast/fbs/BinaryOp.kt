@@ -13,7 +13,7 @@ class BinaryOp private constructor() {
         const val REMAINDER: UByte = 4u
         const val AND: UByte = 5u
         const val OR: UByte = 6u
-        val names : Array<String> = arrayOf("PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR")
-        fun name(e: Int) : String = names[e]
+        val names: Array<String> = arrayOf("PLUS", "MINUS", "MULTI", "DIV", "REMAINDER", "AND", "OR")
+        fun name(e: Int): String = names[e]
     }
 }

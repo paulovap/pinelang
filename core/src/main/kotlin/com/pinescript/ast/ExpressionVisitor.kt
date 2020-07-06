@@ -1,11 +1,15 @@
 package com.pinescript.ast
 
-import com.google.flatbuffers.FlatBufferBuilder
-import com.pinescript.ast.fbs.*
+import com.pinescript.ast.fbs.BinaryExpr
 import com.pinescript.ast.fbs.BinaryOp
+import com.pinescript.ast.fbs.CallableExpr
+import com.pinescript.ast.fbs.Expr
 import com.pinescript.ast.fbs.ExprValue
 import com.pinescript.ast.fbs.PrimitiveExpr.Companion.createPrimitiveExpr
-import com.pinescript.core.*
+import com.pinescript.ast.fbs.PrimitiveType
+import com.pinescript.ast.fbs.PropRefExpr
+import com.pinescript.core.PineCompiler
+import com.pinescript.core.PineScriptParseException
 import com.pinescript.parser.PineScript
 
 /*
@@ -47,7 +51,12 @@ table PrimitiveExpr {
 union Expr {CallableExpr, BinaryExpr, PrimitiveExpr}
  */
 @ExperimentalUnsignedTypes
-class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: Int, debug: Boolean) :
+class ExpressionVisitor(
+    compiler: PineCompiler,
+    var ownerType: Int,
+    var ownerId: Int,
+    debug: Boolean
+) :
     PineScriptVisitor<Int>(compiler, debug) {
 
     fun reset(ownerType: Int, ownerId: Int): ExpressionVisitor {
@@ -64,10 +73,26 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
         val objPropExpr = ctx.objectPropertyExpression()
         val callExpr = ctx.callableExpression()
         return when {
-            primitiveExpr != null -> Expr.createExpr(fb, ExprValue.PrimitiveExpr, visit(ctx.primitiveExpression()))
-            binaryOp != null -> Expr.createExpr(fb, ExprValue.BinaryExpr, createBinaryOperationExp(binaryOp, ctx.expression(0), ctx.expression(1)))
-            objPropExpr != null -> Expr.createExpr(fb, ExprValue.PropRefExpr, createPropExpr(objPropExpr))
-            callExpr != null -> Expr.createExpr(fb, ExprValue.CallableExpr, visitCallableExpression(callExpr))
+            primitiveExpr != null -> Expr.createExpr(
+                fb,
+                ExprValue.PrimitiveExpr,
+                visit(ctx.primitiveExpression())
+            )
+            binaryOp != null -> Expr.createExpr(
+                fb,
+                ExprValue.BinaryExpr,
+                createBinaryOperationExp(binaryOp, ctx.expression(0), ctx.expression(1))
+            )
+            objPropExpr != null -> Expr.createExpr(
+                fb,
+                ExprValue.PropRefExpr,
+                createPropExpr(objPropExpr)
+            )
+            callExpr != null -> Expr.createExpr(
+                fb,
+                ExprValue.CallableExpr,
+                visitCallableExpression(callExpr)
+            )
             else -> throw PineScriptParseException(ctx.start, ctx.stop, "expression not recognized")
         }
     }
@@ -75,16 +100,16 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
     private fun createPropExpr(ctx: PineScript.ObjectPropertyExpressionContext): Int {
         val ids = ctx.Identifier()
         return if (ids.size == 1) {
-                val propId = types[ownerType]!!.indexOfProp(ids[0].text)!!
-                PropRefExpr.createPropRefExpr(fb, ownerId, propId.toUByte())
-            } else {
-                val objName = ids[0].text!!
-                val propName = ids[1].text!!
-                val objMeta = compiler.objectMetaData(objName) ?: ctx.throwObjNotFound(ids[0].text)
-                val objType = types[objMeta.typeIdx]!!
-                val propIdx = objType.indexOfProp(propName)
-                PropRefExpr.createPropRefExpr(fb, objMeta.objId, propIdx!!.toUByte())
-            }
+            val propId = types[ownerType]!!.indexOfProp(ids[0].text)!!
+            PropRefExpr.createPropRefExpr(fb, ownerId, propId.toUByte())
+        } else {
+            val objName = ids[0].text!!
+            val propName = ids[1].text!!
+            val objMeta = compiler.objectMetaData(objName) ?: ctx.throwObjNotFound(ids[0].text)
+            val objType = types[objMeta.typeIdx]!!
+            val propIdx = objType.indexOfProp(propName)
+            PropRefExpr.createPropRefExpr(fb, objMeta.objId, propIdx!!.toUByte())
+        }
     }
 
     /*
@@ -106,7 +131,8 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
 
     override fun visitCallableExpression(ctx: PineScript.CallableExpressionContext?): Int {
         val name = ctx!!.Identifier().text
-        val callIdx = types[ownerType]!!.indexOfCallable(name) ?: ctx.throwCallableNotFound(name, "this")
+        val callIdx =
+            types[ownerType]!!.indexOfCallable(name) ?: ctx.throwCallableNotFound(name, "this")
         return CallableExpr.createCallableExpr(fb, ownerId, callIdx.toUByte())
     }
 
@@ -127,9 +153,9 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
             ctx.stringLiteral() != null -> {
                 val strIdx = fb.createString(ctx.stringLiteral().STRING().text)
                 createPrimitiveExpr(
-                        fb,
-                        PrimitiveType.String,
-                        0.0, strIdx
+                    fb,
+                    PrimitiveType.String,
+                    0.0, strIdx
                 )
             }
             ctx.IntegerLiteral() != null -> createPrimitiveExpr(
@@ -142,7 +168,11 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
                 PrimitiveType.Double,
                 ctx.FloatLiteral().text.toDouble(), 0
             )
-            else -> throw PineScriptParseException(ctx.start, ctx.stop, "failed to parse primitive expression")
+            else -> throw PineScriptParseException(
+                ctx.start,
+                ctx.stop,
+                "failed to parse primitive expression"
+            )
         }
     }
 
@@ -158,7 +188,11 @@ class ExpressionVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId:
             this.REMAINDER() != null -> BinaryOp.REMAINDER
             this.AND() != null -> BinaryOp.AND
             this.OR() != null -> BinaryOp.OR
-            else -> throw PineScriptParseException(this.start, this.stop, "operator $this not recognized")
+            else -> throw PineScriptParseException(
+                this.start,
+                this.stop,
+                "operator $this not recognized"
+            )
         }
     }
 }

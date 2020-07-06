@@ -58,11 +58,6 @@ android {
         exclude("META-INF/*.kotlin_module")
     }
 }
-
-configurations {
-    ktlint
-}
-
 dependencies {
 
     implementation project(path: ":core")
@@ -97,26 +92,8 @@ dependencies {
     androidTestImplementation "androidx.ui:ui-core:$compose_version"
     androidTestImplementation "androidx.ui:ui-test:$compose_version"
 
-    ktlint 'com.pinterest:ktlint:0.37.0'
-
     // Flipper
     debugImplementation 'com.facebook.flipper:flipper:0.48.0'
     debugImplementation 'com.facebook.soloader:soloader:0.9.0'
     releaseImplementation 'com.facebook.flipper:flipper-noop:0.48.0'
-}
-
-task ktlint(type: JavaExec, group: 'verification') {
-    description = 'Check Kotlin code style.'
-    main = 'com.pinterest.ktlint.Main'
-    classpath = configurations.ktlint
-    args 'src/**/*.kt'
-}
-
-check.dependsOn ktlint
-
-task ktlintFormat(type: JavaExec, group: 'formatting') {
-    description = 'Fix Kotlin code style deviations.'
-    main = 'com.pinterest.ktlint.Main'
-    classpath = configurations.ktlint
-    args '-F', 'src/**/*.kt'
 }

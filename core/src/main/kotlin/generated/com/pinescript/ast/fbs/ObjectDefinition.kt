@@ -2,33 +2,32 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class ObjectDefinition : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : ObjectDefinition {
+    fun __assign(_i: Int, _bb: ByteBuffer): ObjectDefinition {
         __init(_i, _bb)
         return this
     }
-    val id : Int
+    val id: Int
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.getInt(o + bb_pos) else 0
+            return if (o != 0) bb.getInt(o + bb_pos) else 0
         }
-    val type : Int
+    val type: Int
         get() {
             val o = __offset(6)
-            return if(o != 0) bb.getInt(o + bb_pos) else 0
+            return if (o != 0) bb.getInt(o + bb_pos) else 0
         }
-    fun children(j: Int) : com.pinescript.ast.fbs.ObjectDefinition? = children(com.pinescript.ast.fbs.ObjectDefinition(), j)
-    fun children(obj: com.pinescript.ast.fbs.ObjectDefinition, j: Int) : com.pinescript.ast.fbs.ObjectDefinition? {
+    fun children(j: Int): com.pinescript.ast.fbs.ObjectDefinition? = children(com.pinescript.ast.fbs.ObjectDefinition(), j)
+    fun children(obj: com.pinescript.ast.fbs.ObjectDefinition, j: Int): com.pinescript.ast.fbs.ObjectDefinition? {
         val o = __offset(8)
         return if (o != 0) {
             obj.__assign(__indirect(__vector(o) + j * 4), bb)
@@ -36,12 +35,12 @@ class ObjectDefinition : Table() {
             null
         }
     }
-    val childrenLength : Int
+    val childrenLength: Int
         get() {
             val o = __offset(8); return if (o != 0) __vector_len(o) else 0
         }
-    fun signals(j: Int) : com.pinescript.ast.fbs.SignalExpr? = signals(com.pinescript.ast.fbs.SignalExpr(), j)
-    fun signals(obj: com.pinescript.ast.fbs.SignalExpr, j: Int) : com.pinescript.ast.fbs.SignalExpr? {
+    fun signals(j: Int): com.pinescript.ast.fbs.SignalExpr? = signals(com.pinescript.ast.fbs.SignalExpr(), j)
+    fun signals(obj: com.pinescript.ast.fbs.SignalExpr, j: Int): com.pinescript.ast.fbs.SignalExpr? {
         val o = __offset(10)
         return if (o != 0) {
             obj.__assign(__indirect(__vector(o) + j * 4), bb)
@@ -49,12 +48,12 @@ class ObjectDefinition : Table() {
             null
         }
     }
-    val signalsLength : Int
+    val signalsLength: Int
         get() {
             val o = __offset(10); return if (o != 0) __vector_len(o) else 0
         }
-    fun props(j: Int) : com.pinescript.ast.fbs.PropDefinition? = props(com.pinescript.ast.fbs.PropDefinition(), j)
-    fun props(obj: com.pinescript.ast.fbs.PropDefinition, j: Int) : com.pinescript.ast.fbs.PropDefinition? {
+    fun props(j: Int): com.pinescript.ast.fbs.PropDefinition? = props(com.pinescript.ast.fbs.PropDefinition(), j)
+    fun props(obj: com.pinescript.ast.fbs.PropDefinition, j: Int): com.pinescript.ast.fbs.PropDefinition? {
         val o = __offset(12)
         return if (o != 0) {
             obj.__assign(__indirect(__vector(o) + j * 4), bb)
@@ -62,12 +61,12 @@ class ObjectDefinition : Table() {
             null
         }
     }
-    val propsLength : Int
+    val propsLength: Int
         get() {
             val o = __offset(12); return if (o != 0) __vector_len(o) else 0
         }
-    val debug : com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
-    fun debug(obj: com.pinescript.ast.fbs.DebugInfo) : com.pinescript.ast.fbs.DebugInfo? {
+    val debug: com.pinescript.ast.fbs.DebugInfo? get() = debug(com.pinescript.ast.fbs.DebugInfo())
+    fun debug(obj: com.pinescript.ast.fbs.DebugInfo): com.pinescript.ast.fbs.DebugInfo? {
         val o = __offset(14)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -82,7 +81,15 @@ class ObjectDefinition : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createObjectDefinition(builder: FlatBufferBuilder, id: Int, type: Int, childrenOffset: Int, signalsOffset: Int, propsOffset: Int, debugOffset: Int) : Int {
+        fun createObjectDefinition(
+            builder: FlatBufferBuilder,
+            id: Int,
+            type: Int,
+            childrenOffset: Int,
+            signalsOffset: Int,
+            propsOffset: Int,
+            debugOffset: Int
+        ): Int {
             builder.startTable(6)
             addDebug(builder, debugOffset)
             addProps(builder, propsOffset)
@@ -96,7 +103,7 @@ class ObjectDefinition : Table() {
         fun addId(builder: FlatBufferBuilder, id: Int) = builder.addInt(0, id, 0)
         fun addType(builder: FlatBufferBuilder, type: Int) = builder.addInt(1, type, 0)
         fun addChildren(builder: FlatBufferBuilder, children: Int) = builder.addOffset(2, children, 0)
-        fun createChildrenVector(builder: FlatBufferBuilder, data: IntArray) : Int {
+        fun createChildrenVector(builder: FlatBufferBuilder, data: IntArray): Int {
             builder.startVector(4, data.size, 4)
             for (i in data.size - 1 downTo 0) {
                 builder.addOffset(data[i])
@@ -105,7 +112,7 @@ class ObjectDefinition : Table() {
         }
         fun startChildrenVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(4, numElems, 4)
         fun addSignals(builder: FlatBufferBuilder, signals: Int) = builder.addOffset(3, signals, 0)
-        fun createSignalsVector(builder: FlatBufferBuilder, data: IntArray) : Int {
+        fun createSignalsVector(builder: FlatBufferBuilder, data: IntArray): Int {
             builder.startVector(4, data.size, 4)
             for (i in data.size - 1 downTo 0) {
                 builder.addOffset(data[i])
@@ -114,7 +121,7 @@ class ObjectDefinition : Table() {
         }
         fun startSignalsVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(4, numElems, 4)
         fun addProps(builder: FlatBufferBuilder, props: Int) = builder.addOffset(4, props, 0)
-        fun createPropsVector(builder: FlatBufferBuilder, data: IntArray) : Int {
+        fun createPropsVector(builder: FlatBufferBuilder, data: IntArray): Int {
             builder.startVector(4, data.size, 4)
             for (i in data.size - 1 downTo 0) {
                 builder.addOffset(data[i])
@@ -123,7 +130,7 @@ class ObjectDefinition : Table() {
         }
         fun startPropsVector(builder: FlatBufferBuilder, numElems: Int) = builder.startVector(4, numElems, 4)
         fun addDebug(builder: FlatBufferBuilder, debug: Int) = builder.addOffset(5, debug, 0)
-        fun endObjectDefinition(builder: FlatBufferBuilder) : Int {
+        fun endObjectDefinition(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

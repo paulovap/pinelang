@@ -32,9 +32,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.fbs.PropDefinition
-import com.pinescript.core.*
+import com.pinescript.core.PineCompiler
 import com.pinescript.parser.PineScript
 
 /*
@@ -46,7 +45,12 @@ table Prop {
 }
  */
 @ExperimentalUnsignedTypes
-class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: Int, debug: Boolean) :
+class PropertyVisitor(
+    compiler: PineCompiler,
+    var ownerType: Int,
+    var ownerId: Int,
+    debug: Boolean
+) :
     PineScriptVisitor<Int>(compiler, debug) {
 
     val expressionVisitor = ExpressionVisitor(compiler, ownerType, ownerId, debug)
@@ -60,7 +64,10 @@ class PropertyVisitor(compiler: PineCompiler, var ownerType: Int, var ownerId: I
 
     override fun visitPropertyDefinition(ctx: PineScript.PropertyDefinitionContext?): Int {
         val propName = ctx!!.Identifier().text
-        val propId = types[ownerType]?.indexOfProp(propName!!) ?: ctx.throwPropNotFound(propName, types[ownerType]!!.scriptName)
+        val propId = types[ownerType]?.indexOfProp(propName!!) ?: ctx.throwPropNotFound(
+            propName,
+            types[ownerType]!!.scriptName
+        )
 
         val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
 

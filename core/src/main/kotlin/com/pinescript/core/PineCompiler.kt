@@ -38,12 +38,15 @@ import com.pinescript.ast.fbs.Program
 import com.pinescript.parser.PineLexer
 import com.pinescript.parser.PineScript
 import com.pinescript.util.IndexedMap
-import org.antlr.v4.runtime.*
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import java.util.*
+import org.antlr.v4.runtime.BaseErrorListener
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonToken
+import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.RecognitionException
+import org.antlr.v4.runtime.Recognizer
 
 class PineContext {
 
@@ -51,7 +54,7 @@ class PineContext {
 
     fun registerObject(id: Int, obj: PineObject) {
         if (refs.containsKey(id))
-            throw PineScriptException("object with id $id already defined: ${refs[id].toString()}!")
+            throw PineScriptException("object with id $id already defined: ${refs[id]}!")
         refs[id] = obj
     }
 
@@ -80,13 +83,13 @@ class CustomFlatBufferBuilder(initialSize: Int) : FlatBufferBuilder(initialSize)
         stringCache.clear()
     }
 }
+
 @ExperimentalUnsignedTypes
 class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
 
     private var incrementalId: Int = 0
     private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
     val flatBuilder = CustomFlatBufferBuilder(2048)
-
 
     fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
 
@@ -97,9 +100,15 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
         return incrementalId
     }
 
-    private val baseErrorListener = object: BaseErrorListener() {
-        override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int,
-                                 charPositionInLine: Int, msg: String, e: RecognitionException?) {
+    private val baseErrorListener = object : BaseErrorListener() {
+        override fun syntaxError(
+            recognizer: Recognizer<*, *>?,
+            offendingSymbol: Any?,
+            line: Int,
+            charPositionInLine: Int,
+            msg: String,
+            e: RecognitionException?
+        ) {
             if (offendingSymbol is CommonToken) {
                 throw PineScriptParseException(
                     offendingSymbol.line,

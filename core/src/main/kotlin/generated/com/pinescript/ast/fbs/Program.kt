@@ -2,23 +2,22 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class Program : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : Program {
+    fun __assign(_i: Int, _bb: ByteBuffer): Program {
         __init(_i, _bb)
         return this
     }
-    val root : com.pinescript.ast.fbs.ObjectDefinition? get() = root(com.pinescript.ast.fbs.ObjectDefinition())
-    fun root(obj: com.pinescript.ast.fbs.ObjectDefinition) : com.pinescript.ast.fbs.ObjectDefinition? {
+    val root: com.pinescript.ast.fbs.ObjectDefinition? get() = root(com.pinescript.ast.fbs.ObjectDefinition())
+    fun root(obj: com.pinescript.ast.fbs.ObjectDefinition): com.pinescript.ast.fbs.ObjectDefinition? {
         val o = __offset(4)
         return if (o != 0) {
             obj.__assign(__indirect(o + bb_pos), bb)
@@ -33,14 +32,14 @@ class Program : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createProgram(builder: FlatBufferBuilder, rootOffset: Int) : Int {
+        fun createProgram(builder: FlatBufferBuilder, rootOffset: Int): Int {
             builder.startTable(1)
             addRoot(builder, rootOffset)
             return endProgram(builder)
         }
         fun startProgram(builder: FlatBufferBuilder) = builder.startTable(1)
         fun addRoot(builder: FlatBufferBuilder, root: Int) = builder.addOffset(0, root, 0)
-        fun endProgram(builder: FlatBufferBuilder) : Int {
+        fun endProgram(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

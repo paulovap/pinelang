@@ -5,17 +5,19 @@ import com.pinescript.lsp.LSPServer
 import com.pinescript.lsp.ServerImpl
 import com.pinescript.lsp.sandbox.ui.Label
 import com.pinescript.lsp.sandbox.ui.Rectangle
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants
-import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.lang.Thread.sleep
-import javax.swing.*
+import javax.swing.JFrame
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JSplitPane
+import javax.swing.SwingUtilities
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import kotlin.system.measureTimeMillis
-
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants
+import org.fife.ui.rtextarea.RTextScrollPane
 
 /*
 BSD License
@@ -55,7 +57,6 @@ class MainWindow(val engine: PineEngine, enableEditor: Boolean) : JFrame() {
     var textArea = RSyntaxTextArea(20, 40)
     var outputPanel = JPanel(null)
 
-
     init {
         title = "Pine Script Live"
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -64,7 +65,14 @@ class MainWindow(val engine: PineEngine, enableEditor: Boolean) : JFrame() {
         bounds = java.awt.Rectangle(10, 10, 1000, 500)
         contentPane.layout = BorderLayout()
         if (enableEditor) {
-            contentPane.add(JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, createTextEditor(), outputPanel))
+            contentPane.add(
+                JSplitPane(
+                    JSplitPane.HORIZONTAL_SPLIT,
+                    true,
+                    createTextEditor(),
+                    outputPanel
+                )
+            )
             textArea.document.addDocumentListener(object : DocumentListener {
                 override fun changedUpdate(e: DocumentEvent?) = runScript(textArea.text)
                 override fun insertUpdate(e: DocumentEvent?) = runScript(textArea.text)
@@ -127,14 +135,14 @@ class MainWindow(val engine: PineEngine, enableEditor: Boolean) : JFrame() {
 
 fun main(argv: Array<String>) {
     val pineEngine = PineEngine.Builder()
-            .registerPineType(Rectangle.meta)
-            .registerPineType(Label.meta)
-            .build()
+        .registerPineType(Rectangle.meta)
+        .registerPineType(Label.meta)
+        .build()
 
     val window = MainWindow(pineEngine, false)
     SwingUtilities.invokeLater { window.isVisible = true }
     val serverImpl = ServerImpl(pineEngine)
-    serverImpl.textChangeListener = { window.runScript(it ) }
+    serverImpl.textChangeListener = { window.runScript(it) }
     val server = LSPServer(serverImpl)
     server.startNettyServer("localhost", 20001)
 

@@ -25,7 +25,7 @@ data class DiagnosticRelatedInformation(
     val message: String
 )
 
-data class PublishDiagnosticsParams (
+data class PublishDiagnosticsParams(
     /**
      * The URI for which diagnostic information is reported.
      */

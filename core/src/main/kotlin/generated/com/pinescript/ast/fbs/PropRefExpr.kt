@@ -2,30 +2,29 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class PropRefExpr : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : PropRefExpr {
+    fun __assign(_i: Int, _bb: ByteBuffer): PropRefExpr {
         __init(_i, _bb)
         return this
     }
-    val objId : Int
+    val objId: Int
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.getInt(o + bb_pos) else 0
+            return if (o != 0) bb.getInt(o + bb_pos) else 0
         }
-    val propId : UByte
+    val propId: UByte
         get() {
             val o = __offset(6)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
+            return if (o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
     companion object {
         fun validateVersion() = Constants.FLATBUFFERS_1_12_0()
@@ -34,7 +33,7 @@ class PropRefExpr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createPropRefExpr(builder: FlatBufferBuilder, objId: Int, propId: UByte) : Int {
+        fun createPropRefExpr(builder: FlatBufferBuilder, objId: Int, propId: UByte): Int {
             builder.startTable(2)
             addObjId(builder, objId)
             addPropId(builder, propId)
@@ -43,7 +42,7 @@ class PropRefExpr : Table() {
         fun startPropRefExpr(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addObjId(builder: FlatBufferBuilder, objId: Int) = builder.addInt(0, objId, 0)
         fun addPropId(builder: FlatBufferBuilder, propId: UByte) = builder.addByte(1, propId.toByte(), 0)
-        fun endPropRefExpr(builder: FlatBufferBuilder) : Int {
+        fun endPropRefExpr(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

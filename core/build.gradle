@@ -12,6 +12,17 @@ repositories {
     jcenter()
 }
 
+ktlint {
+    debug = true
+    verbose = true
+    android = true
+    outputToConsole = true
+    filter {
+        exclude("**/generated/**/*.kt")
+        include("**/kotlin/**")
+    }
+}
+
 kotlin {
     experimental {
         coroutines "enable"

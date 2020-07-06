@@ -3,8 +3,6 @@ package com.pinescript.lsp.sandbox.ui
 import com.pinescript.core.PineMetaObject
 import com.pinescript.core.PineObject
 import com.pinescript.core.intProp
-import com.pinescript.util.toIndexMap
-
 
 /*
 BSD License

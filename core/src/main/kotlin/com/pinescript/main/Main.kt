@@ -3,10 +3,13 @@ package com.pinescript.main
 import com.pinescript.ast.fbs.ObjectDefinition
 import com.pinescript.ast.fbs.PropDefinition
 import com.pinescript.ast.fbs.SignalExpr
-import com.pinescript.core.*
-import java.lang.Thread.sleep
+import com.pinescript.core.PineCompiler
+import com.pinescript.core.PineEngine
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.PineObject
+import com.pinescript.core.intProp
+import com.pinescript.core.stringProp
 import kotlin.system.measureTimeMillis
-
 
 /*
 BSD License
@@ -44,6 +47,7 @@ class Item(id: Int) : PineObject(id) {
     companion object {
         val meta = PineMetaObject("Item") { Item(it) }
     }
+
     val int1: Int by intProp(::int1)
     val int2: Int by intProp(::int2)
     val int3: Int by intProp(::int3)
@@ -55,7 +59,6 @@ class Item(id: Int) : PineObject(id) {
     val str4: String by stringProp(::str4)
     override fun getMeta(): PineMetaObject = meta
 }
-
 
 fun main() {
     val engine = PineEngine.Builder().registerPineType(Item.meta).build()
@@ -166,21 +169,21 @@ fun main() {
             Item{ int1: test.int1 + 20; on mount: helloText() }
         }
     """.trimIndent()
-     //val obj = engine.load(script, true) as Item
+    // val obj = engine.load(script, true) as Item
 //    println(obj.a)
 //    obj.dispose()
- //   benchmarkWhole(script, engine)
-    //println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
-    //benchmark(script, engine)
-    //benchmarkWalk(script, engine)
+    //   benchmarkWhole(script, engine)
+    // println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
+    // benchmark(script, engine)
+    // benchmarkWalk(script, engine)
     val compiler = PineCompiler(engine.types)
     val program = compiler.compile(script, false)
     val releaseBytes = compiler.flatBuilder.sizedByteArray()
     val programDebug = compiler.compile(script, true)
     val debugBytes = compiler.flatBuilder.sizedByteArray()
-    println("scriptSize ${script.toByteArray().size/1024} kb")
-    println("compiledSize ${releaseBytes.size/1024} kb")
-    println("compiledSizeDebug ${debugBytes.size/1024} kb")
+    println("scriptSize ${script.toByteArray().size / 1024} kb")
+    println("compiledSize ${releaseBytes.size / 1024} kb")
+    println("compiledSizeDebug ${debugBytes.size / 1024} kb")
 //    println(measureTimeMillis {
 //        repeat(times) {
 //            engine.compile(script)
@@ -200,21 +203,21 @@ fun benchmarkWhole(script: String, engine: PineEngine) {
     val warmupTimes = 1000
     repeat(warmupTimes) { engine.load(script) }
 
-    var totalCompile = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
-    println("compile $times in total $totalCompile ms avg ${totalCompile/times.toDouble()} ms")
+    val totalCompile = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
+    println("compile $times in total $totalCompile ms avg ${totalCompile / times.toDouble()} ms")
 
-    var totalEval = measureTimeMillis { repeat(times) { engine.eval(compiled) } }
-    println("eval $times in total $totalEval ms avg ${totalEval/times.toDouble()} ms")
+    val totalEval = measureTimeMillis { repeat(times) { engine.eval(compiled) } }
+    println("eval $times in total $totalEval ms avg ${totalEval / times.toDouble()} ms")
 
-    var total = totalCompile + totalEval
-    println("compile + eval $times in total $total ms avg ${total/times.toDouble()} ms")
+    val total = totalCompile + totalEval
+    println("compile + eval $times in total $total ms avg ${total / times.toDouble()} ms")
 }
 
 fun benchmark(script: String, engine: PineEngine) {
     repeat(10) { engine.compile(script) }
     val times = 100000
     val total = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
-    println("run $times in total $total ms avg ${total/times.toDouble()} ms")
+    println("run $times in total $total ms avg ${total / times.toDouble()} ms")
 }
 
 fun benchmarkWalk(script: String, engine: PineEngine) {
@@ -222,12 +225,14 @@ fun benchmarkWalk(script: String, engine: PineEngine) {
     val root = program.root!!
     repeat(100) { walkProgram(root) }
     val times = 100000
-    val total = measureTimeMillis { repeat(times) {
-        walkProgram(
-            root
-        )
-    } }
-    println("run $times in total $total ms avg ${total/times.toDouble()} ms")
+    val total = measureTimeMillis {
+        repeat(times) {
+            walkProgram(
+                root
+            )
+        }
+    }
+    println("run $times in total $total ms avg ${total / times.toDouble()} ms")
 }
 
 fun walkProgram(objectDefinition: ObjectDefinition) {

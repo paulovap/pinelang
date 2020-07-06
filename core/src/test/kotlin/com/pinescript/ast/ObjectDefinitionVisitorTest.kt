@@ -32,22 +32,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.pinescript.ast
 
-import com.google.flatbuffers.Table
-import com.pinescript.ast.fbs.Expr
-import com.pinescript.ast.fbs.PrimitiveExpr
 import com.pinescript.ast.fbs.Program
-import com.pinescript.core.*
-import com.pinescript.util.toIndexMap
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-
+import com.pinescript.core.PineEngine
+import com.pinescript.core.PineMetaObject
+import com.pinescript.core.PineObject
+import com.pinescript.core.boolProp
+import com.pinescript.core.doubleProp
+import com.pinescript.core.intProp
+import com.pinescript.core.stringProp
 import java.io.IOException
-
+import kotlin.system.measureTimeMillis
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import kotlin.system.measureTimeMillis
-
+import org.junit.Before
+import org.junit.Test
 
 class ObjectDefinitionVisitorTest {
 
@@ -56,6 +55,7 @@ class ObjectDefinitionVisitorTest {
         companion object {
             val meta = PineMetaObject("TestObject") { TestObject() }
         }
+
         val myInt: Int by intProp(::myInt)
         var myDouble: Double by doubleProp(::myDouble)
         val myString: String by stringProp(::myString)
@@ -66,8 +66,6 @@ class ObjectDefinitionVisitorTest {
     private var engine: PineEngine = PineEngine.Builder()
         .registerPineType(TestObject.meta)
         .build()
-
-
 
     @Before
     @Throws(Exception::class)
@@ -84,10 +82,16 @@ class ObjectDefinitionVisitorTest {
         val engine = PineEngine.Builder()
             .registerPineType(TestObject.meta)
             .build()
-        println( measureTimeMillis { engine.compile("TestObject { id: test }") })
-        println( measureTimeMillis { engine.compile("TestObject { id: test }") })
-        println( measureTimeMillis { engine.compile("TestObject { id: test }") })
-        println( measureTimeMillis { engine.compile("TestObject { id: test TestObject { }  TestObject { } TestObject { } TestObject { } TestObject { } TestObject { } }") })
+        println(measureTimeMillis { engine.compile("TestObject { id: test }") })
+        println(measureTimeMillis { engine.compile("TestObject { id: test }") })
+        println(measureTimeMillis { engine.compile("TestObject { id: test }") })
+        println(measureTimeMillis {
+            engine.compile(
+                "TestObject { id: test TestObject { }  " +
+                        "TestObject { } TestObject { } TestObject { } " +
+                        "TestObject { } TestObject { } }"
+            )
+        })
     }
 
 //    @Test
@@ -140,8 +144,7 @@ class ObjectDefinitionVisitorTest {
 //        assertEquals(Expr.PrimitiveExpr, stringProp.valueType)
 //        assertEquals("oh my", stringExpr.stringValue)
 
-
-        //(program.root!!.props(0)!!.value(PrimitiveExpr()) as PrimitiveExpr).value
+        // (program.root!!.props(0)!!.value(PrimitiveExpr()) as PrimitiveExpr).value
     }
 //
 //    @Test
@@ -172,5 +175,4 @@ class ObjectDefinitionVisitorTest {
 //        val obj = v.visit(tree)
 //        assertNotNull(obj)
 //    }
-
 }

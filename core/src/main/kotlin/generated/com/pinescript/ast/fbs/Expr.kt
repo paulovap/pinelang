@@ -2,27 +2,26 @@
 
 package com.pinescript.ast.fbs
 
-import java.nio.*
-import kotlin.math.sign
 import com.google.flatbuffers.*
+import java.nio.*
 
 @Suppress("unused")
 @ExperimentalUnsignedTypes
 class Expr : Table() {
 
-    fun __init(_i: Int, _bb: ByteBuffer)  {
+    fun __init(_i: Int, _bb: ByteBuffer) {
         __reset(_i, _bb)
     }
-    fun __assign(_i: Int, _bb: ByteBuffer) : Expr {
+    fun __assign(_i: Int, _bb: ByteBuffer): Expr {
         __init(_i, _bb)
         return this
     }
-    val expValueType : UByte
+    val expValueType: UByte
         get() {
             val o = __offset(4)
-            return if(o != 0) bb.get(o + bb_pos).toUByte() else 0u
+            return if (o != 0) bb.get(o + bb_pos).toUByte() else 0u
         }
-    fun expValue(obj: Table) : Table? {
+    fun expValue(obj: Table): Table? {
         val o = __offset(6); return if (o != 0) __union(obj, o + bb_pos) else null
     }
     companion object {
@@ -32,7 +31,7 @@ class Expr : Table() {
             _bb.order(ByteOrder.LITTLE_ENDIAN)
             return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb))
         }
-        fun createExpr(builder: FlatBufferBuilder, expValueType: UByte, expValueOffset: Int) : Int {
+        fun createExpr(builder: FlatBufferBuilder, expValueType: UByte, expValueOffset: Int): Int {
             builder.startTable(2)
             addExpValue(builder, expValueOffset)
             addExpValueType(builder, expValueType)
@@ -41,7 +40,7 @@ class Expr : Table() {
         fun startExpr(builder: FlatBufferBuilder) = builder.startTable(2)
         fun addExpValueType(builder: FlatBufferBuilder, expValueType: UByte) = builder.addByte(0, expValueType.toByte(), 0)
         fun addExpValue(builder: FlatBufferBuilder, expValue: Int) = builder.addOffset(1, expValue, 0)
-        fun endExpr(builder: FlatBufferBuilder) : Int {
+        fun endExpr(builder: FlatBufferBuilder): Int {
             val o = builder.endTable()
             return o
         }

@@ -32,13 +32,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.pinescript.ast
 
-import com.google.flatbuffers.FlatBufferBuilder
 import com.pinescript.ast.fbs.ObjectDefinition
 import com.pinescript.ast.fbs.ObjectDefinition.Companion.createChildrenVector
 import com.pinescript.ast.fbs.ObjectDefinition.Companion.createPropsVector
 import com.pinescript.ast.fbs.ObjectDefinition.Companion.createSignalsVector
 import com.pinescript.ast.fbs.SignalExpr
-import com.pinescript.core.*
+import com.pinescript.core.PineCompiler
 import com.pinescript.parser.PineScript
 
 /*
@@ -53,7 +52,8 @@ table ObjectDefinition {
 }
  */
 
-class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScriptVisitor<Int>(compiler, debug) {
+class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) :
+    PineScriptVisitor<Int>(compiler, debug) {
 
     private val propertyVisitor = PropertyVisitor(compiler, -1, -1, debug)
     private val expressionVisitor = ExpressionVisitor(compiler, -1, -1, debug)
@@ -63,10 +63,10 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
         val objIdentifierCtx = initContext.objectIdentifier()
         val objMember = initContext.objectMember()
 
-
         // Object information
         val nameType = ctx.ObjectType().text
-        val typeIdx = types.getIndexOrNull(nameType) ?: ctx.ObjectType().throwParseException("Type $nameType not found engine")
+        val typeIdx = types.getIndexOrNull(nameType) ?: ctx.ObjectType()
+            .throwParseException("Type $nameType not found engine")
         val type = types[typeIdx]!!
         val debugName = objIdentifierCtx?.Identifier()?.text ?: ""
         val objId = compiler.generateObjectId(typeIdx, debugName)
@@ -98,9 +98,11 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
                 val name = sigCtx.Identifier().text
                 val id =
                     type.indexOfSignal(name)
-                val expr = expressionVisitor.reset(typeIdx, objId).visit(sigCtx.callableExpression())
+                val expr =
+                    expressionVisitor.reset(typeIdx, objId).visit(sigCtx.callableExpression())
                 signals.add(run {
-                    val debugInfo: Int? = if (debug) createDebugInfo(sigCtx, name, "signalExp") else null
+                    val debugInfo: Int? =
+                        if (debug) createDebugInfo(sigCtx, name, "signalExp") else null
                     SignalExpr.startSignalExpr(fb)
                     SignalExpr.addId(fb, id!!.toUByte())
                     SignalExpr.addExpr(fb, expr)
@@ -110,10 +112,10 @@ class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) : PineScri
             }
         }
 
-
         val debugInfo = if (debug) createDebugInfo(ctx, debugName, nameType) else null
 
-        val childrenVec = if (children.size > 0) createChildrenVector(fb, children.toIntArray()) else -1
+        val childrenVec =
+            if (children.size > 0) createChildrenVector(fb, children.toIntArray()) else -1
         val propVec = if (props.size > 0) createPropsVector(fb, props.toIntArray()) else -1
         val signalVec = if (signals.size > 0) createSignalsVector(fb, signals.toIntArray()) else -1
 

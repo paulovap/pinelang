@@ -1,7 +1,7 @@
 package com.pinescript.core
 
+import com.pinescript.ast.fbs.BinaryOp
 import org.antlr.v4.runtime.Token
-import org.antlr.v4.runtime.tree.TerminalNode
 
 /*
 BSD License
@@ -35,12 +35,40 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-class PineScriptParseException(val startLine: Int, val startCol: Int, val endLine: Int, val endCol: Int, message: String = "", cause: Throwable? = null) :
+class PineScriptParseException(
+    val startLine: Int,
+    val startCol: Int,
+    val endLine: Int,
+    val endCol: Int,
+    message: String = "",
+    cause: Throwable? = null
+) :
     RuntimeException("\n$message at line: $startLine col: $startCol", cause) {
 
-    constructor(startToken: Token, endToken: Token, message: String = "", cause: Throwable? = null):
-            this(startToken.line, startToken.charPositionInLine, endToken.line, endToken.charPositionInLine, message, cause)
+    constructor(
+        startToken: Token,
+        endToken: Token,
+        message: String = "",
+        cause: Throwable? = null
+    ) :
+            this(
+                startToken.line,
+                startToken.charPositionInLine,
+                endToken.line,
+                endToken.charPositionInLine,
+                message,
+                cause
+            )
 }
 
-class PineScriptException(msg: String, cause: Throwable? = null) :
+open class PineScriptException(msg: String, cause: Throwable? = null) :
     RuntimeException(msg, cause)
+
+class BinaryOpNotSupportedPineScriptException(op: UByte, type: PineType) :
+    PineScriptException("operation ${BinaryOp.name(op.toInt())} not supported for $type")
+
+class BinaryOpTypeMismatchPineScriptException(op: UByte, typeA: PineType, typeB: PineType) :
+    PineScriptException(
+        "unable to apply operator '${BinaryOp.name(op.toInt())}' " +
+                "with types $typeA and $typeB"
+    )

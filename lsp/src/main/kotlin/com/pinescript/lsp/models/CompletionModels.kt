@@ -170,7 +170,7 @@ data class CompletionItem(
     val data: Any? = null
 )
 
-data class TextEdit (
+data class TextEdit(
     /**
      * The range of the text document to be manipulated. To insert
      * text into a document create a range where start === end.
@@ -184,7 +184,7 @@ data class TextEdit (
     val newText: String
 )
 
-data class Command (
+data class Command(
     /**
      * Title of the command, like `save`.
      */
