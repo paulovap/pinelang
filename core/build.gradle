@@ -13,7 +13,7 @@ repositories {
 }
 
 ktlint {
-    debug = true
+    debug = false
     verbose = true
     android = true
     outputToConsole = true
