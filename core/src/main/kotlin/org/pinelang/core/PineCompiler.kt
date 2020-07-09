@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) 2018, Paulo Pinheiro
+Copyright (c) $today.year, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

@@ -51,7 +51,7 @@ spotless {
 		ktlint()   // has its own section below
 		ktfmt()    // has its own section below
 		prettier() // has its own section below
-		licenseHeaderFile '.license_header' // or licenseHeaderFile
+		licenseHeaderFile '.license_header', '(package)'
 	}
 }
 

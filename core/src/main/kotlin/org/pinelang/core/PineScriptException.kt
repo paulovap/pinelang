@@ -1,12 +1,7 @@
-package org.pinelang.core
-
-import org.antlr.v4.runtime.Token
-import org.pinelang.ast.fbs.BinaryOp
-
 /*
 BSD License
 
-Copyright (c) 2018, Paulo Pinheiro
+Copyright (c) $today.year, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,6 +29,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+package org.pinelang.core
+
+import org.antlr.v4.runtime.Token
+import org.pinelang.ast.fbs.BinaryOp
 
 class PineScriptParseException(
     val startLine: Int,

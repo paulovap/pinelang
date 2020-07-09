@@ -1,19 +1,7 @@
-package org.pinelang.main
-
-import kotlin.system.measureTimeMillis
-import org.pinelang.ast.fbs.ObjectDefinition
-import org.pinelang.ast.fbs.PropDefinition
-import org.pinelang.ast.fbs.SignalExpr
-import org.pinelang.core.PineEngine
-import org.pinelang.core.PineMetaObject
-import org.pinelang.core.PineObject
-import org.pinelang.core.intProp
-import org.pinelang.core.stringProp
-
 /*
 BSD License
 
-Copyright (c) 2018, Paulo Pinheiro
+Copyright (c) $today.year, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,6 +29,17 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+package org.pinelang.main
+
+import kotlin.system.measureTimeMillis
+import org.pinelang.ast.fbs.ObjectDefinition
+import org.pinelang.ast.fbs.PropDefinition
+import org.pinelang.ast.fbs.SignalExpr
+import org.pinelang.core.PineEngine
+import org.pinelang.core.PineMetaObject
+import org.pinelang.core.PineObject
+import org.pinelang.core.intProp
+import org.pinelang.core.stringProp
 
 class Item(id: Int) : PineObject(id) {
     companion object {

@@ -29,53 +29,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pinelang.ast
+package org.pinelang.core
 
-import org.pinelang.ast.fbs.PropDefinition
-import org.pinelang.core.PineCompiler
-import org.pinelang.parser.PineScript
+import org.junit.Test
 
-/*
-table Prop {
-    debugName: string;
-    idx:       byte;
-    type:      PropType;
-    value:     Expr;
-}
- */
-@ExperimentalUnsignedTypes
-class PropertyVisitor(
-    compiler: PineCompiler,
-    var ownerType: Int,
-    var ownerId: Int,
-    debug: Boolean
-) :
-    PineScriptVisitor<Int>(compiler, debug) {
-
-    val expressionVisitor =
-        ExpressionVisitor(compiler, ownerType, ownerId, debug)
-
-    fun reset(ownerType: Int, ownerId: Int): PropertyVisitor {
-        this.ownerType = ownerType
-        this.ownerId = ownerId
-        expressionVisitor.reset(ownerType, ownerId)
-        return this
-    }
-
-    override fun visitPropertyDefinition(ctx: PineScript.PropertyDefinitionContext?): Int {
-        val propName = ctx!!.Identifier().text
-        val propId = types[ownerType]?.indexOfProp(propName!!) ?: ctx.throwPropNotFound(
-            propName,
-            types[ownerType]!!.scriptName
-        )
-
-        val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
-
-        val debugInfo = if (debug) createDebugInfo(ctx, propName, "PropertyDefinition") else null
-        PropDefinition.startPropDefinition(fb)
-        PropDefinition.addId(fb, propId.toUByte())
-        PropDefinition.addValue(fb, exprValue)
-        debugInfo?.run { PropDefinition.addDebug(fb, debugInfo) }
-        return PropDefinition.endPropDefinition(fb)
+class TestProps {
+    @Test
+    fun testProps() {
     }
 }
