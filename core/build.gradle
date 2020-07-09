@@ -37,23 +37,22 @@ kotlin {
 
 dependencies {
 
-    // Ktor
-//    implementation "io.ktor:ktor:$ktor_version"
-//    implementation "io.ktor:ktor-server-netty:$ktor_version"
-//    implementation "io.ktor:ktor-gson:$ktor_version"
-//    implementation "io.ktor:ktor-network:$ktor_version"
     // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     implementation("com.squareup.moshi:moshi:1.9.2")
     // Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-test-junit5"
-    //implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testCompile "org.antlr:antlr4-runtime:4.8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-test-junit5"
+
+    // Antlr4
+    testImplementation "org.antlr:antlr4-runtime:4.8"
     antlr "org.antlr:antlr4:4.8-1"
-    compile "org.antlr:antlr4-runtime:4.8"
-    testCompile 'junit:junit:4.12'
-    compile group: 'com.google.flatbuffers', name: 'flatbuffers-java', version: '1.12.0'
+    implementation "org.antlr:antlr4-runtime:4.8"
+
+    // Flatbuffers
+    implementation group: 'com.google.flatbuffers', name: 'flatbuffers-java', version: '1.12.0'
+
+    testImplementation 'junit:junit:4.13'
     implementation 'net.sf.squirrel-sql.thirdparty-non-maven:com-fifesoft-rsyntaxtextarea:1.0.0'
 }
 

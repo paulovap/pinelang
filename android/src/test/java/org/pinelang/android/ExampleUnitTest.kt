@@ -1,6 +1,6 @@
 package org.pinelang.android
 
-import kotlin.test.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
