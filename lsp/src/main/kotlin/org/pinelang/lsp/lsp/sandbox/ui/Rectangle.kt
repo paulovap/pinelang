@@ -29,7 +29,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 package org.pinelang.lsp.lsp.sandbox.ui
 
 import java.awt.Color
@@ -42,52 +41,47 @@ import org.pinelang.core.stringProp
 
 class Rectangle(id: Int) : PineObject(id) {
 
-    companion object {
-        val meta = PineMetaObject("Rectangle") {
-            Rectangle(
-                it
-            )
+  companion object {
+    val meta = PineMetaObject("Rectangle") { Rectangle(it) }
+  }
+
+  val panel = JPanel(null)
+
+  var x: Int by intProp(::x, initialValue = 1)
+  var y: Int by intProp(::y, initialValue = 1)
+  var width: Int by intProp(::width, initialValue = 50)
+  var height: Int by intProp(::height, initialValue = 50)
+  var visible: Boolean by boolProp(::visible, initialValue = true)
+  val color: String by stringProp(::color, initialValue = "#ffffff")
+
+  init {
+    connect("x") { resizeSlot() }
+    connect("y") { resizeSlot() }
+    connect("width") { resizeSlot() }
+    connect("height") { resizeSlot() }
+    connect("visible") { resizeSlot() }
+    connect("color") { panel.background = Color.decode(color) }
+
+    panel.background = Color.decode(color)
+
+    connect("children") {
+      panel.removeAll()
+      for (child in children) {
+        if (child is Rectangle) {
+          panel.add(child.panel)
         }
-    }
-
-    val panel = JPanel(null)
-
-    var x: Int by intProp(::x, initialValue = 1)
-    var y: Int by intProp(::y, initialValue = 1)
-    var width: Int by intProp(::width, initialValue = 50)
-    var height: Int by intProp(::height, initialValue = 50)
-    var visible: Boolean by boolProp(::visible, initialValue = true)
-    val color: String by stringProp(::color, initialValue = "#ffffff")
-
-    init {
-        connect("x") { resizeSlot() }
-        connect("y") { resizeSlot() }
-        connect("width") { resizeSlot() }
-        connect("height") { resizeSlot() }
-        connect("visible") { resizeSlot() }
-        connect("color") { panel.background = Color.decode(color) }
-
-        panel.background = Color.decode(color)
-
-        connect("children") {
-            panel.removeAll()
-            for (child in children) {
-                if (child is Rectangle) {
-                    panel.add(child.panel)
-                }
-                if (child is Label) {
-                    panel.add(child.label)
-                }
-            }
+        if (child is Label) {
+          panel.add(child.label)
         }
-        resizeSlot()
+      }
     }
+    resizeSlot()
+  }
 
-    override fun getMeta(): PineMetaObject =
-        meta
+  override fun getMeta(): PineMetaObject = meta
 
-    private fun resizeSlot() {
-        panel.bounds = java.awt.Rectangle(x, y, width, height)
-        panel.isVisible = visible
-    }
+  private fun resizeSlot() {
+    panel.bounds = java.awt.Rectangle(x, y, width, height)
+    panel.isVisible = visible
+  }
 }

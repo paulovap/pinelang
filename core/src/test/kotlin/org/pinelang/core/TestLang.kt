@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,29 +36,27 @@ import org.junit.Before
 import org.junit.Test
 
 class Item(id: Int) : PineObject(id) {
-    companion object {
-        val meta = PineMetaObject("Item") { Item(it) }
-    }
-    var myInt: Int by intProp(::myInt)
-    var myDouble: Double by doubleProp(::myDouble)
-    var myString: String by stringProp(::myString)
-    override fun getMeta(): PineMetaObject = meta
+  companion object {
+    val meta = PineMetaObject("Item") { Item(it) }
+  }
+  var myInt: Int by intProp(::myInt)
+  var myDouble: Double by doubleProp(::myDouble)
+  var myString: String by stringProp(::myString)
+  override fun getMeta(): PineMetaObject = meta
 }
 
 class TestLang {
 
-    val engine = PineEngine.Builder()
-        .registerPineType(PineMetaObject("Item") { Item(it) })
-        .build()
+  val engine = PineEngine.Builder().registerPineType(PineMetaObject("Item") { Item(it) }).build()
 
-        @Before
-    fun setup() {
-    }
+  @Before fun setup() {}
 
-    @Test
-    fun testPrimitives() {
+  @Test
+  fun testPrimitives() {
 
-        val item = engine.load("""
+    val item =
+        engine.load(
+            """
             Item {
                 myInt: 22dp
                 myDouble: 23.23456
@@ -66,15 +64,17 @@ class TestLang {
             }
         """.trimIndent()) as Item
 
-        assertEquals(22, item.myInt)
-        assertEquals(23.23456, item.myDouble)
-        assertEquals("that is a text 😀", item.myString)
-    }
+    assertEquals(22, item.myInt)
+    assertEquals(23.23456, item.myDouble)
+    assertEquals("that is a text 😀", item.myString)
+  }
 
-    @Test
-    fun testChildren() {
+  @Test
+  fun testChildren() {
 
-        val item = engine.load("""
+    val item =
+        engine.load(
+            """
             Item {
                 Item { 
                     myString: "child1"
@@ -85,23 +85,66 @@ class TestLang {
             }
         """.trimIndent()) as Item
 
-        assertEquals("child1", (item.children.get(0) as Item).myString)
-        assertEquals("child1_1", (item.children.get(0).children.get(0) as Item).myString)
-        assertEquals("child2", (item.children.get(1) as Item).myString)
-    }
+    assertEquals("child1", (item.children.get(0) as Item).myString)
+    assertEquals("child1_1", (item.children.get(0).children.get(0) as Item).myString)
+    assertEquals("child2", (item.children.get(1) as Item).myString)
+  }
 
-    @Test
-    fun testBinaryExpression() {
-        val item = engine.load("""
+  @Test
+  fun testBinaryExpression() {
+    val item =
+        engine.load(
+            """
             Item {
-                myInt: 0.1 + 25
+                myInt: 25
                 myDouble: 1 + 0.0098
              //   myString: "asdf" + "fdsa"
             }
         """.trimIndent()) as Item
 
-        assertEquals(25, item.myInt)
-        assertEquals(1.0098, item.myDouble)
-//        assertEquals("child2", (item.children.get(1) as Item).myString)
-    }
+    assertEquals(25, item.myInt)
+    assertEquals(1.0098, item.myDouble)
+  }
+
+  @Test
+  fun testBindBinaryExpression() {
+    val item =
+        engine.load(
+            """
+            Item {
+                id: root
+                myInt: a.myInt + b.myInt
+                
+                Item {
+                  id: a
+                  myInt: 10
+                }
+                Item {
+                  id: b
+                  myInt: 25
+                }
+            }
+        """.trimIndent()) as Item
+
+    val a = item.children.get(0) as Item
+    val b = item.children.get(1) as Item
+    assertEquals(35, item.myInt)
+
+    a.myInt = 12
+    assertEquals(37, item.myInt)
+    b.myInt = 12
+
+    assertEquals(24, item.myInt)
+
+    item.myInt = 10
+    a.myInt = 20
+    assertEquals(10, item.myInt)
+    assertEquals(20, a.myInt)
+    assertEquals(12, b.myInt)
+  }
+
+  @Test(expected = BinaryOpException::class)
+  fun testInvalidBinaryExpression() {
+    val item = engine.load("Item { id: root; myInt: 10 + \"test\" }")
+  }
 }

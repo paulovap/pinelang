@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,30 +42,26 @@ import org.pinelang.core.intProp
 import org.pinelang.core.stringProp
 
 class Item(id: Int) : PineObject(id) {
-    companion object {
-        val meta = PineMetaObject("Item") {
-            Item(it)
-        }
-    }
+  companion object {
+    val meta = PineMetaObject("Item") { Item(it) }
+  }
 
-    val int1: Int by intProp(::int1)
-    val int2: Int by intProp(::int2)
-    val int3: Int by intProp(::int3)
-    val int4: Int by intProp(::int4)
+  val int1: Int by intProp(::int1)
+  val int2: Int by intProp(::int2)
+  val int3: Int by intProp(::int3)
+  val int4: Int by intProp(::int4)
 
-    val str1: String by stringProp(::str1)
-    val str2: String by stringProp(::str2)
-    val str3: String by stringProp(::str3)
-    val str4: String by stringProp(::str4)
-    override fun getMeta(): PineMetaObject =
-        meta
+  val str1: String by stringProp(::str1)
+  val str2: String by stringProp(::str2)
+  val str3: String by stringProp(::str3)
+  val str4: String by stringProp(::str4)
+  override fun getMeta(): PineMetaObject = meta
 }
 
 fun main() {
-    val engine = PineEngine.Builder().registerPineType(
-        Item.meta
-    ).build()
-    val script = """
+  val engine = PineEngine.Builder().registerPineType(Item.meta).build()
+  val script =
+      """
 Item { id: test; int1: 20
 //on mount: printHello()
 //on mount: printHello()
@@ -176,60 +172,60 @@ Item{ int1: test.int1 + 20; on mount: helloText() }
 Item{ int1: test.int1 + 20; on mount: helloText() }
         }
     """.trimIndent()
-    // val obj = engine.load(script, true) as Item
-    //    println(obj.a)
-    //    obj.dispose()
-    benchmarkWhole(script, engine)
-    // println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
-    // benchmark(script, engine)
-    // benchmarkWalk(script, engine)
-    // val compiler = PineCompiler(engine.types)
-    // val program = compiler.compile(script, false)
-    // val releaseBytes = compiler.flatBuilder.sizedByteArray()
-    // val programDebug = compiler.compile(script, true)
-    // val debugBytes = compiler.flatBuilder.sizedByteArray()
-    // println("scriptSize ${script.toByteArray().size / 1024} kb")
-    // println("compiledSize ${releaseBytes.size / 1024} kb")
-    // println("compiledSizeDebug ${debugBytes.size / 1024} kb")
+  // val obj = engine.load(script, true) as Item
+  //    println(obj.a)
+  //    obj.dispose()
+  benchmarkWhole(script, engine)
+  // println("Walk time  ${measureTimeMillis { walkProgram(program.root!!) } } ms")
+  // benchmark(script, engine)
+  // benchmarkWalk(script, engine)
+  // val compiler = PineCompiler(engine.types)
+  // val program = compiler.compile(script, false)
+  // val releaseBytes = compiler.flatBuilder.sizedByteArray()
+  // val programDebug = compiler.compile(script, true)
+  // val debugBytes = compiler.flatBuilder.sizedByteArray()
+  // println("scriptSize ${script.toByteArray().size / 1024} kb")
+  // println("compiledSize ${releaseBytes.size / 1024} kb")
+  // println("compiledSizeDebug ${debugBytes.size / 1024} kb")
 }
 
 fun benchmarkWhole(script: String, engine: PineEngine) {
-    val compiled = engine.compile(script, false)
-    val times = 10000
-    val warmupTimes = 1000
-    repeat(warmupTimes) { engine.load(script) }
+  val compiled = engine.compile(script, false)
+  val times = 10000
+  val warmupTimes = 1000
+  repeat(warmupTimes) { engine.load(script) }
 
-    val totalCompile = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
-    println("compile $times in total $totalCompile ms avg ${totalCompile / times.toDouble()} ms")
+  val totalCompile = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
+  println("compile $times in total $totalCompile ms avg ${totalCompile / times.toDouble()} ms")
 
-    val totalEval = measureTimeMillis { repeat(times) { engine.eval(compiled) } }
-    println("eval $times in total $totalEval ms avg ${totalEval / times.toDouble()} ms")
+  val totalEval = measureTimeMillis { repeat(times) { engine.eval(compiled) } }
+  println("eval $times in total $totalEval ms avg ${totalEval / times.toDouble()} ms")
 
-    val total = totalCompile + totalEval
-    println("compile + eval $times in total $total ms avg ${total / times.toDouble()} ms")
+  val total = totalCompile + totalEval
+  println("compile + eval $times in total $total ms avg ${total / times.toDouble()} ms")
 }
 
 fun benchmark(script: String, engine: PineEngine) {
-    repeat(10) { engine.compile(script) }
-    val times = 100000
-    val total = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
-    println("run $times in total $total ms avg ${total / times.toDouble()} ms")
+  repeat(10) { engine.compile(script) }
+  val times = 100000
+  val total = measureTimeMillis { repeat(times) { engine.compile(script, false) } }
+  println("run $times in total $total ms avg ${total / times.toDouble()} ms")
 }
 
 fun walkProgram(objectDefinition: ObjectDefinition) {
-    val obj = ObjectDefinition()
-    val prop = PropDefinition()
-    val signal = SignalExpr()
+  val obj = ObjectDefinition()
+  val prop = PropDefinition()
+  val signal = SignalExpr()
 
-    for (i in 0 until objectDefinition.childrenLength) {
-        walkProgram(objectDefinition.children(obj, i)!!)
-    }
+  for (i in 0 until objectDefinition.childrenLength) {
+    walkProgram(objectDefinition.children(obj, i)!!)
+  }
 
-    for (i in 0 until objectDefinition.propsLength) {
-        objectDefinition.props(prop, i)
-    }
+  for (i in 0 until objectDefinition.propsLength) {
+    objectDefinition.props(prop, i)
+  }
 
-    for (i in 0 until objectDefinition.signalsLength) {
-        objectDefinition.signals(signal, i)
-    }
+  for (i in 0 until objectDefinition.signalsLength) {
+    objectDefinition.signals(signal, i)
+  }
 }

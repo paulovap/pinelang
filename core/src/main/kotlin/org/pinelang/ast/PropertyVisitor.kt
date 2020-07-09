@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,37 +45,31 @@ table Prop {
  */
 @ExperimentalUnsignedTypes
 class PropertyVisitor(
-    compiler: PineCompiler,
-    var ownerType: Int,
-    var ownerId: Int,
-    debug: Boolean
-) :
-    PineScriptVisitor<Int>(compiler, debug) {
+    compiler: PineCompiler, var ownerType: Int, var ownerId: Int, debug: Boolean
+) : PineScriptVisitor<Int>(compiler, debug) {
 
-    val expressionVisitor =
-        ExpressionVisitor(compiler, ownerType, ownerId, debug)
+  val expressionVisitor = ExpressionVisitor(compiler, ownerType, ownerId, debug)
 
-    fun reset(ownerType: Int, ownerId: Int): PropertyVisitor {
-        this.ownerType = ownerType
-        this.ownerId = ownerId
-        expressionVisitor.reset(ownerType, ownerId)
-        return this
-    }
+  fun reset(ownerType: Int, ownerId: Int): PropertyVisitor {
+    this.ownerType = ownerType
+    this.ownerId = ownerId
+    expressionVisitor.reset(ownerType, ownerId)
+    return this
+  }
 
-    override fun visitPropertyDefinition(ctx: PineScript.PropertyDefinitionContext?): Int {
-        val propName = ctx!!.Identifier().text
-        val propId = types[ownerType]?.indexOfProp(propName!!) ?: ctx.throwPropNotFound(
-            propName,
-            types[ownerType]!!.scriptName
-        )
+  override fun visitPropertyDefinition(ctx: PineScript.PropertyDefinitionContext?): Int {
+    val propName = ctx!!.Identifier().text
+    val propId =
+        types[ownerType]?.indexOfProp(propName!!)
+            ?: ctx.throwPropNotFound(propName, types[ownerType]!!.scriptName)
 
-        val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
+    val exprValue = expressionVisitor.reset(ownerType, ownerId).visit(ctx.expression()!!)
 
-        val debugInfo = if (debug) createDebugInfo(ctx, propName, "PropertyDefinition") else null
-        PropDefinition.startPropDefinition(fb)
-        PropDefinition.addId(fb, propId.toUByte())
-        PropDefinition.addValue(fb, exprValue)
-        debugInfo?.run { PropDefinition.addDebug(fb, debugInfo) }
-        return PropDefinition.endPropDefinition(fb)
-    }
+    val debugInfo = if (debug) createDebugInfo(ctx, propName, "PropertyDefinition") else null
+    PropDefinition.startPropDefinition(fb)
+    PropDefinition.addId(fb, propId.toUByte())
+    PropDefinition.addValue(fb, exprValue)
+    debugInfo?.run { PropDefinition.addDebug(fb, debugInfo) }
+    return PropDefinition.endPropDefinition(fb)
+  }
 }

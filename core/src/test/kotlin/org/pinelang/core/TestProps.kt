@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,55 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pinelang.core
 
+import kotlin.test.assertEquals
 import org.junit.Test
 
 class TestProps {
-    @Test
-    fun testProps() {
-    }
+
+  val engine = PineEngine.Builder().registerPineType(PineMetaObject("Item") { Item(it) }).build()
+  @Test
+  fun testPropBinding() {
+
+    val item =
+        engine.load(
+            """
+            Item {
+                id: root
+                myInt: 10
+                Item { 
+                  myInt: root.myInt  
+                }
+            }
+        """.trimIndent(),
+            debugSymbol = true) as Item
+
+    val child = item.children.get(0) as Item
+    assertEquals(10, item.myInt)
+    assertEquals(10, child.myInt)
+
+    item.myInt = 20
+
+    assertEquals(20, item.myInt)
+    assertEquals(20, child.myInt)
+
+    child.myInt = 5
+
+    assertEquals(20, item.myInt)
+    assertEquals(5, child.myInt)
+
+    item.myInt = 10
+
+    assertEquals(10, item.myInt)
+    assertEquals(5, child.myInt)
+
+    child.getProp("myInt").bind(item.getProp("myInt"))
+
+    assertEquals(10, item.myInt)
+    assertEquals(10, child.myInt)
+
+    item.myInt = 25
+
+    assertEquals(25, item.myInt)
+    assertEquals(25, child.myInt)
+  }
 }

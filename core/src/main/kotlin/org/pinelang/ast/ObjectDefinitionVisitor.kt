@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -54,81 +54,64 @@ table ObjectDefinition {
 class ObjectDefinitionVisitor(compiler: PineCompiler, debug: Boolean) :
     PineScriptVisitor<Int>(compiler, debug) {
 
-    private val propertyVisitor =
-        PropertyVisitor(compiler, -1, -1, debug)
-    private val expressionVisitor =
-        ExpressionVisitor(compiler, -1, -1, debug)
+  private val propertyVisitor = PropertyVisitor(compiler, -1, -1, debug)
+  private val expressionVisitor = ExpressionVisitor(compiler, -1, -1, debug)
 
-    override fun visitObjectDefinition(ctx: PineScript.ObjectDefinitionContext): Int {
-        val initContext = ctx.objectInitializer()
-        val objIdentifierCtx = initContext.objectIdentifier()
-        val objMember = initContext.objectMember()
+  override fun visitObjectDefinition(ctx: PineScript.ObjectDefinitionContext): Int {
+    val initContext = ctx.objectInitializer()
+    val objIdentifierCtx = initContext.objectIdentifier()
 
-        // Object information
-        val nameType = ctx.ObjectType().text
-        val typeIdx = types.getIndexOrNull(nameType) ?: ctx.ObjectType()
-            .throwParseException("Type $nameType not found engine")
-        val type = types[typeIdx]!!
-        val debugName = objIdentifierCtx?.Identifier()?.text ?: ""
-        val objId = compiler.generateObjectId(typeIdx, debugName)
-        val children: MutableList<Int> = ArrayList(16)
-        val signals: MutableList<Int> = ArrayList(16)
-        val props: MutableList<Int> = ArrayList(16)
+    // Object information
+    val nameType = ctx.ObjectType().text
+    val typeIdx =
+        types.getIndexOrNull(nameType)
+            ?: ctx.ObjectType().throwParseException("Type $nameType not found engine")
+    val type = types[typeIdx]!!
+    val debugName = objIdentifierCtx?.Identifier()?.text ?: ""
+    val objId = compiler.generateObjectId(typeIdx, debugName)
 
-        for (i in 0 until objMember.size) {
-            val it = objMember[i]
+    val children: MutableList<Int> = ArrayList()
+    val signals: MutableList<Int> = ArrayList()
+    val props: MutableList<Int> = ArrayList()
 
-            /* Children parsing */
-            if (it.objectDefinition() != null) {
-                children.add(visit(it.objectDefinition()))
-            }
-
-            /* assigning script to a declared property */
-            if (it.propertyDefinition() != null) {
-                props.add(propertyVisitor.reset(typeIdx, objId).visit(it.propertyDefinition()))
-            }
-
-            /*
-            table SignalAssignment {
-                id:            ubyte;
-                expr:          CallableExpr;
-                debugName:     string;
-            }
-         */
-            it.signalAssignement()?.also { sigCtx ->
-                val name = sigCtx.Identifier().text
-                val id =
-                    type.indexOfSignal(name)
-                val expr =
-                    expressionVisitor.reset(typeIdx, objId).visit(sigCtx.callableExpression())
-                signals.add(run {
-                    val debugInfo: Int? =
-                        if (debug) createDebugInfo(sigCtx, name, "signalExp") else null
-                    SignalExpr.startSignalExpr(fb)
-                    SignalExpr.addId(fb, id!!.toUByte())
-                    SignalExpr.addExpr(fb, expr)
-                    debugInfo?.run { SignalExpr.addDebug(fb, debugInfo) }
-                    SignalExpr.endSignalExpr(fb)
-                })
-            }
-        }
-
-        val debugInfo = if (debug) createDebugInfo(ctx, debugName, nameType) else null
-
-        val childrenVec =
-            if (children.size > 0) createChildrenVector(fb, children.toIntArray()) else -1
-        val propVec = if (props.size > 0) createPropsVector(fb, props.toIntArray()) else -1
-        val signalVec = if (signals.size > 0) createSignalsVector(fb, signals.toIntArray()) else -1
-
-        ObjectDefinition.startObjectDefinition(fb)
-        ObjectDefinition.addId(fb, objId)
-        ObjectDefinition.addType(fb, typeIdx)
-
-        if (childrenVec != -1) ObjectDefinition.addChildren(fb, childrenVec)
-        if (propVec != -1) ObjectDefinition.addProps(fb, propVec)
-        if (signalVec != -1) ObjectDefinition.addSignals(fb, signalVec)
-        debugInfo?.run { ObjectDefinition.addDebug(fb, debugInfo) }
-
-        return ObjectDefinition.endObjectDefinition(fb)
+    for (objDefinition in initContext.objectDefinition()) {
+      children.add(visit(objDefinition))
     }
+
+    for (propertyDefinition in initContext.propertyDefinition()) {
+      props.add(propertyVisitor.reset(typeIdx, objId).visit(propertyDefinition))
+    }
+
+    for (signal in initContext.signalAssignement()) {
+      val name = signal.Identifier().text
+      val id = type.indexOfSignal(name)
+      val expr = expressionVisitor.reset(typeIdx, objId).visit(signal.callableExpression())
+      signals.add(
+          run {
+            val debugInfo: Int? = if (debug) createDebugInfo(signal, name, "signalExp") else null
+            SignalExpr.startSignalExpr(fb)
+            SignalExpr.addId(fb, id!!.toUByte())
+            SignalExpr.addExpr(fb, expr)
+            debugInfo?.run { SignalExpr.addDebug(fb, debugInfo) }
+            SignalExpr.endSignalExpr(fb)
+          })
+    }
+
+    val debugInfo = if (debug) createDebugInfo(ctx, debugName, nameType) else null
+
+    val childrenVec = if (children.size > 0) createChildrenVector(fb, children.toIntArray()) else -1
+    val propVec = if (props.size > 0) createPropsVector(fb, props.toIntArray()) else -1
+    val signalVec = if (signals.size > 0) createSignalsVector(fb, signals.toIntArray()) else -1
+
+    ObjectDefinition.startObjectDefinition(fb)
+    ObjectDefinition.addId(fb, objId)
+    ObjectDefinition.addType(fb, typeIdx)
+
+    if (childrenVec != -1) ObjectDefinition.addChildren(fb, childrenVec)
+    if (propVec != -1) ObjectDefinition.addProps(fb, propVec)
+    if (signalVec != -1) ObjectDefinition.addSignals(fb, signalVec)
+    debugInfo?.run { ObjectDefinition.addDebug(fb, debugInfo) }
+
+    return ObjectDefinition.endObjectDefinition(fb)
+  }
 }

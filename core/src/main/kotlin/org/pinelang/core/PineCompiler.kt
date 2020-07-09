@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -49,61 +49,58 @@ import org.pinelang.util.IndexedMap
 
 class PineContext {
 
-    val refs: HashMap<Int, PineObject> = hashMapOf()
+  val refs: HashMap<Int, PineObject> = hashMapOf()
 
-    fun registerObject(id: Int, obj: PineObject) {
-        if (refs.containsKey(id))
-            throw PineScriptException("object with id $id already defined: ${refs[id]}!")
-        refs[id] = obj
-    }
+  fun registerObject(id: Int, obj: PineObject) {
+    if (refs.containsKey(id))
+        throw PineScriptException("object with id $id already defined: ${refs[id]}!")
+    refs[id] = obj
+  }
 
-    fun clear() {
-        refs.clear()
-    }
+  fun clear() {
+    refs.clear()
+  }
 
-    operator fun get(id: Int) = refs[id]
+  operator fun get(id: Int) = refs[id]
 }
 
 data class CompileObjectMetaData(val typeIdx: Int, val objId: Int, val objName: String)
 
 class CustomFlatBufferBuilder(initialSize: Int) : FlatBufferBuilder(initialSize) {
-    private val stringCache = mutableMapOf<CharSequence, Int>()
+  private val stringCache = mutableMapOf<CharSequence, Int>()
 
-    override fun createString(s: CharSequence?): Int {
-        if (s == null) return 0
-        if (!stringCache.containsKey(s)) {
-            return super.createString(s).also { stringCache[s] = it }
-        }
-        return stringCache[s]!!
+  override fun createString(s: CharSequence?): Int {
+    if (s == null) return 0
+    if (!stringCache.containsKey(s)) {
+      return super.createString(s).also { stringCache[s] = it }
     }
+    return stringCache[s]!!
+  }
 
-    override fun clear() {
-        super.clear()
-        stringCache.clear()
-    }
+  override fun clear() {
+    super.clear()
+    stringCache.clear()
+  }
 }
 
 @ExperimentalUnsignedTypes
 class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
 
-    private var incrementalId: Int = 0
-    private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
-    val flatBuilder = CustomFlatBufferBuilder(2048)
+  private var incrementalId: Int = 0
+  private var ids: MutableMap<String, CompileObjectMetaData> = mutableMapOf()
+  val flatBuilder = CustomFlatBufferBuilder(2048)
 
-    fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
+  fun objectMetaData(objectIdentifier: String) = ids[objectIdentifier]
 
-    fun generateObjectId(typeId: Int, objectIdentifier: String?): Int {
-        incrementalId++
-        if (objectIdentifier != null)
-            ids[objectIdentifier] = CompileObjectMetaData(
-                typeId,
-                incrementalId,
-                objectIdentifier
-            )
-        return incrementalId
-    }
+  fun generateObjectId(typeId: Int, objectIdentifier: String?): Int {
+    incrementalId++
+    if (objectIdentifier != null)
+        ids[objectIdentifier] = CompileObjectMetaData(typeId, incrementalId, objectIdentifier)
+    return incrementalId
+  }
 
-    private val baseErrorListener = object : BaseErrorListener() {
+  private val baseErrorListener =
+      object : BaseErrorListener() {
         override fun syntaxError(
             recognizer: Recognizer<*, *>?,
             offendingSymbol: Any?,
@@ -112,39 +109,38 @@ class PineCompiler internal constructor(val types: IndexedMap<PineMetaObject>) {
             msg: String,
             e: RecognitionException?
         ) {
-            if (offendingSymbol is CommonToken) {
-                throw PineScriptParseException(
-                    offendingSymbol.line,
-                    offendingSymbol.charPositionInLine,
-                    offendingSymbol.line,
-                    offendingSymbol.charPositionInLine,
-                    msg
-                )
-            } else {
-                throw PineScriptException("syntax error: line $line:$charPositionInLine $msg")
-            }
+          if (offendingSymbol is CommonToken) {
+            throw PineScriptParseException(
+                offendingSymbol.line,
+                offendingSymbol.charPositionInLine,
+                offendingSymbol.line,
+                offendingSymbol.charPositionInLine,
+                msg)
+          } else {
+            throw PineScriptException("syntax error: line $line:$charPositionInLine $msg")
+          }
         }
+      }
+
+  fun compile(unit: String, keepDebugSymbols: Boolean = false): Program {
+    try {
+      flatBuilder.clear()
+      val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
+      val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+
+      lexer.removeErrorListeners()
+      lexer.addErrorListener(baseErrorListener)
+
+      val tokens = CommonTokenStream(lexer)
+      val parser = PineScript(tokens)
+
+      parser.removeErrorListeners()
+      parser.addErrorListener(baseErrorListener)
+
+      val tree = parser.program()
+      return ProgramVisitor(this, keepDebugSymbols).visit(tree)
+    } catch (e: IOException) {
+      throw PineScriptException("unable to load unit", e)
     }
-
-    fun compile(unit: String, keepDebugSymbols: Boolean = false): Program {
-        try {
-            flatBuilder.clear()
-            val stream = ByteArrayInputStream(unit.toByteArray(StandardCharsets.UTF_8))
-            val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
-
-            lexer.removeErrorListeners()
-            lexer.addErrorListener(baseErrorListener)
-
-            val tokens = CommonTokenStream(lexer)
-            val parser = PineScript(tokens)
-
-            parser.removeErrorListeners()
-            parser.addErrorListener(baseErrorListener)
-
-            val tree = parser.program()
-            return ProgramVisitor(this, keepDebugSymbols).visit(tree)
-        } catch (e: IOException) {
-            throw PineScriptException("unable to load unit", e)
-        }
-    }
+  }
 }

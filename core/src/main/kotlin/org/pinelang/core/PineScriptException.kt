@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,23 +41,16 @@ class PineScriptParseException(
     val endCol: Int,
     message: String = "",
     cause: Throwable? = null
-) :
-    RuntimeException("\n$message at line: $startLine col: $startCol", cause) {
+) : RuntimeException("\n$message at line: $startLine col: $startCol", cause) {
 
-    constructor(
-        startToken: Token,
-        endToken: Token,
-        message: String = "",
-        cause: Throwable? = null
-    ) :
-            this(
-                startToken.line,
-                startToken.charPositionInLine,
-                endToken.line,
-                endToken.charPositionInLine,
-                message,
-                cause
-            )
+  constructor(startToken: Token, endToken: Token, message: String = "", cause: Throwable? = null
+  ) : this(
+      startToken.line,
+      startToken.charPositionInLine,
+      endToken.line,
+      endToken.charPositionInLine,
+      message,
+      cause)
 }
 
 open class PineScriptException(msg: String, cause: Throwable? = null) :
@@ -66,8 +59,7 @@ open class PineScriptException(msg: String, cause: Throwable? = null) :
 class BinaryOpNotSupportedPineScriptException(op: UByte, type: PineType) :
     PineScriptException("operation ${BinaryOp.name(op.toInt())} not supported for $type")
 
-class BinaryOpTypeMismatchPineScriptException(op: UByte, typeA: PineType, typeB: PineType) :
+class BinaryOpException(op: UByte, typeA: PineType, typeB: PineType) :
     PineScriptException(
         "unable to apply operator '${BinaryOp.name(op.toInt())}' " +
-                "with types $typeA and $typeB"
-    )
+            "with types $typeA and $typeB")

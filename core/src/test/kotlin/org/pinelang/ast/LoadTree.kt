@@ -29,7 +29,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 package org.pinelang.ast
 
 import java.io.ByteArrayInputStream
@@ -43,13 +42,13 @@ import org.pinelang.parser.PineScript
 
 object LoadTree {
 
-    @Throws(IOException::class)
-    fun loadTree(code: String): PineScript {
-        val stream = ByteArrayInputStream(code.toByteArray(StandardCharsets.UTF_8))
-        val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
-        val tokens = CommonTokenStream(lexer)
-        val parser = PineScript(tokens)
-        parser.errorHandler = BailErrorStrategy()
-        return parser
-    }
+  @Throws(IOException::class)
+  fun loadTree(code: String): PineScript {
+    val stream = ByteArrayInputStream(code.toByteArray(StandardCharsets.UTF_8))
+    val lexer = PineLexer(CharStreams.fromStream(stream, StandardCharsets.UTF_8))
+    val tokens = CommonTokenStream(lexer)
+    val parser = PineScript(tokens)
+    parser.errorHandler = BailErrorStrategy()
+    return parser
+  }
 }

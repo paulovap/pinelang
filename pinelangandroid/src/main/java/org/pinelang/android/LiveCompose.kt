@@ -70,7 +70,7 @@ class LiveCompose : AppCompatActivity() {
         runOnUiThread {
             var error: String? = null
             try {
-                root?.getProp("visible")?.asType<Boolean>()?.expr?.calculation = { false }
+                root?.getProp("visible")?.asType<Boolean>()?.expr?.update { false }
                 root?.dispose()
                 var program: Program? = null
                 val compileTime = measureTimeMillis {

@@ -55,7 +55,10 @@ objectDefinition
 
 // { ... }
 objectInitializer
-    : LBRACE objectIdentifier? objectMember* RBRACE
+    : LBRACE objectIdentifier?
+    ( objectDefinition
+    | signalAssignement
+    | propertyDefinition)* RBRACE
     ;
 
 objectIdentifier

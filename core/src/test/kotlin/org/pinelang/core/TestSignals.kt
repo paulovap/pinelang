@@ -38,33 +38,31 @@ import org.junit.Test
 
 class TestSignals {
 
-    @Before
-    @Throws(Exception::class)
-    fun setUp() {
-    }
+  @Before
+  @Throws(Exception::class)
+  fun setUp() {}
 
-    @After
-    @Throws(Exception::class)
-    fun tearDown() {
-    }
+  @After
+  @Throws(Exception::class)
+  fun tearDown() {}
 
-    @Test
-    fun testConnections() {
-        val root = Item(-1)
-        var count = 0
-        val slot: () -> Unit = { count++ }
-        root.connect("myInt", slot)
-        root.connect("myInt", slot)
-        root.myInt = 1
-        root.myInt = 2
-        root.myInt = 3
-        assertEquals(6, count)
-        root.disconnect("myInt", slot)
-        root.myInt = 4
-        assertEquals(7, count)
-        root.connect("myInt", slot)
-        root.myInt = 5
-        assertEquals(9, count)
-        assertEquals(9, count)
-    }
+  @Test
+  fun testConnections() {
+    val root = Item(-1)
+    var count = 0
+    val slot: () -> Unit = { count++ }
+    root.connect("myInt", slot)
+    root.connect("myInt", slot)
+    root.myInt = 1
+    root.myInt = 2
+    root.myInt = 3
+    assertEquals(6, count)
+    root.disconnect("myInt", slot)
+    root.myInt = 4
+    assertEquals(7, count)
+    root.connect("myInt", slot)
+    root.myInt = 5
+    assertEquals(9, count)
+    assertEquals(9, count)
+  }
 }

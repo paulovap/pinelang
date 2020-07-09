@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 package org.pinelang.ast
 
 import org.antlr.v4.runtime.ParserRuleContext
@@ -44,78 +43,55 @@ import org.pinelang.parser.PineScriptBaseVisitor
 open class PineScriptVisitor<T>(protected var compiler: PineCompiler, var debug: Boolean) :
     PineScriptBaseVisitor<T>() {
 
-    val types = compiler.types
-    val fb = compiler.flatBuilder
+  val types = compiler.types
+  val fb = compiler.flatBuilder
 
-    fun ParserRuleContext.throwPropNotFound(propName: String, objName: String): Nothing {
-        throw PineScriptParseException(
-            this.start,
-            this.stop,
-            "prop $propName on object $objName not found"
-        )
-    }
+  fun ParserRuleContext.throwPropNotFound(propName: String, objName: String): Nothing {
+    throw PineScriptParseException(
+        this.start, this.stop, "prop $propName on object $objName not found")
+  }
 
-    fun ParserRuleContext.throwCallableNotFound(callableName: String, objName: String): Nothing {
-        throw PineScriptParseException(
-            this.start,
-            this.stop,
-            "callable $callableName on object $objName not found"
-        )
-    }
+  fun ParserRuleContext.throwCallableNotFound(callableName: String, objName: String): Nothing {
+    throw PineScriptParseException(
+        this.start, this.stop, "callable $callableName on object $objName not found")
+  }
 
-    fun ParserRuleContext.throwObjNotFound(objName: String): Nothing {
-        throw PineScriptParseException(
-            this.start,
-            this.stop,
-            "object with identifier $objName not found"
-        )
-    }
+  fun ParserRuleContext.throwObjNotFound(objName: String): Nothing {
+    throw PineScriptParseException(
+        this.start, this.stop, "object with identifier $objName not found")
+  }
 
-    fun ParserRuleContext.throwParseException(msg: String): Nothing {
-        throw PineScriptParseException(
-            this.start,
-            this.stop,
-            msg
-        )
-    }
+  fun ParserRuleContext.throwParseException(msg: String): Nothing {
+    throw PineScriptParseException(this.start, this.stop, msg)
+  }
 
-    fun TerminalNode.throwParseException(msg: String): Nothing {
-        throw PineScriptParseException(
-            this.symbol.line,
-            this.symbol.startIndex,
-            this.symbol.line,
-            this.symbol.stopIndex,
-            msg
-        )
-    }
+  fun TerminalNode.throwParseException(msg: String): Nothing {
+    throw PineScriptParseException(
+        this.symbol.line, this.symbol.startIndex, this.symbol.line, this.symbol.stopIndex, msg)
+  }
 
-    fun createDebugInfo(
-        startNode: TerminalNode,
-        endNode: TerminalNode,
-        name: String?,
-        type: String?
-    ): Int =
-        createDebugInfo(startNode.symbol, endNode.symbol, name, type)
+  fun createDebugInfo(
+      startNode: TerminalNode, endNode: TerminalNode, name: String?, type: String?
+  ): Int = createDebugInfo(startNode.symbol, endNode.symbol, name, type)
 
-    fun createDebugInfo(ctx: ParserRuleContext, name: String?, type: String?): Int =
-        createDebugInfo(ctx.start, ctx.stop, name, type)
+  fun createDebugInfo(ctx: ParserRuleContext, name: String?, type: String?): Int =
+      createDebugInfo(ctx.start, ctx.stop, name, type)
 
-    fun createDebugInfo(startToken: Token, endToken: Token, name: String?, type: String?): Int {
+  fun createDebugInfo(startToken: Token, endToken: Token, name: String?, type: String?): Int {
 
-        val namePos: Int? = name?.run { fb.createString(name) }
-        val typePos: Int? = type?.run { fb.createString(type) }
-        DebugInfo.startDebugInfo(fb)
-        DebugInfo.addRange(
-            fb, Range.createRange(
-                fb,
-                startToken.line,
-                startToken.charPositionInLine,
-                endToken.line,
-                endToken.charPositionInLine
-            )
-        )
-        namePos?.run { DebugInfo.addDebugName(fb, namePos) }
-        typePos?.run { DebugInfo.addDebugType(fb, typePos) }
-        return DebugInfo.endDebugInfo(fb)
-    }
+    val namePos: Int? = name?.run { fb.createString(name) }
+    val typePos: Int? = type?.run { fb.createString(type) }
+    DebugInfo.startDebugInfo(fb)
+    DebugInfo.addRange(
+        fb,
+        Range.createRange(
+            fb,
+            startToken.line,
+            startToken.charPositionInLine,
+            endToken.line,
+            endToken.charPositionInLine))
+    namePos?.run { DebugInfo.addDebugName(fb, namePos) }
+    typePos?.run { DebugInfo.addDebugType(fb, typePos) }
+    return DebugInfo.endDebugInfo(fb)
+  }
 }

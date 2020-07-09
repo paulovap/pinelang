@@ -40,49 +40,44 @@ import org.pinelang.core.stringProp
 
 class Label(id: Int) : Item(id) {
 
-    companion object {
-        val meta = PineMetaObject("Label") {
-            Label(
-                it
-            )
+  companion object {
+    val meta = PineMetaObject("Label") { Label(it) }
+  }
+
+  val label = JLabel("oh my god")
+
+  var text: String by stringProp(::text, initialValue = "")
+  var visible: Boolean by boolProp(::visible, initialValue = true)
+  val color: String by stringProp(::color, initialValue = "#000000")
+
+  override fun getMeta(): PineMetaObject = meta
+
+  init {
+    connect("x") { resizeSlot() }
+    connect("y") { resizeSlot() }
+    connect("width") { resizeSlot() }
+    connect("text") { resizeSlot() }
+    connect("visible") { resizeSlot() }
+    connect("color") { resizeSlot() }
+
+    resizeSlot()
+
+    connect("children") {
+      label.removeAll()
+      for (child in children) {
+        if (child is Rectangle) {
+          label.add(child.panel)
         }
+      }
     }
+  }
 
-    val label = JLabel("oh my god")
-
-    var text: String by stringProp(::text, initialValue = "")
-    var visible: Boolean by boolProp(::visible, initialValue = true)
-    val color: String by stringProp(::color, initialValue = "#000000")
-
-    override fun getMeta(): PineMetaObject =
-        meta
-
-    init {
-        connect("x") { resizeSlot() }
-        connect("y") { resizeSlot() }
-        connect("width") { resizeSlot() }
-        connect("text") { resizeSlot() }
-        connect("visible") { resizeSlot() }
-        connect("color") { resizeSlot() }
-
-        resizeSlot()
-
-        connect("children") {
-            label.removeAll()
-            for (child in children) {
-                if (child is Rectangle) {
-                    label.add(child.panel)
-                }
-            }
-        }
-    }
-
-    private fun resizeSlot() {
-        label.foreground = Color.decode(color)
-        label.text = text
-        label.size = Dimension(width, height)
-//        label.size = label.preferredSize
-        label.setLocation(x, y)
-        label.isVisible = visible
-    }
+  private fun resizeSlot() {
+    label.foreground = Color.decode(color)
+    label.text = text
+    label.size = Dimension(width, height)
+    //        label.size = label.preferredSize
+    label.setLocation(x, y)
+    label.isVisible = visible
+  }
 }

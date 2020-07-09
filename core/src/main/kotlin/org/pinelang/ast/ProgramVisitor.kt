@@ -1,7 +1,7 @@
 /*
 BSD License
 
-Copyright (c) $today.year, Paulo Pinheiro
+Copyright (c) 2020, Paulo Pinheiro
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,12 +39,11 @@ import org.pinelang.parser.PineScript
 class ProgramVisitor(compiler: PineCompiler, debug: Boolean) :
     PineScriptVisitor<Program>(compiler, debug) {
 
-    private val objectDefinitionVisitor =
-        ObjectDefinitionVisitor(compiler, debug)
+  private val objectDefinitionVisitor = ObjectDefinitionVisitor(compiler, debug)
 
-    override fun visitProgram(ctx: PineScript.ProgramContext): Program {
-        val objPos = objectDefinitionVisitor.visit(ctx.rootMember().objectDefinition())
-        fb.finish(Program.createProgram(fb, objPos))
-        return Program.getRootAsProgram(fb.dataBuffer())
-    }
+  override fun visitProgram(ctx: PineScript.ProgramContext): Program {
+    val objPos = objectDefinitionVisitor.visit(ctx.rootMember().objectDefinition())
+    fb.finish(Program.createProgram(fb, objPos))
+    return Program.getRootAsProgram(fb.dataBuffer())
+  }
 }

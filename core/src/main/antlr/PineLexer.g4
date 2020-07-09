@@ -49,7 +49,7 @@ COMMA : ',';
 NULL : 'null';
 TRUE : 'true';
 FALSE : 'false';
-EQ : '=';
+EQ : '==';
 LBRACKET : '[';
 RBRACKET : ']';
 AND_AND : '&&';
