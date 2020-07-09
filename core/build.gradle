@@ -58,7 +58,7 @@ dependencies {
 }
 
 generateGrammarSource {
-    outputDirectory = file("src/main/java/com/pinescript/parser")
+    outputDirectory = file("src/main/java/org/pinelang/parser")
     arguments += ["-visitor", "-long-messages"]
 }
 

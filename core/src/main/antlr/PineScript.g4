@@ -35,7 +35,7 @@ parser grammar PineScript;
 options { tokenVocab = PineLexer; }
 
 @header {
-    package com.pinescript.parser;
+    package org.pinelang.parser;
 }
 
 ///////////////////////////

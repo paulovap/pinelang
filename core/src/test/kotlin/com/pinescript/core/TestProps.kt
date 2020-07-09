@@ -1,4 +1,4 @@
-package com.pinescript.core
+package org.pinelang.core
 
 import org.junit.Test
 

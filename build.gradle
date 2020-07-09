@@ -16,6 +16,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.android.tools.build:gradle:4.2.0-alpha03'
         classpath "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
+        classpath "androidx.benchmark:benchmark-gradle-plugin:1.0.0"
     }
 }
 
@@ -34,7 +35,8 @@ allprojects {
         kotlinOptions {
             freeCompilerArgs += [
                     "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                    "-XXLanguage:+InlineClasses"
+                    "-XXLanguage:+InlineClasses",
+                    "-Xopt-in=kotlin.RequiresOptIn"
             ]
         }
     }

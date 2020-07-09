@@ -1,4 +1,4 @@
-namespace com.pinescript.ast.fbs;
+namespace org.pinelang.ast.fbs;
 
 struct Position {
     line: int32;

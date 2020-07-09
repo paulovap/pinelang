@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id "androidx.benchmark"
 }
 
 android {
@@ -8,8 +9,11 @@ android {
         relase {
         }
     }
+
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+
+    testBuildType = "release"
 
     defaultConfig {
             applicationId "com.paulovap.pinelangandroid"
@@ -18,16 +22,24 @@ android {
             versionCode 1
             versionName '1.0'
             vectorDrawables.useSupportLibrary = true
-            testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'androidx.benchmark.junit4.AndroidBenchmarkRunner'
         signingConfig signingConfigs.debug
     }
 
+    testBuildType = "release"
     buildTypes {
+        debug {
+            // Since debuggable can"t be modified by gradle for library modules,
+            // it must be done in a manifest - see src/androidTest/AndroidManifest.xml
+            minifyEnabled true
+            //proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "benchmark-proguard-rules.pro"
+            signingConfig signingConfigs.debug
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            isDefault = true
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -62,14 +74,14 @@ dependencies {
 
     implementation project(path: ":core")
     implementation project(path: ":lsp")
+    implementation project(path: ":android")
 
     implementation("io.coil-kt:coil:0.11.0")
     implementation "dev.chrisbanes.accompanist:accompanist-coil:0.1.6"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.google.android.material:material:1.1.0'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
     implementation "androidx.compose:compose-runtime:$compose_version"
     implementation "androidx.ui:ui-core:$compose_version"
     implementation "androidx.ui:ui-layout:$compose_version"
@@ -81,14 +93,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0-alpha01'
     implementation 'androidx.activity:activity-ktx:1.1.0'
     implementation 'androidx.core:core-ktx:1.5.0-alpha01'
-
     implementation "androidx.ui:ui-livedata:$compose_version"
-
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha05"
 
-    androidTestImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
+
     androidTestImplementation "androidx.ui:ui-core:$compose_version"
     androidTestImplementation "androidx.ui:ui-test:$compose_version"
 
@@ -96,4 +104,13 @@ dependencies {
     debugImplementation 'com.facebook.flipper:flipper:0.48.0'
     debugImplementation 'com.facebook.soloader:soloader:0.9.0'
     releaseImplementation 'com.facebook.flipper:flipper-noop:0.48.0'
+
+    // android benchmark
+    implementation 'androidx.test:runner:1.2.0'
+    implementation 'androidx.test.ext:junit:1.1.1'
+    implementation 'junit:junit:4.13'
+    implementation 'androidx.benchmark:benchmark-junit4:1.0.0'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

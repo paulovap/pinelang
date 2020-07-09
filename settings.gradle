@@ -1,4 +1,5 @@
 include ':pinelangandroid'
-rootProject.name = 'flexscript'
+rootProject.name = 'pinelang'
 include 'core', 'lsp'
 
+include ':android'

@@ -4,7 +4,7 @@
 lexer grammar PineLexer;
 
 @header {
-    package com.pinescript.parser;
+    package org.pinelang.parser;
 }
 
 // Something to keep in mind
