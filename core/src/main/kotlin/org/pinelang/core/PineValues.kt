@@ -38,17 +38,16 @@ import org.pinelang.ast.fbs.BinaryOp.Companion.MULTI
 import org.pinelang.ast.fbs.BinaryOp.Companion.OR
 import org.pinelang.ast.fbs.BinaryOp.Companion.PLUS
 import org.pinelang.ast.fbs.BinaryOp.Companion.REMAINDER
-import org.pinelang.core.PineValue.Companion.of
 
 interface PineNumber<T> {
-    operator fun plus(other: PineValue<*>): PineValue<T>
-    operator fun minus(other: PineValue<*>): PineValue<T>
-    operator fun times(other: PineValue<*>): PineValue<T>
-    operator fun div(other: PineValue<*>): PineValue<T>
-    operator fun rem(other: PineValue<*>): PineValue<T>
+    operator fun plus(other: PineExpr<*>): PineExpr<T>
+    operator fun minus(other: PineExpr<*>): PineExpr<T>
+    operator fun times(other: PineExpr<*>): PineExpr<T>
+    operator fun div(other: PineExpr<*>): PineExpr<T>
+    operator fun rem(other: PineExpr<*>): PineExpr<T>
 
-    fun toDouble(): PineValue<Double>
-    fun toInt(): PineValue<Int>
+    fun toDouble(): PineExpr<Double>
+    fun toInt(): PineExpr<Int>
 }
 
 data class PineType(val typeName: String, val type: Int) {
@@ -80,373 +79,304 @@ data class PineType(val typeName: String, val type: Int) {
     }
 }
 
-abstract class PineValue<T> {
+data class PineInt(private val value: Int) : PineNumber<Int>, PineExpr<Int>(
+        pineType = PineType.INT,
+        cached = value,
+        calculation = { value }) {
 
-    abstract fun getPineType(): PineType
+    override fun plus(other: PineExpr<*>): PineInt {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineInt(this() + (other() as Double).toInt())
+            PineType.INT -> PineInt(this() + other() as Int)
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                PLUS,
+                pineType,
+                other.pineType
+            )
+        }
+    }
 
-    abstract fun getValue(): T
+    override fun minus(other: PineExpr<*>): PineInt {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineInt(this() - (other() as Double).toInt())
+            PineType.INT -> PineInt(this() - other() as Int)
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MINUS,
+                pineType,
+                other.pineType
+            )
+        }
+    }
 
-    fun isBool() = getPineType() == PineType.BOOL
-    fun isDouble() = getPineType() == PineType.DOUBLE
-    fun isInt() = getPineType() == PineType.INT
-    fun isNumber() = isInt() || isDouble()
-    fun isString() = getPineType() == PineType.STRING
-    fun isObject() = getPineType() == PineType.OBJECT
-    fun isFunction() = getPineType() == PineType.FUNCTION
-    fun isList() = getPineType() == PineType.LIST
+    override fun times(other: PineExpr<*>): PineInt {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineInt(this() * (other() as Double).toInt())
+            PineType.INT -> PineInt(this() * other() as Int)
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MULTI,
+                pineType,
+                other.pineType
+            )
+        }
+    }
 
-    open operator fun invoke(): T =
-        throw PineScriptException("Value of type ${getPineType()} is not invokable")
+    override fun div(other: PineExpr<*>): PineInt {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineInt(this() / (other() as Double).toInt())
+            PineType.INT -> PineInt(this() / other() as Int)
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                DIV,
+                pineType,
+                other.pineType
+            )
+        }
+    }
 
-    open operator fun invoke(arg: PineValue<*>): T = this()
-    open operator fun invoke(arg: PineValue<*>, arg1: PineValue<*>): T = this()
-    open operator fun invoke(arg: PineValue<*>, arg1: PineValue<*>, arg2: PineValue<*>): T = this()
-    open operator fun invoke(
-        arg: PineValue<*>,
-        arg1: PineValue<*>,
-        arg2: PineValue<*>,
-        arg3: PineValue<*>
-    ): T = this()
+    override fun rem(other: PineExpr<*>): PineInt {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineInt(this() % (other() as Double).toInt())
+            PineType.INT -> PineInt(this() % (other() as Int))
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                REMAINDER,
+            pineType,
+            other.pineType
+            )
+        }
+    }
 
+    override fun toDouble(): PineDouble = PineDouble(this().toDouble())
+    override fun toInt(): PineInt = PineInt(this())
+}
+
+data class PineDouble(private val value: Double) : PineNumber<Double>, PineExpr<Double>(
+        pineType = PineType.DOUBLE,
+        cached = value,
+        calculation = { value }) {
+
+    override fun plus(other: PineExpr<*>): PineDouble {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineDouble(this() + (other as PineDouble)())
+            PineType.INT -> PineDouble(this() + (other() as Int).toDouble())
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                PLUS,
+                pineType,
+                other.pineType
+            )
+        }
+    }
+
+    override fun minus(other: PineExpr<*>): PineDouble {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineDouble(this() - other() as Double)
+            PineType.INT -> PineDouble(this() - (other() as Int).toDouble())
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MINUS,
+                pineType,
+                other.pineType
+            )
+        }
+    }
+
+    override fun times(other: PineExpr<*>): PineDouble {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineDouble(this() * other() as Double)
+            PineType.INT -> PineDouble(this() * (other() as Int))
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                MULTI,
+                pineType,
+                other.pineType
+            )
+        }
+    }
+
+    override fun div(other: PineExpr<*>): PineDouble {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineDouble(this() / (other() as Double))
+            PineType.INT -> PineDouble(this() / (other() as Int))
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                DIV,
+                pineType,
+                other.pineType
+            )
+        }
+    }
+
+    override fun rem(other: PineExpr<*>): PineDouble {
+        return when (other.pineType) {
+            PineType.DOUBLE -> PineDouble(this() % (other() as Double))
+            PineType.INT -> PineDouble(this() % (other() as Int))
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                REMAINDER,
+                pineType,
+                other.pineType
+            )
+        }
+    }
+
+    override fun toDouble(): PineDouble = PineDouble(this())
+    override fun toInt(): PineExpr<Int> = PineInt(this().toInt())
+}
+
+data class PineBoolean(private val value: Boolean) : PineExpr<Boolean>(
+        pineType = PineType.BOOL,
+        cached = value,
+        calculation = { value }
+) {
+
+    fun and(other: PineExpr<*>) = when (other.pineType) {
+        PineType.BOOL -> of(this() && other() as Boolean)
+        else -> throw BinaryOpTypeMismatchPineScriptException(
+            AND,
+            pineType,
+            other.pineType
+        )
+    }
+
+    fun or(other: PineExpr<*>) = when (other.pineType) {
+        PineType.BOOL -> PineBoolean(this() || other() as Boolean)
+        else -> throw BinaryOpTypeMismatchPineScriptException(
+            OR,
+            pineType,
+            other.pineType
+        )
+    }
+
+    operator fun not(): PineBoolean = PineBoolean(!this())
+}
+
+data class PineString(private val value: String) : PineExpr<String>(
+        pineType = PineType.STRING,
+        calculation = { value }
+)
+
+data class PineList(private val value: List<*>) : PineExpr<List<*>>(
+        pineType = PineType.LIST,
+        calculation = { value }
+)
+
+class BinaryLogicalExp(
+    val owner: PineObject,
+    val name: String,
+    val op: UByte,
+    val lhv: PineExpr<Boolean>,
+    val rhv: PineExpr<Boolean>
+) : PineExpr<Boolean>(
+    pineType = PineType.BOOL,
+    calculation = {
+        when (op) {
+            AND -> lhv().and(rhv())
+            OR -> lhv().or(rhv())
+            else -> throw BinaryOpNotSupportedPineScriptException(op, lhv.pineType)
+            }
+    })
+
+@Suppress("UNCHECKED_CAST")
+class BinaryNumberExpr<T>(
+    val owner: PineObject,
+    val name: String,
+    val op: UByte,
+    lhv: PineExpr<*>,
+    rhv: PineExpr<*>
+) : PineExpr<T>(
+        pineType = resultType(op, lhv, rhv),
+        calculation = {
+
+        val left = if (lhv.isDouble() || rhv.isDouble()) {
+                if (lhv.isInt()) {
+                    PineDouble((lhv() as Int).toDouble()) as PineNumber<T>
+                } else {
+                    PineDouble(lhv() as Double) as PineNumber<T>
+                }
+            } else {
+                PineInt(lhv() as Int) as PineNumber<T>
+            }
+        when (op) {
+            PLUS -> (left + rhv)()
+            MINUS -> (left - rhv)()
+            MULTI -> (left * rhv)()
+            DIV -> (left / rhv)()
+            REMAINDER -> (left % rhv)()
+            else -> throw BinaryOpNotSupportedPineScriptException(op, lhv.pineType)
+        }
+}) {
     companion object {
+        fun resultType(op: UByte, lhv: PineExpr<*>, rhv: PineExpr<*>): PineType {
+            if (!lhv.isNumber()) {
+                throw BinaryOpNotSupportedPineScriptException(op, lhv.pineType)
+            }
+            if (!rhv.isNumber()) {
+                throw BinaryOpNotSupportedPineScriptException(op, rhv.pineType)
+            }
+            if (lhv.isDouble() || rhv.isDouble())
+                return PineType.DOUBLE
+            return PineType.INT
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+open class PineExpr<T>(
+    var dirty: Boolean = true,
+    val pineType: PineType,
+    private var cached: Any = EMPTY,
+    var calculation: () -> T
+) {
+    companion object {
+        val EMPTY = object : Any() {
+            override fun toString(): String {
+                return "EMPTY"
+            }
+        }
+
         fun of(value: Int) = PineInt(value)
         fun of(value: Double) = PineDouble(value)
         fun of(value: Float) = PineDouble(value.toDouble())
         fun of(value: Boolean) = PineBoolean(value)
         fun of(value: String) = PineString(value)
         fun of(value: List<*>) = PineList(value)
-        fun <T> of(value: T): PineValue<*> {
+        fun <T> of(value: T): PineExpr<*> {
             return when (value) {
                 is Int -> of(value)
                 is Double -> of(value)
                 is Float -> of(value)
                 is Boolean -> of(value)
-                is String -> of(value)
-                is List<*> -> of(value)
-                is MutableList<*> -> of(value)
                 else -> throw PineScriptException("Value $value not recognized")
             }
         }
     }
 
-    fun toPineDouble(): PineDouble {
-        return if (isNumber()) {
-            if (isInt()) {
-                of((this as PineInt).getValue().toDouble())
-            } else {
-                this as PineDouble
-            }
-        } else throw PineScriptException("$this cannot be cast to PineDouble")
+    operator fun invoke(): T {
+        if (dirty) {
+            cached = calculation() as Any
+            dirty = true
+        }
+        return cached as T
     }
 
-    fun toPineInt(): PineInt {
-        return if (isNumber()) {
-            if (isDouble()) {
-                of((this as PineDouble).getValue().toInt())
-            } else {
-                this as PineInt
-            }
-        } else throw PineScriptException("$this cannot be cast to PineDouble")
-    }
+    fun isBool() = pineType == PineType.BOOL
+    fun isDouble() = pineType == PineType.DOUBLE
+    fun isInt() = pineType == PineType.INT
+    fun isNumber() = isInt() || isDouble()
+    fun isString() = pineType == PineType.STRING
+    fun isObject() = pineType == PineType.OBJECT
+    fun isFunction() = pineType == PineType.FUNCTION
+    fun isList() = pineType == PineType.LIST
 }
 
-data class PineInt(private val value: Int) : PineNumber<Int>, PineValue<Int>() {
-
-    override fun getPineType(): PineType =
-        PineType.INT
-    override fun getValue(): Int = value
-    override operator fun invoke(): Int = value
-
-    override fun plus(other: PineValue<*>): PineValue<Int> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineInt(
-                value + (other as PineDouble).getValue()
-                    .toInt()
-            )
-            PineType.INT -> PineInt(
-                value + (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                PLUS,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun minus(other: PineValue<*>): PineValue<Int> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineInt(
-                value - (other as PineDouble).getValue()
-                    .toInt()
-            )
-            PineType.INT -> PineInt(
-                value - (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                MINUS,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun times(other: PineValue<*>): PineValue<Int> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineInt(
-                value * (other as PineDouble).getValue()
-                    .toInt()
-            )
-            PineType.INT -> PineInt(
-                value * (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                MULTI,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun div(other: PineValue<*>): PineValue<Int> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineInt(
-                value / (other as PineDouble).getValue()
-                    .toInt()
-            )
-            PineType.INT -> PineInt(
-                value / (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                DIV,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun rem(other: PineValue<*>): PineValue<Int> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineInt(
-                value % (other as PineDouble).getValue()
-                    .toInt()
-            )
-            PineType.INT -> PineInt(
-                value % (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                REMAINDER,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun toDouble(): PineValue<Double> = of(value.toDouble())
-    override fun toInt(): PineValue<Int> = of(value)
-}
-
-data class PineDouble(private val value: Double) : PineNumber<Double>, PineValue<Double>() {
-
-    override fun getPineType(): PineType =
-        PineType.DOUBLE
-
-    override fun getValue(): Double = value
-    override operator fun invoke(): Double = value
-
-    override fun plus(other: PineValue<*>): PineValue<Double> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineDouble(
-                value + (other as PineDouble).value
-            )
-            PineType.INT -> PineDouble(
-                value + (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                PLUS,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun minus(other: PineValue<*>): PineValue<Double> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineDouble(
-                value - (other as PineDouble).value
-            )
-            PineType.INT -> PineDouble(
-                value - (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                MINUS,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun times(other: PineValue<*>): PineValue<Double> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineDouble(
-                value * (other as PineDouble).value
-            )
-            PineType.INT -> PineDouble(
-                value * (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                MULTI,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun div(other: PineValue<*>): PineValue<Double> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineDouble(
-                value / (other as PineDouble).value
-            )
-            PineType.INT -> PineDouble(
-                value / (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                DIV,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun rem(other: PineValue<*>): PineValue<Double> {
-        return when (other.getPineType()) {
-            PineType.DOUBLE -> PineDouble(
-                value % (other as PineDouble).value
-            )
-            PineType.INT -> PineDouble(
-                value % (other as PineInt).getValue()
-            )
-            else -> throw BinaryOpTypeMismatchPineScriptException(
-                REMAINDER,
-                getPineType(),
-                other.getPineType()
-            )
-        }
-    }
-
-    override fun toDouble(): PineValue<Double> = of(value)
-    override fun toInt(): PineValue<Int> = of(value.toInt())
-}
-
-data class PineBoolean(val value: Boolean) : PineValue<Boolean>() {
-    override fun getPineType(): PineType =
-        PineType.BOOL
-    override fun getValue(): Boolean = value
-
-    fun and(other: PineValue<*>) = when (other.getPineType()) {
-        PineType.BOOL -> of(value && (other as PineValue<Boolean>).getValue())
-        else -> throw BinaryOpTypeMismatchPineScriptException(
-            AND,
-            getPineType(),
-            other.getPineType()
-        )
-    }
-
-    fun or(other: PineValue<*>) = when (other.getPineType()) {
-        PineType.BOOL -> of(value || (other as PineValue<Boolean>).getValue())
-        else -> throw BinaryOpTypeMismatchPineScriptException(
-            OR,
-            getPineType(),
-            other.getPineType()
-        )
-    }
-
-    operator fun not(): PineBoolean = of(!value)
-    override operator fun invoke(): Boolean = value
-}
-
-data class PineString(private val value: String) : PineValue<String>() {
-    override fun getPineType(): PineType =
-        PineType.STRING
-    override fun getValue() = value
-    override operator fun invoke(): String = value
-}
-
-data class PineList(private val value: List<*>) : PineValue<List<*>>() {
-    override fun getPineType(): PineType =
-        PineType.LIST
-    override fun getValue() = value
-    override operator fun invoke(): List<*> = value
-}
-
-class BinaryExprValue<T>(
-    owner: PineObject,
-    name: String,
-    val op: UByte,
-    val lhv: PineValue<T>,
-    val rhv: PineValue<*>
-) : PineCallable<T>(owner, name, {
-    val pineValue = if (op.isNumberOp()) {
-        if (lhv.isDouble() || rhv.isDouble()) {
-            val left = lhv.toPineDouble()
-            when (op) {
-                PLUS -> (left + rhv)
-                MINUS -> (left - rhv)
-                MULTI -> (left * rhv)
-                DIV -> (left / rhv)
-                REMAINDER -> (left % rhv)
-                else -> throw BinaryOpNotSupportedPineScriptException(
-                    op,
-                    lhv.getPineType()
-                )
-            }
-        } else {
-            val left = lhv.toPineInt()
-            when (op) {
-                PLUS -> (left + rhv)
-                MINUS -> (left - rhv)
-                MULTI -> (left * rhv)
-                DIV -> (left / rhv)
-                REMAINDER -> (left % rhv)
-                else -> throw BinaryOpNotSupportedPineScriptException(
-                    op,
-                    lhv.getPineType()
-                )
-            }
-        }
-    } else {
-        val left = lhv as PineBoolean
-        when (op) {
-            AND -> left.and(rhv)
-            OR -> left.or(rhv)
-            else -> throw BinaryOpNotSupportedPineScriptException(
-                op,
-                lhv.getPineType()
-            )
-        }
-    } as PineValue<T>
-    pineValue.getValue()
-})
-
-open class PineCallable<T>(val owner: PineObject, val name: String, val lambda: () -> T) :
-    PineSignal, PineValue<T>() {
-
-    override fun getPineType(): PineType =
-        PineType.FUNCTION
-    override operator fun invoke(): T = getValue()
-    override fun getValue(): T = lambda()
+class PineCallable<T>(val owner: PineObject, val name: String, val lambda: () -> T) :
+    PineSignal, PineExpr<T>(pineType = PineType.FUNCTION, calculation = lambda) {
     override fun getPineObject(): PineObject = owner
     override fun getScriptName(): String = name
 }
 
-fun String.toPineValue() = of(this)
-fun Int.toPineValue() = of(this)
-fun Double.toPineValue() = of(this)
-fun Float.toPineValue() = of(this)
-fun Long.toPineValue() = of(this)
-fun Boolean.toPineValue() = of(this)
-
-private fun UByte.isNumberOp() =
+fun UByte.isNumberOp() =
     this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER
 
-private fun UByte.isBooleanOp() = this == AND || this == OR
+fun intExpr(calculation: () -> Int) =
+        PineExpr(pineType = PineType.INT, calculation = calculation) as PineExpr<Any?>
+fun boolExpr(calculation: () -> Boolean) =
+        PineExpr(pineType = PineType.BOOL, calculation = calculation) as PineExpr<Any?>
+fun stringExpr(calculation: () -> String) =
+        PineExpr(pineType = PineType.STRING, calculation = calculation) as PineExpr<Any?>
+fun doubleExpr(calculation: () -> Double) =
+        PineExpr(pineType = PineType.DOUBLE, calculation = calculation) as PineExpr<Any?>

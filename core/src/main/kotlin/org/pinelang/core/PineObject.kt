@@ -33,7 +33,6 @@ package org.pinelang.core
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
-import org.pinelang.core.PineValue.Companion.of
 
 typealias Slot = () -> Unit
 
@@ -71,56 +70,33 @@ class BaseSignal(private val pineObject: PineObject, val name: String) :
     override fun getScriptName(): String = name
 }
 
+@Suppress("UNCHECKED_CAST")
 open class PineProp<T>(
     private val pineObject: PineObject,
     val name: String,
-    val pineType: PineType,
     val kProp: KProperty<*>,
-    initialValue: PineValue<T>
+    expr: PineExpr<Any?>
 ) : PineSignal, ReadWriteProperty<PineObject, T> {
 
-    var value: PineValue<T> = initialValue
-        set(value) {
-            if (field != value) {
-                field = value
-                emit()
-            }
-        }
+    var expr = expr
+    set(value) {
+        field = value
+        emit()
+    }
 
     override fun getPineObject(): PineObject = pineObject
     override fun getScriptName(): String = name
 
-    override fun getValue(thisRef: PineObject, property: KProperty<*>): T = value.getValue()
+    override fun getValue(thisRef: PineObject, property: KProperty<*>): T = expr() as T
 
     override fun setValue(thisRef: PineObject, property: KProperty<*>, value: T) {
-        this.value = of(value) as PineValue<T>
-    }
-
-    fun setPineValue(value: PineValue<*>) {
-        this.value = value as PineValue<T>
-    }
-
-    fun bind(otherProp: PineProp<*>) {
-        checkType(otherProp)
-        when (pineType) {
-            PineType.DOUBLE -> otherProp.connect {
-                this.asType<Double>().value = otherProp.asType<Double>().value
-            }
-            PineType.STRING -> otherProp.connect {
-                this.asType<String>().value = otherProp.asType<String>().value
-            }
-            PineType.INT -> otherProp.connect {
-                this.asType<Int>().value = otherProp.asType<Int>().value
-            }
-            PineType.OBJECT -> otherProp.connect {
-                this.asType<Any>().value = otherProp.asType<Any>().value
-            }
-        }
-        otherProp.emit()
+        expr.calculation = { value }
+        expr.dirty = true
+        emit()
     }
 
     private fun checkType(other: PineProp<*>): PineProp<*> {
-        if (other.pineType != this.pineType)
+        if (other.expr.pineType != expr.pineType)
             throw PineScriptException("unable to bind prop $other into $this. Incompatible types}")
         return this
     }
@@ -128,6 +104,7 @@ open class PineProp<T>(
     fun <T> asType(): PineProp<T> = this as PineProp<T>
 }
 
+@Suppress("UNCHECKED_CAST")
 open class ChildrenListPineProp(
     private val pineObject: PineObject,
     kProp: KProperty<*>
@@ -135,11 +112,13 @@ open class ChildrenListPineProp(
     PineProp<MutableList<PineObject>>(
         pineObject,
         "children",
-        PineType.LIST,
         kProp,
-        of(mutableListOf<PineObject>()) as PineValue<MutableList<PineObject>>
+        PineExpr(pineType = PineType.LIST, calculation = { mutableListOf<PineObject>() })
     ), Iterable<PineObject> {
 
+    init {
+        expr.calculation = { props }
+    }
     var props = mutableListOf<PineObject>()
 
     fun add(el: PineObject) = props.add(el).apply { emit() }
@@ -157,7 +136,7 @@ open class ChildrenListPineProp(
     override operator fun getValue(
         thisRef: PineObject,
         property: KProperty<*>
-    ): MutableList<PineObject> = value.getValue()
+    ): MutableList<PineObject> = expr() as MutableList<PineObject>
 
     override fun iterator(): Iterator<PineObject> = ListPinePropIterator()
 
@@ -258,7 +237,7 @@ abstract class PineObject(val id: Int = -1) {
         return sig
     }
 
-    fun <T> makeCallable(name: String, lambda: () -> T): PineCallable<T> {
+    fun <T> makeCallable(name: String, lambda: () -> T): PineExpr<T> {
         val callable = PineCallable(this, name, lambda)
         callables.add(callable)
         return callable
@@ -268,13 +247,12 @@ abstract class PineObject(val id: Int = -1) {
 fun PineObject.intProp(
     kProp: KProperty<Int>,
     initialValue: Int = 0
-) = registerProp(
+) = registerProp<Int>(
     PineProp(
         this,
         kProp.name,
-        PineType.INT,
         kProp,
-        of(initialValue)
+        intExpr { initialValue }
     )
 )
 
@@ -282,12 +260,11 @@ fun PineObject.boolProp(
     kProp: KProperty<Boolean>,
     initialValue: Boolean = false
 ) = registerProp(
-    PineProp(
+    PineProp<Boolean>(
         this,
         kProp.name,
-        PineType.BOOL,
         kProp,
-        of(initialValue)
+        boolExpr { initialValue }
     )
 )
 
@@ -295,12 +272,11 @@ fun PineObject.stringProp(
     kProp: KProperty<String>,
     initialValue: String = ""
 ) = registerProp(
-    PineProp(
+    PineProp<String>(
         this,
         kProp.name,
-        PineType.STRING,
         kProp,
-        of(initialValue)
+        stringExpr { initialValue }
     )
 )
 
@@ -308,12 +284,11 @@ fun PineObject.doubleProp(
     kProp: KProperty<Double>,
     initialValue: Double = 0.0
 ) = registerProp(
-    PineProp(
+    PineProp<Double>(
         this,
         kProp.name,
-        PineType.DOUBLE,
         kProp,
-        of(initialValue)
+        doubleExpr { initialValue }
     )
 )
 

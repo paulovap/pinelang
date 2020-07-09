@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.pinelang.core
 
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import org.junit.Test
 import org.pinelang.ast.fbs.BinaryOp.Companion.AND
 import org.pinelang.ast.fbs.BinaryOp.Companion.DIV
@@ -41,8 +40,7 @@ import org.pinelang.ast.fbs.BinaryOp.Companion.MULTI
 import org.pinelang.ast.fbs.BinaryOp.Companion.OR
 import org.pinelang.ast.fbs.BinaryOp.Companion.PLUS
 import org.pinelang.ast.fbs.BinaryOp.Companion.REMAINDER
-import org.pinelang.core.PineType.Companion.FUNCTION
-import org.pinelang.core.PineValue.Companion.of
+import org.pinelang.core.PineExpr.Companion.of
 
 class TestExpressions {
 
@@ -61,46 +59,41 @@ class TestExpressions {
         val v10 = of(10)
         val v25 = of(25)
 
-        assertEquals(35, BinaryExprValue(
+        assertEquals(35, BinaryNumberExpr<Int>(
             root,
             "anon",
             PLUS,
             v10,
             v25
         )())
-        assertEquals(-15, BinaryExprValue(
+        assertEquals(-15, BinaryNumberExpr<Int>(
             root,
             "anon",
             MINUS,
             v10,
             v25
         )())
-        assertEquals(250, BinaryExprValue(
+        assertEquals(250, BinaryNumberExpr<Int>(
             root,
             "anon",
             MULTI,
             v10,
             v25
         )())
-        assertEquals(2, BinaryExprValue(
+        assertEquals(2, BinaryNumberExpr<Int>(
             root,
             "anon",
             DIV,
             v25,
             v10
         )())
-        assertEquals(5, BinaryExprValue(
+        assertEquals(5, BinaryNumberExpr<Int>(
             root,
             "anon",
             REMAINDER,
             v25,
             v10
         )())
-
-        val exp =
-            BinaryExprValue(root, "anon", AND, of(true), v10)
-        assertEquals(FUNCTION, exp.getPineType())
-        assertFailsWith(PineScriptException::class) { exp() }
     }
 
     @Test
@@ -109,28 +102,19 @@ class TestExpressions {
         val vTrue = of(true)
         val vFalse = of(false)
 
-        assertEquals(true, BinaryExprValue(
+        assertEquals(true, BinaryLogicalExp(
             root,
             "anon",
             AND,
             vTrue,
             vTrue
         )())
-        assertEquals(true, BinaryExprValue(
+        assertEquals(true, BinaryLogicalExp(
             root,
             "anon",
             OR,
             vTrue,
             vFalse
         )())
-        assertFailsWith(PineScriptException::class) {
-            BinaryExprValue(
-                root,
-                "anon",
-                PLUS,
-                of(10),
-                vFalse
-            )()
-        }
     }
 }

@@ -42,11 +42,11 @@ import org.pinelang.ast.fbs.Program
 import org.pinelang.ast.fbs.PropDefinition
 import org.pinelang.ast.fbs.PropRefExpr
 import org.pinelang.ast.fbs.SignalExpr
+import org.pinelang.core.PineExpr.Companion.of
 import org.pinelang.core.PineType.Companion.BOOL
 import org.pinelang.core.PineType.Companion.DOUBLE
 import org.pinelang.core.PineType.Companion.INT
 import org.pinelang.core.PineType.Companion.STRING
-import org.pinelang.core.PineValue.Companion.of
 import org.pinelang.util.IndexedMap
 
 typealias Allocator = (Int) -> PineObject
@@ -72,7 +72,7 @@ class PineMetaObject(
         props = pineObj.props.map {
             MetaProp(
                 it.name,
-                it.pineType
+                it.expr.pineType
             )
         }.toTypedArray()
         allNames = Array(callableIndexEnd + 1) {
@@ -161,19 +161,25 @@ class PineEngine private constructor(
 
         // ExprValue.PropRefExpr -> evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
         val exprValue = propDef.value!!
-        val value = if (exprValue.expValueType == ExprValue.PropRefExpr) {
+        val value: PineExpr<Any?> = if (exprValue.expValueType == ExprValue.PropRefExpr) {
             val otherProp =
                 evalPropertyReferenceExp(exprValue.expValue(PropRefExpr())!! as PropRefExpr)
-            otherProp.connect { prop.setPineValue(otherProp.value) }
-            otherProp.value
+            val pineExpr = PineExpr(
+                    pineType = otherProp.expr.pineType,
+                    calculation = {
+                otherProp.expr()
+            })
+            otherProp.connect { pineExpr.dirty = true }
+            pineExpr
         } else {
             evalExpr(obj, exprValue)
         }
 
-        prop.setPineValue(value)
+        prop.expr = value
     }
 
-    private fun evalPrimitiveExpr(primitiveExpr: PrimitiveExpr): PineValue<*> {
+    @Suppress("CAST_NEVER_SUCCEEDS", "IMPLICIT_CAST_TO_ANY")
+    private fun evalPrimitiveExpr(primitiveExpr: PrimitiveExpr): PineExpr<Any?> {
         return when (PineType.fromUByte(primitiveExpr.type)) {
             INT -> of(primitiveExpr.value.toInt())
             BOOL -> of(primitiveExpr.value.toInt() > 0)
@@ -184,10 +190,10 @@ class PineEngine private constructor(
                     primitiveExpr.type.toInt()
                 )}"
             )
-        }
+        } as PineExpr<Any?>
     }
 
-    private fun evalExpr(owner: PineObject, expr: Expr): PineValue<*> {
+    private fun evalExpr(owner: PineObject, expr: Expr): PineExpr<Any?> {
 
         return when (expr.expValueType) {
             ExprValue.PrimitiveExpr ->
@@ -196,10 +202,10 @@ class PineEngine private constructor(
                 evalCallableExpression(expr.expValue(CallableExpr()) as CallableExpr)
             ExprValue.BinaryExpr -> evalBinaryExpr(
                 owner,
-                expr.expValue(BinaryExpr())!! as BinaryExpr
+                expr.expValue(BinaryExpr()) as BinaryExpr
             )
             ExprValue.PropRefExpr ->
-                evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).value
+                evalPropertyReferenceExp(expr.expValue(PropRefExpr())!! as PropRefExpr).expr
             else -> throw PineScriptException(
                 "Unable to evaluate expression of type ${ExprValue.name(
                     expr.expValueType.toInt()
@@ -208,14 +214,27 @@ class PineEngine private constructor(
         }
     }
 
-    private fun evalBinaryExpr(owner: PineObject, binaryExpr: BinaryExpr): BinaryExprValue<*> {
-        return BinaryExprValue(
-            owner,
-            "anon",
-            binaryExpr.op,
-            evalExpr(owner, binaryExpr.left!!),
-            evalExpr(owner, binaryExpr.right!!)
-        )
+    @Suppress("UNCHECKED_CAST")
+    private fun evalBinaryExpr(owner: PineObject, binaryExpr: BinaryExpr): PineExpr<Any?> {
+
+        val left = evalExpr(owner, binaryExpr.left!!)
+        val right = evalExpr(owner, binaryExpr.right!!)
+        return when {
+            left.isDouble() or right.isDouble() ->
+                BinaryNumberExpr<Double>(owner, "anon", binaryExpr.op, left, right)
+            left.isInt() -> BinaryNumberExpr<Int>(owner, "anon", binaryExpr.op, left, right)
+            left.isBool() ->
+                BinaryLogicalExp(
+                        owner,
+                        "anon",
+                        binaryExpr.op,
+                        left as PineExpr<Boolean>,
+                        right as PineExpr<Boolean>)
+            else -> throw BinaryOpTypeMismatchPineScriptException(
+                    binaryExpr.op,
+                    left.pineType,
+                    right.pineType)
+        } as PineExpr<Any?>
     }
 
     private fun evalPropertyReferenceExp(propRefExpr: PropRefExpr): PineProp<*> {
@@ -228,9 +247,10 @@ class PineEngine private constructor(
         signal.connect { evalCallableExpression(sigExpr.expr!!)() }
     }
 
-    private fun evalCallableExpression(expr: CallableExpr): PineValue<*> {
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private fun evalCallableExpression(expr: CallableExpr): PineExpr<Any?> {
         val otherObj = rootContext.refs[expr.objId]!!
-        return otherObj.callables[expr.callIdx.toInt()]
+        return otherObj.callables[expr.callIdx.toInt()] as PineExpr<Any?>
     }
 
     class Builder {

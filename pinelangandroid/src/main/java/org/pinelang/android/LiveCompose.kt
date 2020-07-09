@@ -23,7 +23,6 @@ import org.pinelang.android.compose.PineVScroller
 import org.pinelang.android.ui.FlexscriptTheme
 import org.pinelang.ast.fbs.Program
 import org.pinelang.core.PineEngine
-import org.pinelang.core.PineValue
 import org.pinelang.lsp.lsp.LSPServer
 import org.pinelang.lsp.lsp.ServerImpl
 
@@ -71,7 +70,7 @@ class LiveCompose : AppCompatActivity() {
         runOnUiThread {
             var error: String? = null
             try {
-                root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
+                root?.getProp("visible")?.asType<Boolean>()?.expr?.calculation = { false }
                 root?.dispose()
                 var program: Program? = null
                 val compileTime = measureTimeMillis {

@@ -46,7 +46,6 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.pinelang.core.PineEngine
 import org.pinelang.core.PineObject
-import org.pinelang.core.PineValue
 import org.pinelang.lsp.lsp.LSPServer
 import org.pinelang.lsp.lsp.ServerImpl
 import org.pinelang.lsp.lsp.sandbox.ui.Label
@@ -88,7 +87,7 @@ class MainWindow(val engine: PineEngine, enableEditor: Boolean) : JFrame() {
 
     fun runScript(text: String) {
         try {
-            root?.getProp("visible")?.asType<Boolean>()?.value = PineValue.of(false)
+            root?.getProp("visible")?.asType<Boolean>()?.expr?.calculation = { false }
             root?.dispose()
             root = engine.load(text)
             outputPanel.removeAll()

@@ -36,7 +36,7 @@ import kotlin.test.assertFailsWith
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.pinelang.core.PineValue.Companion.of
+import org.pinelang.core.PineExpr.Companion.of
 
 class TestValues {
     @Before
@@ -52,7 +52,7 @@ class TestValues {
     @Test fun testIntValue() {
         val data = 10
         val a = PineInt(data)
-        assertEquals(data, a.getValue())
+        assertEquals(data, a())
         assertEquals(data, a())
         assertEquals(PineInt(data), a)
 
@@ -60,15 +60,15 @@ class TestValues {
 
         assertEquals(a, a.toInt())
         // plus
-        assertEquals(data + data, (a + a).getValue())
+        assertEquals(data + data, (a + a)())
         // minus
-        assertEquals(data - data, (a - a).getValue())
+        assertEquals(data - data, (a - a)())
         // multi
-        assertEquals(data * data, (a * a).getValue())
+        assertEquals(data * data, (a * a)())
         // div
-        assertEquals(data / data, (a / a).getValue())
+        assertEquals(data / data, (a / a)())
         // remainder
-        assertEquals(data % (data - 1), (a % (a + of(-1))).getValue())
+        assertEquals(data % (data - 1), (a % (a + of(-1)))())
 
         assertFailsWith(PineScriptException::class) { a + of("test") }
         assertFailsWith(PineScriptException::class) { a - of("test") }
@@ -80,21 +80,21 @@ class TestValues {
     @Test fun testDoubleValue() {
         val data = 12.5
         val a = PineDouble(data)
-        assertEquals(data, a.getValue())
+        assertEquals(data, a())
         assertEquals(data, a())
         assertEquals(PineDouble(12.5), a)
         assertEquals(PineInt(12), a.toInt())
         assertEquals(a, a.toDouble())
         // plus
-        assertEquals(data + data, (a + a).getValue())
+        assertEquals(data + data, (a + a)())
         // minus
-        assertEquals(data - data, (a - a).getValue())
+        assertEquals(data - data, (a - a)())
         // multi
-        assertEquals(data * data, (a * a).getValue())
+        assertEquals(data * data, (a * a)())
         // div
-        assertEquals(data / data, (a / a).getValue())
+        assertEquals(data / data, (a / a)())
         // remainder
-        assertEquals(data % (data - 1), (a % (a + of(-1))).getValue())
+        assertEquals(data % (data - 1), (a % (a + of(-1)))())
 
         assertFailsWith(PineScriptException::class) { a + of("test") }
         assertFailsWith(PineScriptException::class) { a - of("test") }
@@ -111,16 +111,16 @@ class TestValues {
         assertEquals(false, doubleVal.isFunction())
         assertEquals(false, doubleVal.isList())
         // plus
-        assertEquals(30, (intVal + doubleVal).getValue())
-        assertEquals(30.0, (doubleVal + intVal).getValue())
+        assertEquals(30, (intVal + doubleVal)())
+        assertEquals(30.0, (doubleVal + intVal)())
         // minus
-        assertEquals(10.0, (doubleVal - intVal).getValue())
+        assertEquals(10.0, (doubleVal - intVal)())
         // multi
-        assertEquals(200.0, (doubleVal * intVal).getValue())
+        assertEquals(200.0, (doubleVal * intVal)())
         // div
-        assertEquals(2.0, (doubleVal / intVal).getValue())
+        assertEquals(2.0, (doubleVal / intVal)())
         // remainder
-        assertEquals(0.0, (doubleVal % intVal).getValue())
+        assertEquals(0.0, (doubleVal % intVal)())
     }
 
     @Test fun testBooleanValue() {
@@ -128,9 +128,9 @@ class TestValues {
         val falseValue = of(false)
         assertEquals(true, falseValue.isBool())
         assertEquals(false, falseValue.isNumber())
-        assertEquals(true, trueValue.getValue())
-        assertEquals(false, (!trueValue).getValue())
-        assertEquals(PineType.BOOL, trueValue.getPineType())
+        assertEquals(true, trueValue())
+        assertEquals(false, (!trueValue)())
+        assertEquals(PineType.BOOL, trueValue.pineType)
         assert(trueValue != falseValue)
 
         assertEquals(of(true), trueValue)
@@ -154,7 +154,7 @@ class TestValues {
         val a = of(data)
         assertEquals(true, a.isString())
         assertEquals(false, a.isObject())
-        assertEquals(data, a.getValue())
+        assertEquals(data, a())
         assertEquals(data, a())
         assert(of(data2) != a)
     }
@@ -162,9 +162,5 @@ class TestValues {
     @Test fun testInvocationValue() {
         val a = of(10)
         assertEquals(10, a())
-        assertEquals(10, a(a))
-        assertEquals(10, a(a, a))
-        assertEquals(10, a(a, a, a))
-        assertEquals(10, a(a, a, a, a))
     }
 }
