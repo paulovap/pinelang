@@ -240,15 +240,20 @@ class PineEngine
   }
 
   private fun evalBooleanExpr(op: UByte, left: PineExpr<*>, right: PineExpr<*>): PineExpr<*> {
-    if (left.isBoolean() and right.isBoolean()) {
-      val leftCasted = left.toPineBoolean()
-      return when (op) {
-        BinaryOp.AND -> leftCasted and right
-        BinaryOp.OR -> leftCasted or right
-        else -> throw BinaryOpException(op, left.pineType, right.pineType)
+
+    return when (op) {
+      BinaryOp.EQUAL -> {
+        when {
+          left.isBoolean() -> left.toPineBoolean().pineEquals(right)
+          left.isDouble() -> left.toPineDouble().pineEquals(right)
+          left.isInt() -> left.toPineInt().pineEquals(right)
+          else -> throw BinaryOpException(op, left.pineType, right.pineType)
+        }
       }
+      BinaryOp.AND -> left.toPineBoolean() and right
+      BinaryOp.OR -> left.toPineBoolean() or right
+      else -> throw BinaryOpException(op, left.pineType, right.pineType)
     }
-    throw BinaryOpException(op, left.pineType, right.pineType)
   }
 
   private fun evalPropertyReferenceExp(propRefExpr: PropRefExpr): PineProp<*> {

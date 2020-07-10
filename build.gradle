@@ -60,8 +60,8 @@ allprojects {
 
 		kotlin {
 			// by default the target is every '.kt' and '.kts` file in the java sourcesets
-			//ktlint()   // has its own section below
-			ktfmt('0.15')    // has its own section below
+			ktlint()   // has its own section below
+			//ktfmt('0.15')    // has its own section below
 			//prettier() // has its own section below
 			licenseHeaderFile "${rootProject.projectDir}/.license_header", '(package)'
 		}

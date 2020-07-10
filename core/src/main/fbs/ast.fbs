@@ -53,6 +53,7 @@ enum BinaryOp : ubyte {
     MULTI,
     DIV,
     REMAINDER,
+    EQUAL,
     AND,
     OR
 }

@@ -60,16 +60,6 @@ public interface PineScriptListener extends ParseTreeListener {
 	 */
 	void exitObjectIdentifier(PineScript.ObjectIdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PineScript#objectMember}.
-	 * @param ctx the parse tree
-	 */
-	void enterObjectMember(PineScript.ObjectMemberContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PineScript#objectMember}.
-	 * @param ctx the parse tree
-	 */
-	void exitObjectMember(PineScript.ObjectMemberContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link PineScript#signalAssignement}.
 	 * @param ctx the parse tree
 	 */

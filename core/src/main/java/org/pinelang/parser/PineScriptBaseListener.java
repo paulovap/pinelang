@@ -78,18 +78,6 @@ public class PineScriptBaseListener implements PineScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterObjectMember(PineScript.ObjectMemberContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitObjectMember(PineScript.ObjectMemberContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterSignalAssignement(PineScript.SignalAssignementContext ctx) { }
 	/**
 	 * {@inheritDoc}

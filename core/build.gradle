@@ -4,8 +4,6 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm'
 }
 
-sourceCompatibility = 1.8
-
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -77,6 +75,6 @@ task flatbuffer(type: Exec) {
 
 compileKotlin {
 //TODO: add a way to generate flatbuffers on circleCI
-// dependsOn flatbuffer
-	dependsOn generateGrammarSource
+  dependsOn flatbuffer
+  dependsOn generateGrammarSource
 }

@@ -197,6 +197,7 @@ class ExpressionVisitor(
       this.REMAINDER() != null -> BinaryOp.REMAINDER
       this.AND() != null -> BinaryOp.AND
       this.OR() != null -> BinaryOp.OR
+      this.EQ() != null -> BinaryOp.EQUAL
       else -> throw PineScriptParseException(this.start, this.stop, "operator $this not recognized")
     }
   }

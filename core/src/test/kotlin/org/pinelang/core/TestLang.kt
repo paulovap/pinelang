@@ -42,6 +42,7 @@ class Item(id: Int) : PineObject(id) {
   var myInt: Int by intProp(::myInt)
   var myDouble: Double by doubleProp(::myDouble)
   var myString: String by stringProp(::myString)
+  var myBoolean: Boolean by boolProp(::myBoolean)
   override fun getMeta(): PineMetaObject = meta
 }
 
@@ -96,14 +97,16 @@ class TestLang {
         engine.load(
             """
             Item {
-                myInt: 25
+                myInt: 1
                 myDouble: 1 + 0.0098
+                myBoolean: myInt == myDouble
              //   myString: "asdf" + "fdsa"
             }
         """.trimIndent()) as Item
 
-    assertEquals(25, item.myInt)
+    assertEquals(1, item.myInt)
     assertEquals(1.0098, item.myDouble)
+    assertEquals(true, item.myBoolean)
   }
 
   @Test

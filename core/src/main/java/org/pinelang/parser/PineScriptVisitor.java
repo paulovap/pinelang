@@ -43,12 +43,6 @@ public interface PineScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitObjectIdentifier(PineScript.ObjectIdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PineScript#objectMember}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitObjectMember(PineScript.ObjectMemberContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link PineScript#signalAssignement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

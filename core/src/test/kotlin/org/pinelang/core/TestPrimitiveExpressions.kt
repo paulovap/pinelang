@@ -225,6 +225,37 @@ class TestPrimitiveExpressions {
     assertEquals(false, and())
     assertEquals(false, or())
   }
+
+  @Test
+  fun testBoolEqualityExpressions() {
+    val first = PineBoolean(true)
+    val second = PineBoolean(true)
+
+    val firstInt = PineInt(10)
+    val secondInt = PineInt(10)
+
+    val firstDouble = PineDouble(10.2)
+    val secondDouble = PineDouble(10.2)
+
+    val eq = first.pineEquals(second)
+    val eqInt = firstInt.pineEquals(secondInt)
+    val eqDouble = firstDouble.pineEquals(secondDouble)
+
+    assertEquals(true, eq())
+    assertEquals(true, eqInt())
+    assertEquals(true, eqDouble())
+
+    second.update { false }
+
+    assertEquals(false, eq())
+
+    val eqBoolInt = first.pineEquals(eqInt)
+    assertEquals(true, eqBoolInt())
+
+    firstInt.update { 11 }
+    assertEquals(false, eqInt())
+    assertEquals(false, eqBoolInt())
+  }
   /*
      @Test
      fun testBinaryMathExpressions() {

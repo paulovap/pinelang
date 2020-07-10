@@ -65,12 +65,6 @@ objectIdentifier
     : ID COLON Identifier SEMICOLON?
     ;
 
-objectMember
-    : objectDefinition
-    | signalAssignement
-    | propertyDefinition
-    ;
-
 signalAssignement
     : ON Identifier COLON callableExpression SEMICOLON?
     ;
@@ -92,6 +86,7 @@ binaryOperation
     | MULTI
     | DIV
     | REMAINDER  // end number values only
+    | EQ
     | AND        // start boolean values only
     | OR         // end boolean values only
     ;
