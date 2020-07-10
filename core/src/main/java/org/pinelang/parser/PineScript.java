@@ -45,7 +45,7 @@ public class PineScript extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'on'", "'dp'", "'px'", "'id'", "'.'", "'('", "')'", "','", "'null'", 
-			"'true'", "'false'", "'='", "'['", "']'", "'&&'", "'||'", "'?'", "';'", 
+			"'true'", "'false'", "'=='", "'['", "']'", "'&&'", "'||'", "'?'", "';'", 
 			"':'", "'{'", "'}'", "'return'", "'import'", "'+'", "'-'", "'*'", "'/'", 
 			"'%'", "'and'", "'or'"
 		};

@@ -15,7 +15,7 @@ buildscript {
 
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-		classpath 'com.android.tools.build:gradle:4.2.0-alpha03'
+		classpath 'com.android.tools.build:gradle:4.2.0-alpha04'
 		classpath "androidx.benchmark:benchmark-gradle-plugin:1.0.0"
 	}
 }
@@ -47,7 +47,7 @@ allprojects {
 	spotless {
 		// optional: limit format enforcement to just the files changed by this feature branch
 		//ratchetFrom 'origin/main'
-
+		enforceCheck false
 		format 'misc', {
 			// define the files to apply `misc` to
 			target '*.gradle', '*.md', '.gitignore'
