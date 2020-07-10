@@ -69,7 +69,6 @@ class BaseSignal(private val pineObject: PineObject, val name: String) : PineSig
 open class PineProp<T>(
     private val pineObject: PineObject,
     val name: String,
-    val kProp: KProperty<*>,
     val expr: PineExpr<Any?>
 ) : PineSignal, ReadWriteProperty<PineObject, T> {
 
@@ -103,7 +102,6 @@ open class ChildrenListPineProp(private val pineObject: PineObject, kProp: KProp
     PineProp<MutableList<PineObject>>(
         pineObject,
         "children",
-        kProp,
         PineExpr(pineType = PineType.LIST, calculation = { mutableListOf<PineObject>() })),
     Iterable<PineObject> {
 
@@ -227,19 +225,19 @@ abstract class PineObject(val id: Int = -1, var name: String? = null) {
 }
 
 fun PineObject.intProp(kProp: KProperty<Int>, initialValue: Int = 0) =
-    registerProp<Int>(PineProp(this, kProp.name, kProp, intExpr(initialValue) as PineExpr<Any?>))
+    registerProp<Int>(PineProp(this, kProp.name, intExpr(initialValue) as PineExpr<Any?>))
 
 fun PineObject.boolProp(kProp: KProperty<Boolean>, initialValue: Boolean = false) =
     registerProp(
-        PineProp<Boolean>(this, kProp.name, kProp, boolExpr { initialValue } as PineExpr<Any?>))
+        PineProp<Boolean>(this, kProp.name, boolExpr { initialValue } as PineExpr<Any?>))
 
 fun PineObject.stringProp(kProp: KProperty<String>, initialValue: String = "") =
     registerProp(
-        PineProp<String>(this, kProp.name, kProp, stringExpr { initialValue } as PineExpr<Any?>))
+        PineProp<String>(this, kProp.name, stringExpr { initialValue } as PineExpr<Any?>))
 
 fun PineObject.doubleProp(kProp: KProperty<Double>, initialValue: Double = 0.0) =
     registerProp(
-        PineProp<Double>(this, kProp.name, kProp, doubleExpr { initialValue } as PineExpr<Any?>))
+        PineProp<Double>(this, kProp.name, doubleExpr { initialValue } as PineExpr<Any?>))
 
 private fun PineObject.childrenProp(
     kProp: KProperty<MutableList<PineObject>>
