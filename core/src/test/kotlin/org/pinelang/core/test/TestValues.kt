@@ -29,13 +29,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pinelang.core
+package org.pinelang.core.test
 
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.pinelang.core.*
 import org.pinelang.core.PineExpr.Companion.of
 
 class TestValues {
@@ -155,11 +156,18 @@ class TestValues {
     val data = "My String"
     val data2 = "Another String"
     val a = of(data)
+    val b = of(data2)
     assertEquals(true, a.isString())
     assertEquals(false, a.isObject())
     assertEquals(data, a())
     assertEquals(data, a())
-    assert(of(data2) != a)
+    assert(b != a)
+
+    val eqExpr = a.pineEquals(b)
+    assertEquals(false, eqExpr())
+    b.update { data }
+    assertEquals(true, eqExpr())
+    assertEquals("${data}${data}", (a + b)())
   }
 
   @Test

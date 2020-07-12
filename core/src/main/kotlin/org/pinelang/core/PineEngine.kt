@@ -247,6 +247,7 @@ class PineEngine
           left.isBoolean() -> left.toPineBoolean().pineEquals(right)
           left.isDouble() -> left.toPineDouble().pineEquals(right)
           left.isInt() -> left.toPineInt().pineEquals(right)
+          left.isString() -> left.toPineString().pineEquals(right)
           else -> throw BinaryOpException(op, left.pineType, right.pineType)
         }
       }

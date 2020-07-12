@@ -125,11 +125,6 @@ class PineInt(vararg refs: PineExpr<*>, calculation: () -> Int) :
     }
   }
 
-  fun pineEquals(other: PineExpr<*>): PineBoolean {
-    val otherInt = other.toPineInt()
-    return PineBoolean(this, otherInt) { this() == otherInt() }
-  }
-
   override fun equals(other: Any?): Boolean {
     if (other == null || other !is PineInt) return false
     return this() == other()
@@ -191,11 +186,6 @@ class PineDouble(vararg refs: PineExpr<*>, calculation: () -> Double) :
   override fun toDouble(): PineDouble = PineDouble(this) { this() }
   override fun toInt(): PineExpr<Int> = PineInt(calculation = { this().toInt() })
 
-  fun pineEquals(other: PineExpr<*>): PineBoolean {
-    val doubleOther = other.toPineDouble()
-    return PineBoolean(this, doubleOther) { this() == doubleOther() }
-  }
-
   override fun equals(other: Any?): Boolean {
     if (other == null || other !is PineDouble) return false
     return this() == other()
@@ -225,10 +215,6 @@ class PineBoolean(vararg refs: PineExpr<*>, calculation: () -> Boolean) :
 
   operator fun not(): PineBoolean = PineBoolean(this) { !this() }
 
-  fun pineEquals(other: PineExpr<*>): PineBoolean {
-    return PineBoolean(this, other) { this() == other() }
-  }
-
   override fun hashCode(): Int {
     return if (this()) 1 else 0
   }
@@ -243,6 +229,10 @@ class PineBoolean(vararg refs: PineExpr<*>, calculation: () -> Boolean) :
 class PineString(vararg refs: PineExpr<*>, calculation: () -> String) :
     PineExpr<String>(pineType = PineType.STRING, refs = *refs, calculation = calculation) {
   constructor(value: String) : this(calculation = { value })
+
+  operator fun plus(other: PineExpr<*>): PineString {
+    return PineString(this, other) { this() + (other as PineString)() }
+  }
 }
 
 class PineList(vararg refs: PineExpr<*>, calculation: () -> List<*>) :
@@ -348,11 +338,24 @@ open class PineExpr<T>(
     return this as PineInt
   }
 
+  fun toPineString(): PineString {
+    if (!isString()) {
+      throwInvalidCast(PineType.STRING)
+    }
+    return this as PineString
+  }
+
   fun toPineBoolean(): PineBoolean {
     if (!isBoolean()) {
       throwInvalidCast(PineType.BOOL)
     }
     return this as PineBoolean
+  }
+
+  open fun pineEquals(other: PineExpr<*>): PineBoolean {
+    return PineBoolean(this, other) {
+      this() == other()
+    }
   }
 
   private fun throwInvalidCast(pineType: PineType) {

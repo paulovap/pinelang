@@ -29,25 +29,32 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.pinelang.core
+package org.pinelang.core.test
 
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.pinelang.core.*
 
 class TestPrimitiveExpressions {
 
   class Item : PineObject(-1) {
     companion object {
-      val meta = PineMetaObject("Item") { Item() }
+      val meta =
+        PineMetaObject("Item") { Item() }
     }
 
-    override fun getMeta(): PineMetaObject = meta
+    override fun getMeta(): PineMetaObject =
+      meta
   }
 
   @Test
   fun testBasicDependency() {
-    val right = PineExpr(PineType.INT) { 10 }
-    val left = PineExpr(PineType.INT, right) { right() }
+    val right =
+      PineExpr(PineType.INT) { 10 }
+    val left = PineExpr(
+      PineType.INT,
+      right
+    ) { right() }
 
     assertEquals(10, left())
     right.update { 42 }
@@ -205,7 +212,8 @@ class TestPrimitiveExpressions {
     val first = PineBoolean(true)
     val second = PineBoolean(false)
 
-    val and = PineBoolean(first, second) { first() && second() }
+    val and =
+      PineBoolean(first, second) { first() && second() }
     val or = PineBoolean(first, second) { first() || second() }
 
     assertEquals(true, first())
