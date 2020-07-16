@@ -21,10 +21,8 @@ git clone $REPO $DIR
 cd $DIR
 
 # Generate the API docs
-./gradlew \
-  :core:dokka \
-  :lsp:dokka \
-  :android:dokka
+./gradlew build :core:dokka :lsp:dokka
+
 
 # Dokka filenames like `-http-url/index.md` don't work well with MkDocs <title> tags.
 # Assign metadata to the file's first Markdown heading.
@@ -39,15 +37,15 @@ title_markdown_file() {
   mv "$1.fixed" "$1"
 }
 
-set +x
-for MARKDOWN_FILE in $(find docs/4.x/ -name '*.md'); do
-  echo $MARKDOWN_FILE
-  title_markdown_file $MARKDOWN_FILE
-done
-set -x
+#set +x
+#for MARKDOWN_FILE in $(find docs/ -name '*.md'); do
+#  echo $MARKDOWN_FILE
+#  title_markdown_file $MARKDOWN_FILE
+#done
+#set -x
 
 # Copy in special files that GitHub wants in the project root.
-cat Readme.md | grep -v 'project website' > docs/index.md
+cp Readme.md docs/
 #cp CHANGELOG.md docs/changelog.md
 #cp CONTRIBUTING.md docs/contributing.md
 
