@@ -55,6 +55,13 @@ android {
 	}
 }
 
+afterEvaluate { project ->
+	project.tasks.dokka {
+		outputDirectory = "$rootDir/docs/latest"
+		outputFormat = 'gfm'
+	}
+}
+
 dependencies {
 
 	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

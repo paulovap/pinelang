@@ -24,19 +24,6 @@ cd $DIR
 ./gradlew build :core:dokka :lsp:dokka
 
 
-# Dokka filenames like `-http-url/index.md` don't work well with MkDocs <title> tags.
-# Assign metadata to the file's first Markdown heading.
-# https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data
-title_markdown_file() {
-  TITLE_PATTERN="s/^[#]+ *(.*)/title: \1 - OkHttp/"
-  echo "---"                                                     > "$1.fixed"
-  cat $1 | sed -E "$TITLE_PATTERN" | grep "title: " | head -n 1 >> "$1.fixed"
-  echo "---"                                                    >> "$1.fixed"
-  echo                                                          >> "$1.fixed"
-  cat $1                                                        >> "$1.fixed"
-  mv "$1.fixed" "$1"
-}
-
 #set +x
 #for MARKDOWN_FILE in $(find docs/ -name '*.md'); do
 #  echo $MARKDOWN_FILE
@@ -53,5 +40,5 @@ cp Readme.md docs/
 mkdocs gh-deploy
 
 # Delete our temp folder
-cd ..
-rm -rf $DIR
+#cd ..
+#rm -rf $DIR

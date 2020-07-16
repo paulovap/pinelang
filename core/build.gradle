@@ -4,24 +4,6 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm'
 }
 
-repositories {
-	mavenLocal()
-	mavenCentral()
-	jcenter()
-}
-
-kotlin {
-	experimental {
-		coroutines "enable"
-	}
-	compileKotlin {
-		kotlinOptions.jvmTarget = "1.8"
-	}
-	compileTestKotlin {
-		kotlinOptions.jvmTarget = "1.8"
-	}
-}
-
 dependencies {
 
 	// Moshi
@@ -41,6 +23,13 @@ dependencies {
 
 	testImplementation 'junit:junit:4.13'
 	implementation 'net.sf.squirrel-sql.thirdparty-non-maven:com-fifesoft-rsyntaxtextarea:1.0.0'
+}
+
+afterEvaluate { project ->
+	project.tasks.dokka {
+		outputDirectory = "$rootDir/docs/latest"
+		outputFormat = 'gfm'
+	}
 }
 
 generateGrammarSource {
