@@ -155,8 +155,12 @@ class TestValues {
   fun testStringValue() {
     val data = "My String"
     val data2 = "Another String"
+
     val a = of(data)
     val b = of(data2)
+
+    val sum = a + b
+
     assertEquals(true, a.isString())
     assertEquals(false, a.isObject())
     assertEquals(data, a())
@@ -167,7 +171,7 @@ class TestValues {
     assertEquals(false, eqExpr())
     b.update { data }
     assertEquals(true, eqExpr())
-    assertEquals("${data}${data}", (a + b)())
+    assertEquals("${data}${data}", sum())
   }
 
   @Test

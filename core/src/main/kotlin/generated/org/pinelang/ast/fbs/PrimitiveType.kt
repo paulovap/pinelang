@@ -11,8 +11,9 @@ class PrimitiveType private constructor() {
         const val Boolean: UByte = 2u
         const val Double: UByte = 3u
         const val String: UByte = 4u
-        const val ObjectProperty: UByte = 5u
-        val names : Array<String> = arrayOf("Void", "Int", "Boolean", "Double", "String", "ObjectProperty")
+        const val List: UByte = 5u
+        const val ObjectProperty: UByte = 6u
+        val names : Array<String> = arrayOf("Void", "Int", "Boolean", "Double", "String", "List", "ObjectProperty")
         fun name(e: Int) : String = names[e]
     }
 }

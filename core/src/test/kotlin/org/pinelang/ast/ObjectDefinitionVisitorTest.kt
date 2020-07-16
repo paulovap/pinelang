@@ -31,15 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pinelang.ast
 
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import java.io.IOException
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import kotlin.system.measureTimeMillis
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.pinelang.ast.fbs.Expr
-import org.pinelang.ast.fbs.PrimitiveExpr
 import org.pinelang.ast.fbs.Program
 import org.pinelang.core.PineEngine
 import org.pinelang.core.PineMetaObject

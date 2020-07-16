@@ -1,0 +1,41 @@
+site_name: Pinelang
+site_url: https://paulovap.github.com/pinelang
+repo_name: pinelang
+repo_url: https://paulovap.github.com/pinelang
+site_description: "An small scripting language for mobile development"
+site_author: Paulo Pinheiro
+remote_branch: gh-pages
+
+copyright: 'Copyright &copy; 2020 Paulo Pinheiro'
+
+theme:
+  name: 'material'
+  favicon: images/icon.png
+  logo: images/icon.png
+  palette:
+    primary: 'teal'
+    accent: 'white'
+
+extra_css:
+  - 'css/app.css'
+
+markdown_extensions:
+  - smarty
+  - codehilite:
+      guess_lang: false
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tilde
+  - tables
+
+nav:
+  - 'Overview': Readme.md

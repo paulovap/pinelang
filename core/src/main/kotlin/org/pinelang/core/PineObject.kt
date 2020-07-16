@@ -213,8 +213,14 @@ abstract class PineObject(val id: Int = -1, var name: String? = null) {
     return sig
   }
 
-  fun <T> makeCallable(name: String, lambda: () -> T): PineExpr<T> {
-    val callable = PineCallable(this, name, lambda)
+  fun makeCallable(name: String, lambda: () -> Unit): PineExpr<Unit> {
+    val callable = PineCallable(returnType = PineType.VOID, name = name, calculation=lambda)
+    callables.add(callable)
+    return callable
+  }
+
+  fun <T> makeCallable(returnType: PineType, name: String, lambda: () -> T): PineExpr<T> {
+    val callable = PineCallable(returnType = returnType, name = name, calculation=lambda)
     callables.add(callable)
     return callable
   }

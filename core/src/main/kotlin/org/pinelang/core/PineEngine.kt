@@ -205,8 +205,7 @@ class PineEngine
     val right = evalExpr(originalType, binaryExpr.right!!)
     val op = binaryExpr.op
     return when (originalType) {
-      DOUBLE -> evalNumberExpr(originalType, op, left, right)
-      INT -> evalNumberExpr(originalType, op, left, right)
+      STRING, INT, DOUBLE -> evalNumberExpr(originalType, op, left, right)
       BOOL -> evalBooleanExpr(op, left, right)
       else -> throw BinaryOpException(binaryExpr.op, left.pineType, right.pineType)
     } as PineExpr<Any?>
@@ -215,28 +214,37 @@ class PineEngine
   private fun evalNumberExpr(
       originalType: PineType, op: UByte, left: PineExpr<*>, right: PineExpr<*>
   ): PineExpr<*> {
-    if (originalType == DOUBLE) {
-      val leftCasted = left.toPineDouble()
-      return when (op) {
-        BinaryOp.PLUS -> leftCasted + right
-        BinaryOp.MINUS -> leftCasted - right
-        BinaryOp.MULTI -> leftCasted * right
-        BinaryOp.DIV -> leftCasted / right
-        BinaryOp.REMAINDER -> leftCasted % right
-        else -> throw BinaryOpException(op, left.pineType, right.pineType)
+    return when (originalType) {
+      DOUBLE -> {
+        val leftCasted = left.toPineDouble()
+        when (op) {
+          BinaryOp.PLUS -> leftCasted + right
+          BinaryOp.MINUS -> leftCasted - right
+          BinaryOp.MULTI -> leftCasted * right
+          BinaryOp.DIV -> leftCasted / right
+          BinaryOp.REMAINDER -> leftCasted % right
+          else -> throw BinaryOpException(op, left.pineType, right.pineType)
+        }
       }
-    } else if (originalType == INT) {
-      val leftCasted = left.toPineInt()
-      return when (op) {
-        BinaryOp.PLUS -> leftCasted + right
-        BinaryOp.MINUS -> leftCasted - right
-        BinaryOp.MULTI -> leftCasted * right
-        BinaryOp.DIV -> leftCasted / right
-        BinaryOp.REMAINDER -> leftCasted % right
-        else -> throw BinaryOpException(op, left.pineType, right.pineType)
+      INT -> {
+        val leftCasted = left.toPineInt()
+        when (op) {
+          BinaryOp.PLUS -> leftCasted + right
+          BinaryOp.MINUS -> leftCasted - right
+          BinaryOp.MULTI -> leftCasted * right
+          BinaryOp.DIV -> leftCasted / right
+          BinaryOp.REMAINDER -> leftCasted % right
+          else -> throw BinaryOpException(op, left.pineType, right.pineType)
+        }
       }
+      STRING -> {
+        when (op) {
+          BinaryOp.PLUS -> left.toPineString() + right
+          else -> throw BinaryOpException(op, left.pineType, right.pineType)
+        }
+      }
+      else -> throw BinaryOpException(op, left.pineType, right.pineType)
     }
-    throw BinaryOpException(op, left.pineType, right.pineType)
   }
 
   private fun evalBooleanExpr(op: UByte, left: PineExpr<*>, right: PineExpr<*>): PineExpr<*> {

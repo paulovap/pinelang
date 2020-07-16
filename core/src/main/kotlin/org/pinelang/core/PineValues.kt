@@ -38,6 +38,7 @@ import org.pinelang.ast.fbs.BinaryOp.Companion.MULTI
 import org.pinelang.ast.fbs.BinaryOp.Companion.OR
 import org.pinelang.ast.fbs.BinaryOp.Companion.PLUS
 import org.pinelang.ast.fbs.BinaryOp.Companion.REMAINDER
+import org.pinelang.ast.fbs.PrimitiveType
 
 interface PineNumber<T> {
   operator fun plus(other: PineExpr<*>): PineExpr<T>
@@ -50,29 +51,25 @@ interface PineNumber<T> {
   fun toInt(): PineExpr<Int>
 }
 
-data class PineType(val typeName: String, val type: Int) {
+data class PineType(val typeName: String, val type: UByte) {
   companion object {
-    val VOID = PineType("Void", 0)
-    val INT = PineType("Int", 1)
-    val BOOL = PineType("Bool", 2)
-    val DOUBLE = PineType("Double", 3)
-    val STRING = PineType("String", 4)
-    val OBJECT = PineType("Object", 5)
-    val LIST = PineType("List", 4)
-    val FUNCTION = PineType("Function", 5)
-    val LAMBDA = PineType("Lambda", 6)
+    val VOID = PineType("Void", PrimitiveType.Void)
+    val INT = PineType("Int", PrimitiveType.Int)
+    val BOOL = PineType("Bool", PrimitiveType.Boolean)
+    val DOUBLE = PineType("Double", PrimitiveType.Double)
+    val STRING = PineType("String", PrimitiveType.String)
+    val LIST = PineType("List", PrimitiveType.List)
+    val OBJECT = PineType("Object", PrimitiveType.ObjectProperty)
 
     fun fromUByte(type: UByte): PineType {
-      return when (type.toInt()) {
+      return when (type) {
         VOID.type -> VOID
         INT.type -> INT
         BOOL.type -> BOOL
         DOUBLE.type -> DOUBLE
         STRING.type -> STRING
-        OBJECT.type -> OBJECT
         LIST.type -> LIST
-        FUNCTION.type -> FUNCTION
-        LAMBDA.type -> LAMBDA
+        OBJECT.type -> OBJECT
         else -> throw PineScriptException("invalid PineType $type")
       }
     }
@@ -315,7 +312,7 @@ open class PineExpr<T>(
   fun isNumber() = isInt() || isDouble()
   fun isString() = pineType == PineType.STRING
   fun isObject() = pineType == PineType.OBJECT
-  fun isFunction() = pineType == PineType.FUNCTION
+  open fun isFunction() = false
   fun isList() = pineType == PineType.LIST
 
   fun toPineDouble(): PineDouble {
@@ -363,8 +360,10 @@ open class PineExpr<T>(
   }
 }
 
-class PineCallable<T>(val owner: PineObject, val name: String, val lambda: () -> T) :
-    PineExpr<T>(pineType = PineType.FUNCTION, calculation = lambda) {}
+class PineCallable<T>(val returnType: PineType, val name: String, vararg refs: PineExpr<*>, val calculation: () -> T) :
+    PineExpr<T>(pineType = returnType, refs=*refs, calculation = calculation) {
+  override fun isFunction() = true
+}
 
 fun UByte.isNumberOp() =
     this == PLUS || this == MINUS || this == MULTI || this == DIV || this == REMAINDER

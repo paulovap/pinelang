@@ -1,5 +1,2 @@
-include ':pinelangandroid'
 rootProject.name = 'pinelang'
-include 'core', 'lsp'
-
-include ':android'
+include ':pinelangandroid', ':core', ':lsp', ':android'

@@ -118,14 +118,17 @@ class TestLang {
             Item {
                 id: root
                 myInt: a.myInt + b.myInt
-                
+                myBoolean: a.myString == b.myString
+                myString: b.myString + a.myString
                 Item {
                   id: a
                   myInt: 10
+                  myString: "Hello World"
                 }
                 Item {
                   id: b
                   myInt: 25
+                  myString: "Hello World"
                 }
             }
         """.trimIndent()) as Item
@@ -145,6 +148,11 @@ class TestLang {
     assertEquals(10, item.myInt)
     assertEquals(20, a.myInt)
     assertEquals(12, b.myInt)
+
+    assertEquals(true, item.myBoolean)
+    assertEquals("Hello World", a.myString)
+    assertEquals("Hello World", b.myString)
+    assertEquals("Hello WorldHello World", item.myString)
   }
 
   @Test(expected = BinaryOpException::class)
