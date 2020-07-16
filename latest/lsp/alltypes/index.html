@@ -1,0 +1,1040 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An small scripting language for mobile development">
+      
+      
+        <link rel="canonical" href="https://paulovap.github.com/pinelang/latest/lsp/alltypes/">
+      
+      
+        <meta name="author" content="Paulo Pinheiro">
+      
+      <link rel="shortcut icon" href="../../../images/icon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>Index - Pinelang</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#009688">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../../css/app.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="teal" data-md-color-accent="white">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#all-types" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://paulovap.github.com/pinelang" title="Pinelang" class="md-header-nav__button md-logo" aria-label="Pinelang">
+      
+  <img src="../../../images/icon.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Pinelang
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Index
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://paulovap.github.com/pinelang" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pinelang
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://paulovap.github.com/pinelang" title="Pinelang" class="md-nav__button md-logo" aria-label="Pinelang">
+      
+  <img src="../../../images/icon.png" alt="logo">
+
+    </a>
+    Pinelang
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://paulovap.github.com/pinelang" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pinelang
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../Readme/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#all-types" class="md-nav__link">
+    All Types
+  </a>
+  
+    <nav class="md-nav" aria-label="All Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscodeactionclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CodeActionClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscodeactionliteralsupport" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CodeActionLiteralSupport
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscommand" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.Command
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscompletionclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CompletionClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscompletioncontext" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CompletionContext
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscompletionitem" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CompletionItem
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscompletionitemkind" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CompletionItemKind
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelscompletionprovider" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.CompletionProvider
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsconfigurationclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.ConfigurationClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsdeclarationclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.DeclarationClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsdiagnosticrelatedinformation" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.DiagnosticRelatedInformation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsdocumentlinkclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.DocumentLinkClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsdocumentsymbol" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.DocumentSymbol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsdocumentsymbolclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.DocumentSymbolClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelserrorcode" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.ErrorCode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsfoldingrangeclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.FoldingRangeClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelshoverclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.HoverClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelshoverparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.HoverParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelshoverresponse" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.HoverResponse
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspsandboxuiitem" class="md-nav__link">
+    org.pinelang.lsp.lsp.sandbox.ui.Item
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsjsonrpcclientinfo" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.JsonRPCClientInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsjsonrpcheader" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.JsonRPCHeader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsjsonrpcrequest" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.JsonRPCRequest
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsjsonrpcservercapabilitiesimpl" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.JsonRPCServerCapabilitiesImpl
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspsandboxuilabel" class="md-nav__link">
+    org.pinelang.lsp.lsp.sandbox.ui.Label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslocation" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.Location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspclientinfo" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPClientInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspcompletionitem" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPCompletionItem
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspcompletionlist" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPCompletionList
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplsplspdelegate" class="md-nav__link">
+    org.pinelang.lsp.lsp.LSPDelegate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspdiagnostic" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPDiagnostic
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspemptyparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPEmptyParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspfailurehandling" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPFailureHandling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspinitializeparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPInitializeParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspinitializeserverresult" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPInitializeServerResult
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplsplspmethod" class="md-nav__link">
+    org.pinelang.lsp.lsp.LSPMethod
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspnotification" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPNotification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplsplsprequestadapter" class="md-nav__link">
+    org.pinelang.lsp.lsp.LSPRequestAdapter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspresourceoperation" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPResourceOperation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspresponse" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPResponse
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplsplspserver" class="md-nav__link">
+    org.pinelang.lsp.lsp.LSPServer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelslspserverinfo" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.LSPServerInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglspmainsandboxuimainwindow" class="md-nav__link">
+    org.pinelang.lsp.main.sandbox.ui.MainWindow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsmarkupcontent" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.MarkupContent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsparameterinformation" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.ParameterInformation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsposition" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.Position
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelspublishdiagnosticsclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.PublishDiagnosticsClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelspublishdiagnosticsparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.PublishDiagnosticsParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsrange" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.Range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspsandboxuirectangle" class="md-nav__link">
+    org.pinelang.lsp.lsp.sandbox.ui.Rectangle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsrenameclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.RenameClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsresponseerror" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.ResponseError
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspserverimpl" class="md-nav__link">
+    org.pinelang.lsp.lsp.ServerImpl
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelssignaturehelpclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.SignatureHelpClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelssignatureinformation" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.SignatureInformation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kotlinstring" class="md-nav__link">
+    kotlin.String
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelssymbolinformation" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.SymbolInformation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelssymbolkind" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.SymbolKind
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentcompletionparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentCompletionParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentcontentchangeevent" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentContentChangeEvent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentdidchangeparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentDidChangeParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentdidopenparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentDidOpenParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentidentifier" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentIdentifier
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentitem" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentItem
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentsymbolparams" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentSymbolParams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentsync" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentSync
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentsyncclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentSyncClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentsynckind" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentSyncKind
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextdocumentsynckindadapter" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextDocumentSyncKindAdapter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelstextedit" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.TextEdit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsvalueset" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.ValueSet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsversionedtextdocumentidentifier" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.VersionedTextDocumentIdentifier
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsworkspaceclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.WorkspaceClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsworkspaceeditclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.WorkspaceEditClientCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsworkspacefolderscapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.WorkspaceFoldersCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsworkspacefoldersservercapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.WorkspaceFoldersServerCapabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelanglsplspmodelsworkspacesymbolclientcapabilities" class="md-nav__link">
+    org.pinelang.lsp.lsp.models.WorkspaceSymbolClientCapabilities
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>Index</h1>
+                
+                <h3 id="all-types">All Types<a class="headerlink" href="#all-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="orgpinelanglsplspmodelscodeactionclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-code-action-client-capabilities/">org.pinelang.lsp.lsp.models.CodeActionClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelscodeactionclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscodeactionliteralsupport"><a href="../org.pinelang.lsp.lsp.models/-code-action-literal-support/">org.pinelang.lsp.lsp.models.CodeActionLiteralSupport</a><a class="headerlink" href="#orgpinelanglsplspmodelscodeactionliteralsupport" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscommand"><a href="../org.pinelang.lsp.lsp.models/-command/">org.pinelang.lsp.lsp.models.Command</a><a class="headerlink" href="#orgpinelanglsplspmodelscommand" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscompletionclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-completion-client-capabilities/">org.pinelang.lsp.lsp.models.CompletionClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelscompletionclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscompletioncontext"><a href="../org.pinelang.lsp.lsp.models/-completion-context/">org.pinelang.lsp.lsp.models.CompletionContext</a><a class="headerlink" href="#orgpinelanglsplspmodelscompletioncontext" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscompletionitem"><a href="../org.pinelang.lsp.lsp.models/-completion-item/">org.pinelang.lsp.lsp.models.CompletionItem</a><a class="headerlink" href="#orgpinelanglsplspmodelscompletionitem" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscompletionitemkind"><a href="../org.pinelang.lsp.lsp.models/-completion-item-kind/">org.pinelang.lsp.lsp.models.CompletionItemKind</a><a class="headerlink" href="#orgpinelanglsplspmodelscompletionitemkind" title="Permanent link">&para;</a></h5>
+<p>The kind of a completion entry.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelscompletionprovider"><a href="../org.pinelang.lsp.lsp.models/-completion-provider/">org.pinelang.lsp.lsp.models.CompletionProvider</a><a class="headerlink" href="#orgpinelanglsplspmodelscompletionprovider" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsconfigurationclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-configuration-client-capabilities/">org.pinelang.lsp.lsp.models.ConfigurationClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsconfigurationclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsdeclarationclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-declaration-client-capabilities/">org.pinelang.lsp.lsp.models.DeclarationClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsdeclarationclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsdiagnosticrelatedinformation"><a href="../org.pinelang.lsp.lsp.models/-diagnostic-related-information/">org.pinelang.lsp.lsp.models.DiagnosticRelatedInformation</a><a class="headerlink" href="#orgpinelanglsplspmodelsdiagnosticrelatedinformation" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsdocumentlinkclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-document-link-client-capabilities/">org.pinelang.lsp.lsp.models.DocumentLinkClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsdocumentlinkclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsdocumentsymbol"><a href="../org.pinelang.lsp.lsp.models/-document-symbol/">org.pinelang.lsp.lsp.models.DocumentSymbol</a><a class="headerlink" href="#orgpinelanglsplspmodelsdocumentsymbol" title="Permanent link">&para;</a></h5>
+<p>Represents programming constructs like variables, classes, interfaces etc. that appear in a
+document. Document symbols can be hierarchical and they have two ranges: one that encloses its
+definition and one that points to its most interesting range, e.g. the range of an identifier.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsdocumentsymbolclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-document-symbol-client-capabilities/">org.pinelang.lsp.lsp.models.DocumentSymbolClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsdocumentsymbolclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelserrorcode"><a href="../org.pinelang.lsp.lsp.models/-error-code/">org.pinelang.lsp.lsp.models.ErrorCode</a><a class="headerlink" href="#orgpinelanglsplspmodelserrorcode" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsfoldingrangeclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-folding-range-client-capabilities/">org.pinelang.lsp.lsp.models.FoldingRangeClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsfoldingrangeclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelshoverclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-hover-client-capabilities/">org.pinelang.lsp.lsp.models.HoverClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelshoverclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelshoverparams"><a href="../org.pinelang.lsp.lsp.models/-hover-params/">org.pinelang.lsp.lsp.models.HoverParams</a><a class="headerlink" href="#orgpinelanglsplspmodelshoverparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelshoverresponse"><a href="../org.pinelang.lsp.lsp.models/-hover-response/">org.pinelang.lsp.lsp.models.HoverResponse</a><a class="headerlink" href="#orgpinelanglsplspmodelshoverresponse" title="Permanent link">&para;</a></h5>
+<p>The result of a hover request.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspsandboxuiitem"><a href="../org.pinelang.lsp.lsp.sandbox.ui/-item/">org.pinelang.lsp.lsp.sandbox.ui.Item</a><a class="headerlink" href="#orgpinelanglsplspsandboxuiitem" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsjsonrpcclientinfo"><a href="../org.pinelang.lsp.lsp.models/-json-r-p-c-client-info/">org.pinelang.lsp.lsp.models.JsonRPCClientInfo</a><a class="headerlink" href="#orgpinelanglsplspmodelsjsonrpcclientinfo" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsjsonrpcheader"><a href="../org.pinelang.lsp.lsp.models/-json-r-p-c-header/">org.pinelang.lsp.lsp.models.JsonRPCHeader</a><a class="headerlink" href="#orgpinelanglsplspmodelsjsonrpcheader" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsjsonrpcrequest"><a href="../org.pinelang.lsp.lsp.models/-json-r-p-c-request/">org.pinelang.lsp.lsp.models.JsonRPCRequest</a><a class="headerlink" href="#orgpinelanglsplspmodelsjsonrpcrequest" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsjsonrpcservercapabilitiesimpl"><a href="../org.pinelang.lsp.lsp.models/-json-r-p-c-server-capabilities-impl/">org.pinelang.lsp.lsp.models.JsonRPCServerCapabilitiesImpl</a><a class="headerlink" href="#orgpinelanglsplspmodelsjsonrpcservercapabilitiesimpl" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspsandboxuilabel"><a href="../org.pinelang.lsp.lsp.sandbox.ui/-label/">org.pinelang.lsp.lsp.sandbox.ui.Label</a><a class="headerlink" href="#orgpinelanglsplspsandboxuilabel" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslocation"><a href="../org.pinelang.lsp.lsp.models/-location/">org.pinelang.lsp.lsp.models.Location</a><a class="headerlink" href="#orgpinelanglsplspmodelslocation" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-client-capabilities/">org.pinelang.lsp.lsp.models.LSPClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelslspclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspclientinfo"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-client-info/">org.pinelang.lsp.lsp.models.LSPClientInfo</a><a class="headerlink" href="#orgpinelanglsplspmodelslspclientinfo" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspcompletionitem"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-completion-item/">org.pinelang.lsp.lsp.models.LSPCompletionItem</a><a class="headerlink" href="#orgpinelanglsplspmodelslspcompletionitem" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspcompletionlist"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-completion-list/">org.pinelang.lsp.lsp.models.LSPCompletionList</a><a class="headerlink" href="#orgpinelanglsplspmodelslspcompletionlist" title="Permanent link">&para;</a></h5>
+<p>Represents a collection of <a href="#CompletionItem">completion items</a> to be presented in the editor.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplsplspdelegate"><a href="../org.pinelang.lsp.lsp/-l-s-p-delegate/">org.pinelang.lsp.lsp.LSPDelegate</a><a class="headerlink" href="#orgpinelanglsplsplspdelegate" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspdiagnostic"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-diagnostic/">org.pinelang.lsp.lsp.models.LSPDiagnostic</a><a class="headerlink" href="#orgpinelanglsplspmodelslspdiagnostic" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspemptyparams"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-empty-params/">org.pinelang.lsp.lsp.models.LSPEmptyParams</a><a class="headerlink" href="#orgpinelanglsplspmodelslspemptyparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspfailurehandling"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-failure-handling/">org.pinelang.lsp.lsp.models.LSPFailureHandling</a><a class="headerlink" href="#orgpinelanglsplspmodelslspfailurehandling" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspinitializeparams"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-initialize-params/">org.pinelang.lsp.lsp.models.LSPInitializeParams</a><a class="headerlink" href="#orgpinelanglsplspmodelslspinitializeparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspinitializeserverresult"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-initialize-server-result/">org.pinelang.lsp.lsp.models.LSPInitializeServerResult</a><a class="headerlink" href="#orgpinelanglsplspmodelslspinitializeserverresult" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplsplspmethod"><a href="../org.pinelang.lsp.lsp/-l-s-p-method/">org.pinelang.lsp.lsp.LSPMethod</a><a class="headerlink" href="#orgpinelanglsplsplspmethod" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspnotification"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-notification/">org.pinelang.lsp.lsp.models.LSPNotification</a><a class="headerlink" href="#orgpinelanglsplspmodelslspnotification" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplsplsprequestadapter"><a href="../org.pinelang.lsp.lsp/-l-s-p-request-adapter/">org.pinelang.lsp.lsp.LSPRequestAdapter</a><a class="headerlink" href="#orgpinelanglsplsplsprequestadapter" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspresourceoperation"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-resource-operation/">org.pinelang.lsp.lsp.models.LSPResourceOperation</a><a class="headerlink" href="#orgpinelanglsplspmodelslspresourceoperation" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspresponse"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-response/">org.pinelang.lsp.lsp.models.LSPResponse</a><a class="headerlink" href="#orgpinelanglsplspmodelslspresponse" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplsplspserver"><a href="../org.pinelang.lsp.lsp/-l-s-p-server/">org.pinelang.lsp.lsp.LSPServer</a><a class="headerlink" href="#orgpinelanglsplsplspserver" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelslspserverinfo"><a href="../org.pinelang.lsp.lsp.models/-l-s-p-server-info/">org.pinelang.lsp.lsp.models.LSPServerInfo</a><a class="headerlink" href="#orgpinelanglsplspmodelslspserverinfo" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglspmainsandboxuimainwindow"><a href="../org.pinelang.lsp.main.sandbox.ui/-main-window/">org.pinelang.lsp.main.sandbox.ui.MainWindow</a><a class="headerlink" href="#orgpinelanglspmainsandboxuimainwindow" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsmarkupcontent"><a href="../org.pinelang.lsp.lsp.models/-markup-content/">org.pinelang.lsp.lsp.models.MarkupContent</a><a class="headerlink" href="#orgpinelanglsplspmodelsmarkupcontent" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsparameterinformation"><a href="../org.pinelang.lsp.lsp.models/-parameter-information/">org.pinelang.lsp.lsp.models.ParameterInformation</a><a class="headerlink" href="#orgpinelanglsplspmodelsparameterinformation" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsposition"><a href="../org.pinelang.lsp.lsp.models/-position/">org.pinelang.lsp.lsp.models.Position</a><a class="headerlink" href="#orgpinelanglsplspmodelsposition" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelspublishdiagnosticsclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-publish-diagnostics-client-capabilities/">org.pinelang.lsp.lsp.models.PublishDiagnosticsClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelspublishdiagnosticsclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelspublishdiagnosticsparams"><a href="../org.pinelang.lsp.lsp.models/-publish-diagnostics-params/">org.pinelang.lsp.lsp.models.PublishDiagnosticsParams</a><a class="headerlink" href="#orgpinelanglsplspmodelspublishdiagnosticsparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsrange"><a href="../org.pinelang.lsp.lsp.models/-range/">org.pinelang.lsp.lsp.models.Range</a><a class="headerlink" href="#orgpinelanglsplspmodelsrange" title="Permanent link">&para;</a></h5>
+<p>Selection range for a document. End position is exclusive</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspsandboxuirectangle"><a href="../org.pinelang.lsp.lsp.sandbox.ui/-rectangle/">org.pinelang.lsp.lsp.sandbox.ui.Rectangle</a><a class="headerlink" href="#orgpinelanglsplspsandboxuirectangle" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsrenameclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-rename-client-capabilities/">org.pinelang.lsp.lsp.models.RenameClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsrenameclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsresponseerror"><a href="../org.pinelang.lsp.lsp.models/-response-error/">org.pinelang.lsp.lsp.models.ResponseError</a><a class="headerlink" href="#orgpinelanglsplspmodelsresponseerror" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspserverimpl"><a href="../org.pinelang.lsp.lsp/-server-impl/">org.pinelang.lsp.lsp.ServerImpl</a><a class="headerlink" href="#orgpinelanglsplspserverimpl" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelssignaturehelpclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-signature-help-client-capabilities/">org.pinelang.lsp.lsp.models.SignatureHelpClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelssignaturehelpclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>Client Capabilities for a <a href="#SignatureHelpRequest">SignatureHelpRequest</a>.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelssignatureinformation"><a href="../org.pinelang.lsp.lsp.models/-signature-information/">org.pinelang.lsp.lsp.models.SignatureInformation</a><a class="headerlink" href="#orgpinelanglsplspmodelssignatureinformation" title="Permanent link">&para;</a></h5>
+<p>| (extensions in package org.pinelang.lsp.lsp.models)</p>
+<h5 id="kotlinstring"><a href="../org.pinelang.lsp.lsp.models/kotlin.-string/">kotlin.String</a><a class="headerlink" href="#kotlinstring" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelssymbolinformation"><a href="../org.pinelang.lsp.lsp.models/-symbol-information/">org.pinelang.lsp.lsp.models.SymbolInformation</a><a class="headerlink" href="#orgpinelanglsplspmodelssymbolinformation" title="Permanent link">&para;</a></h5>
+<p>Represents information about programming constructs like variables, classes, interfaces etc.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelssymbolkind"><a href="../org.pinelang.lsp.lsp.models/-symbol-kind/">org.pinelang.lsp.lsp.models.SymbolKind</a><a class="headerlink" href="#orgpinelanglsplspmodelssymbolkind" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-text-document-client-capabilities/">org.pinelang.lsp.lsp.models.TextDocumentClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>Text document specific client capabilities.</p>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentcompletionparams"><a href="../org.pinelang.lsp.lsp.models/-text-document-completion-params/">org.pinelang.lsp.lsp.models.TextDocumentCompletionParams</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentcompletionparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentcontentchangeevent"><a href="../org.pinelang.lsp.lsp.models/-text-document-content-change-event/">org.pinelang.lsp.lsp.models.TextDocumentContentChangeEvent</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentcontentchangeevent" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentdidchangeparams"><a href="../org.pinelang.lsp.lsp.models/-text-document-did-change-params/">org.pinelang.lsp.lsp.models.TextDocumentDidChangeParams</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentdidchangeparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentdidopenparams"><a href="../org.pinelang.lsp.lsp.models/-text-document-did-open-params/">org.pinelang.lsp.lsp.models.TextDocumentDidOpenParams</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentdidopenparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentidentifier"><a href="../org.pinelang.lsp.lsp.models/-text-document-identifier/">org.pinelang.lsp.lsp.models.TextDocumentIdentifier</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentidentifier" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentitem"><a href="../org.pinelang.lsp.lsp.models/-text-document-item/">org.pinelang.lsp.lsp.models.TextDocumentItem</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentitem" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentsymbolparams"><a href="../org.pinelang.lsp.lsp.models/-text-document-symbol-params/">org.pinelang.lsp.lsp.models.TextDocumentSymbolParams</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentsymbolparams" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentsync"><a href="../org.pinelang.lsp.lsp.models/-text-document-sync/">org.pinelang.lsp.lsp.models.TextDocumentSync</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentsync" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentsyncclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-text-document-sync-client-capabilities/">org.pinelang.lsp.lsp.models.TextDocumentSyncClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentsyncclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentsynckind"><a href="../org.pinelang.lsp.lsp.models/-text-document-sync-kind/">org.pinelang.lsp.lsp.models.TextDocumentSyncKind</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentsynckind" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextdocumentsynckindadapter"><a href="../org.pinelang.lsp.lsp.models/-text-document-sync-kind-adapter/">org.pinelang.lsp.lsp.models.TextDocumentSyncKindAdapter</a><a class="headerlink" href="#orgpinelanglsplspmodelstextdocumentsynckindadapter" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelstextedit"><a href="../org.pinelang.lsp.lsp.models/-text-edit/">org.pinelang.lsp.lsp.models.TextEdit</a><a class="headerlink" href="#orgpinelanglsplspmodelstextedit" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsvalueset"><a href="../org.pinelang.lsp.lsp.models/-value-set/">org.pinelang.lsp.lsp.models.ValueSet</a><a class="headerlink" href="#orgpinelanglsplspmodelsvalueset" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsversionedtextdocumentidentifier"><a href="../org.pinelang.lsp.lsp.models/-versioned-text-document-identifier/">org.pinelang.lsp.lsp.models.VersionedTextDocumentIdentifier</a><a class="headerlink" href="#orgpinelanglsplspmodelsversionedtextdocumentidentifier" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsworkspaceclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-workspace-client-capabilities/">org.pinelang.lsp.lsp.models.WorkspaceClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsworkspaceclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsworkspaceeditclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-workspace-edit-client-capabilities/">org.pinelang.lsp.lsp.models.WorkspaceEditClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsworkspaceeditclientcapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsworkspacefolderscapabilities"><a href="../org.pinelang.lsp.lsp.models/-workspace-folders-capabilities/">org.pinelang.lsp.lsp.models.WorkspaceFoldersCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsworkspacefolderscapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsworkspacefoldersservercapabilities"><a href="../org.pinelang.lsp.lsp.models/-workspace-folders-server-capabilities/">org.pinelang.lsp.lsp.models.WorkspaceFoldersServerCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsworkspacefoldersservercapabilities" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelanglsplspmodelsworkspacesymbolclientcapabilities"><a href="../org.pinelang.lsp.lsp.models/-workspace-symbol-client-capabilities/">org.pinelang.lsp.lsp.models.WorkspaceSymbolClientCapabilities</a><a class="headerlink" href="#orgpinelanglsplspmodelsworkspacesymbolclientcapabilities" title="Permanent link">&para;</a></h5>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 Paulo Pinheiro
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

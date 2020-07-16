@@ -1,0 +1,589 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An small scripting language for mobile development">
+      
+      
+        <link rel="canonical" href="https://paulovap.github.com/pinelang/latest/core/org.pinelang.parser/-pine-lexer/">
+      
+      
+        <meta name="author" content="Paulo Pinheiro">
+      
+      <link rel="shortcut icon" href="../../../../images/icon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>Index - Pinelang</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#009688">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../../../css/app.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="teal" data-md-color-accent="white">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pinelexer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://paulovap.github.com/pinelang" title="Pinelang" class="md-header-nav__button md-logo" aria-label="Pinelang">
+      
+  <img src="../../../../images/icon.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Pinelang
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Index
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://paulovap.github.com/pinelang" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pinelang
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://paulovap.github.com/pinelang" title="Pinelang" class="md-nav__button md-logo" aria-label="Pinelang">
+      
+  <img src="../../../../images/icon.png" alt="logo">
+
+    </a>
+    Pinelang
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://paulovap.github.com/pinelang" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pinelang
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../../Readme/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructors" class="md-nav__link">
+    Constructors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                <p><a href="../../">core</a> / <a href="../">org.pinelang.parser</a> / <a href="./">PineLexer</a></p>
+<h1 id="pinelexer">PineLexer<a class="headerlink" href="#pinelexer" title="Permanent link">&para;</a></h1>
+<p><code>open class PineLexer : Lexer</code></p>
+<h3 id="constructors">Constructors<a class="headerlink" href="#constructors" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="-init-/">&lt;init&gt;</a></td>
+<td><code>PineLexer(input: CharStream!)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="_-a-t-n/">_ATN</a></td>
+<td><code>static val _ATN: ATN!</code></td>
+</tr>
+<tr>
+<td><a href="_decision-to-d-f-a/">_decisionToDFA</a></td>
+<td><code>static val _decisionToDFA:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;DFA!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="_serialized-a-t-n/">_serializedATN</a></td>
+<td><code>static val _serializedATN:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a></td>
+</tr>
+<tr>
+<td><a href="_shared-context-cache/">_sharedContextCache</a></td>
+<td><code>static val _sharedContextCache: PredictionContextCache!</code></td>
+</tr>
+<tr>
+<td><a href="-a-n-d/">AND</a></td>
+<td><code>static val AND:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-a-n-d_-a-n-d/">AND_AND</a></td>
+<td><code>static val AND_AND:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="channel-names/">channelNames</a></td>
+<td><code>static var channelNames:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="-c-o-l-o-n/">COLON</a></td>
+<td><code>static val COLON:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-c-o-m-m-a/">COMMA</a></td>
+<td><code>static val COMMA:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-c-o-m-m-e-n-t/">COMMENT</a></td>
+<td><code>static val COMMENT:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-d-i-v/">DIV</a></td>
+<td><code>static val DIV:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-d-o-t/">DOT</a></td>
+<td><code>static val DOT:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-d-o-u-b-l-e_-q-u-o-t-e_-c-l-o-s-e/">DOUBLE_QUOTE_CLOSE</a></td>
+<td><code>static val DOUBLE_QUOTE_CLOSE:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-d-o-u-b-l-e_-q-u-o-t-e_-o-p-e-n/">DOUBLE_QUOTE_OPEN</a></td>
+<td><code>static val DOUBLE_QUOTE_OPEN:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-e-q/">EQ</a></td>
+<td><code>static val EQ:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-f-a-l-s-e/">FALSE</a></td>
+<td><code>static val FALSE:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-float-literal/">FloatLiteral</a></td>
+<td><code>static val FloatLiteral:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-i-d/">ID</a></td>
+<td><code>static val ID:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-identifier/">Identifier</a></td>
+<td><code>static val Identifier:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-i-m-p-o-r-t/">IMPORT</a></td>
+<td><code>static val IMPORT:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-integer-literal/">IntegerLiteral</a></td>
+<td><code>static val IntegerLiteral:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-l-b-r-a-c-e/">LBRACE</a></td>
+<td><code>static val LBRACE:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-l-b-r-a-c-k-e-t/">LBRACKET</a></td>
+<td><code>static val LBRACKET:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-l-i-n-e_-c-o-m-m-e-n-t/">LINE_COMMENT</a></td>
+<td><code>static val LINE_COMMENT:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-line-string/">LineString</a></td>
+<td><code>static val LineString:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-line-terminator/">LineTerminator</a></td>
+<td><code>static val LineTerminator:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-l-p-a-r-e-n/">LPAREN</a></td>
+<td><code>static val LPAREN:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-m-i-n-u-s/">MINUS</a></td>
+<td><code>static val MINUS:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="mode-names/">modeNames</a></td>
+<td><code>static var modeNames:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="-m-u-l-t-i/">MULTI</a></td>
+<td><code>static val MULTI:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-n-u-l-l/">NULL</a></td>
+<td><code>static val NULL:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-object-type/">ObjectType</a></td>
+<td><code>static val ObjectType:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-o-n/">ON</a></td>
+<td><code>static val ON:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-o-r/">OR</a></td>
+<td><code>static val OR:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-o-r_-o-r/">OR_OR</a></td>
+<td><code>static val OR_OR:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-p-l-u-s/">PLUS</a></td>
+<td><code>static val PLUS:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-q-u-e-s-t-i-o-n/">QUESTION</a></td>
+<td><code>static val QUESTION:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-r-b-r-a-c-e/">RBRACE</a></td>
+<td><code>static val RBRACE:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-r-b-r-a-c-k-e-t/">RBRACKET</a></td>
+<td><code>static val RBRACKET:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-r-e-m-a-i-n-d-e-r/">REMAINDER</a></td>
+<td><code>static val REMAINDER:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-r-e-t-u-r-n/">RETURN</a></td>
+<td><code>static val RETURN:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-r-p-a-r-e-n/">RPAREN</a></td>
+<td><code>static val RPAREN:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="rule-names/">ruleNames</a></td>
+<td><code>static val ruleNames:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="-s-e-m-i-c-o-l-o-n/">SEMICOLON</a></td>
+<td><code>static val SEMICOLON:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-s-t-r-i-n-g/">STRING</a></td>
+<td><code>static val STRING:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-s-u-f-f-i-x_-d-p/">SUFFIX_DP</a></td>
+<td><code>static val SUFFIX_DP:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-s-u-f-f-i-x_-p-x/">SUFFIX_PX</a></td>
+<td><code>static val SUFFIX_PX:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="token-names/">tokenNames</a></td>
+<td><code>static val tokenNames:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="-t-r-u-e/">TRUE</a></td>
+<td><code>static val TRUE:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+<tr>
+<td><a href="-v-o-c-a-b-u-l-a-r-y/">VOCABULARY</a></td>
+<td><code>static val VOCABULARY: Vocabulary!</code></td>
+</tr>
+<tr>
+<td><a href="-w-s/">WS</a></td>
+<td><code>static val WS:</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><code>Int</code></a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="get-a-t-n/">getATN</a></td>
+<td><code>open fun getATN(): ATN!</code></td>
+</tr>
+<tr>
+<td><a href="get-channel-names/">getChannelNames</a></td>
+<td><code>open fun getChannelNames():</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="get-grammar-file-name/">getGrammarFileName</a></td>
+<td><code>open fun getGrammarFileName():</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!</code></td>
+</tr>
+<tr>
+<td><a href="get-mode-names/">getModeNames</a></td>
+<td><code>open fun getModeNames():</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="get-rule-names/">getRuleNames</a></td>
+<td><code>open fun getRuleNames():</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="get-serialized-a-t-n/">getSerializedATN</a></td>
+<td><code>open fun getSerializedATN():</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!</code></td>
+</tr>
+<tr>
+<td><a href="get-token-names/">getTokenNames</a></td>
+<td><code>open fun ~~getTokenNames~~():</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html"><code>Array</code></a><code>&lt;</code><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><code>String</code></a><code>!&gt;!</code></td>
+</tr>
+<tr>
+<td><a href="get-vocabulary/">getVocabulary</a></td>
+<td><code>open fun getVocabulary(): Vocabulary!</code></td>
+</tr>
+</tbody>
+</table>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 Paulo Pinheiro
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

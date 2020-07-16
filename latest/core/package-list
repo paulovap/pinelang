@@ -1,0 +1,12 @@
+$dokka.format:gfm
+$dokka.linkExtension:md
+$dokka.location:org.pinelang.core$isNumberOp(kotlin.UByte)org.pinelang.core/kotlin.-u-byte/is-number-op.md
+$dokka.location:org.pinelang.util$safeAdd(kotlin.collections.MutableMap((org.pinelang.util.safeAdd.K, kotlin.collections.MutableSet((org.pinelang.util.safeAdd.V)))), org.pinelang.util.safeAdd.K, org.pinelang.util.safeAdd.V)org.pinelang.util/kotlin.collections.-mutable-map/safe-add.md
+$dokka.location:org.pinelang.util$safeGet(kotlin.collections.MutableMap((org.pinelang.util.safeGet.K, kotlin.collections.MutableSet((org.pinelang.util.safeGet.V)))), org.pinelang.util.safeGet.K)org.pinelang.util/kotlin.collections.-mutable-map/safe-get.md
+$dokka.location:org.pinelang.util$toIndexMap(kotlin.collections.List((org.pinelang.core.PineSignal)))org.pinelang.util/kotlin.collections.-list/to-index-map.md
+org.pinelang.ast
+org.pinelang.ast.fbs
+org.pinelang.core
+org.pinelang.main
+org.pinelang.parser
+org.pinelang.util

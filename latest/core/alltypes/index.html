@@ -1,0 +1,854 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An small scripting language for mobile development">
+      
+      
+        <link rel="canonical" href="https://paulovap.github.com/pinelang/latest/core/alltypes/">
+      
+      
+        <meta name="author" content="Paulo Pinheiro">
+      
+      <link rel="shortcut icon" href="../../../images/icon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>Index - Pinelang</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#009688">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../../css/app.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="teal" data-md-color-accent="white">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#all-types" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://paulovap.github.com/pinelang" title="Pinelang" class="md-header-nav__button md-logo" aria-label="Pinelang">
+      
+  <img src="../../../images/icon.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Pinelang
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Index
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://paulovap.github.com/pinelang" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pinelang
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://paulovap.github.com/pinelang" title="Pinelang" class="md-nav__button md-logo" aria-label="Pinelang">
+      
+  <img src="../../../images/icon.png" alt="logo">
+
+    </a>
+    Pinelang
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://paulovap.github.com/pinelang" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pinelang
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../Readme/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#all-types" class="md-nav__link">
+    All Types
+  </a>
+  
+    <nav class="md-nav" aria-label="All Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcoreallocator" class="md-nav__link">
+    org.pinelang.core.Allocator
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorebasesignal" class="md-nav__link">
+    org.pinelang.core.BaseSignal
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsbinaryexpr" class="md-nav__link">
+    org.pinelang.ast.fbs.BinaryExpr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsbinaryop" class="md-nav__link">
+    org.pinelang.ast.fbs.BinaryOp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorebinaryopexception" class="md-nav__link">
+    org.pinelang.core.BinaryOpException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorebinaryopnotsupportedpinescriptexception" class="md-nav__link">
+    org.pinelang.core.BinaryOpNotSupportedPineScriptException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbscallableexpr" class="md-nav__link">
+    org.pinelang.ast.fbs.CallableExpr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorechildrenlistpineprop" class="md-nav__link">
+    org.pinelang.core.ChildrenListPineProp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorecompileobjectmetadata" class="md-nav__link">
+    org.pinelang.core.CompileObjectMetaData
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorecustomflatbufferbuilder" class="md-nav__link">
+    org.pinelang.core.CustomFlatBufferBuilder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsdebuginfo" class="md-nav__link">
+    org.pinelang.ast.fbs.DebugInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsexpr" class="md-nav__link">
+    org.pinelang.ast.fbs.Expr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastexpressionvisitor" class="md-nav__link">
+    org.pinelang.ast.ExpressionVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsexprvalue" class="md-nav__link">
+    org.pinelang.ast.fbs.ExprValue
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangutilindexedmap" class="md-nav__link">
+    org.pinelang.util.IndexedMap
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangmainitem" class="md-nav__link">
+    org.pinelang.main.Item
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kotlincollectionslist" class="md-nav__link">
+    kotlin.collections.List
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcoremetaprop" class="md-nav__link">
+    org.pinelang.core.MetaProp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kotlincollectionsmutablemap" class="md-nav__link">
+    kotlin.collections.MutableMap
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsobjectdefinition" class="md-nav__link">
+    org.pinelang.ast.fbs.ObjectDefinition
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastobjectdefinitionvisitor" class="md-nav__link">
+    org.pinelang.ast.ObjectDefinitionVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineboolean" class="md-nav__link">
+    org.pinelang.core.PineBoolean
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinecallable" class="md-nav__link">
+    org.pinelang.core.PineCallable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinecompiler" class="md-nav__link">
+    org.pinelang.core.PineCompiler
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineconnection" class="md-nav__link">
+    org.pinelang.core.PineConnection
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinecontext" class="md-nav__link">
+    org.pinelang.core.PineContext
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinedouble" class="md-nav__link">
+    org.pinelang.core.PineDouble
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineengine" class="md-nav__link">
+    org.pinelang.core.PineEngine
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineexpr" class="md-nav__link">
+    org.pinelang.core.PineExpr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineint" class="md-nav__link">
+    org.pinelang.core.PineInt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangparserpinelexer" class="md-nav__link">
+    org.pinelang.parser.PineLexer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinelist" class="md-nav__link">
+    org.pinelang.core.PineList
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinemetaobject" class="md-nav__link">
+    org.pinelang.core.PineMetaObject
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinenumber" class="md-nav__link">
+    org.pinelang.core.PineNumber
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineobject" class="md-nav__link">
+    org.pinelang.core.PineObject
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepineprop" class="md-nav__link">
+    org.pinelang.core.PineProp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangparserpinescript" class="md-nav__link">
+    org.pinelang.parser.PineScript
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangparserpinescriptbaselistener" class="md-nav__link">
+    org.pinelang.parser.PineScriptBaseListener
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangparserpinescriptbasevisitor" class="md-nav__link">
+    org.pinelang.parser.PineScriptBaseVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinescriptexception" class="md-nav__link">
+    org.pinelang.core.PineScriptException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangparserpinescriptlistener" class="md-nav__link">
+    org.pinelang.parser.PineScriptListener
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinescriptparseexception" class="md-nav__link">
+    org.pinelang.core.PineScriptParseException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastpinescriptvisitor" class="md-nav__link">
+    org.pinelang.ast.PineScriptVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangparserpinescriptvisitor" class="md-nav__link">
+    org.pinelang.parser.PineScriptVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinesignal" class="md-nav__link">
+    org.pinelang.core.PineSignal
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinestring" class="md-nav__link">
+    org.pinelang.core.PineString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcorepinetype" class="md-nav__link">
+    org.pinelang.core.PineType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsposition" class="md-nav__link">
+    org.pinelang.ast.fbs.Position
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsprimitiveexpr" class="md-nav__link">
+    org.pinelang.ast.fbs.PrimitiveExpr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsprimitivetype" class="md-nav__link">
+    org.pinelang.ast.fbs.PrimitiveType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsprogram" class="md-nav__link">
+    org.pinelang.ast.fbs.Program
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastprogramvisitor" class="md-nav__link">
+    org.pinelang.ast.ProgramVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbspropdefinition" class="md-nav__link">
+    org.pinelang.ast.fbs.PropDefinition
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastpropertyvisitor" class="md-nav__link">
+    org.pinelang.ast.PropertyVisitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsproprefexpr" class="md-nav__link">
+    org.pinelang.ast.fbs.PropRefExpr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbsrange" class="md-nav__link">
+    org.pinelang.ast.fbs.Range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangastfbssignalexpr" class="md-nav__link">
+    org.pinelang.ast.fbs.SignalExpr
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orgpinelangcoreslot" class="md-nav__link">
+    org.pinelang.core.Slot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kotlinubyte" class="md-nav__link">
+    kotlin.UByte
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>Index</h1>
+                
+                <h3 id="all-types">All Types<a class="headerlink" href="#all-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="orgpinelangcoreallocator"><a href="../org.pinelang.core/-allocator/">org.pinelang.core.Allocator</a><a class="headerlink" href="#orgpinelangcoreallocator" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorebasesignal"><a href="../org.pinelang.core/-base-signal/">org.pinelang.core.BaseSignal</a><a class="headerlink" href="#orgpinelangcorebasesignal" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsbinaryexpr"><a href="../org.pinelang.ast.fbs/-binary-expr/">org.pinelang.ast.fbs.BinaryExpr</a><a class="headerlink" href="#orgpinelangastfbsbinaryexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsbinaryop"><a href="../org.pinelang.ast.fbs/-binary-op/">org.pinelang.ast.fbs.BinaryOp</a><a class="headerlink" href="#orgpinelangastfbsbinaryop" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorebinaryopexception"><a href="../org.pinelang.core/-binary-op-exception/">org.pinelang.core.BinaryOpException</a><a class="headerlink" href="#orgpinelangcorebinaryopexception" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorebinaryopnotsupportedpinescriptexception"><a href="../org.pinelang.core/-binary-op-not-supported-pine-script-exception/">org.pinelang.core.BinaryOpNotSupportedPineScriptException</a><a class="headerlink" href="#orgpinelangcorebinaryopnotsupportedpinescriptexception" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbscallableexpr"><a href="../org.pinelang.ast.fbs/-callable-expr/">org.pinelang.ast.fbs.CallableExpr</a><a class="headerlink" href="#orgpinelangastfbscallableexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorechildrenlistpineprop"><a href="../org.pinelang.core/-children-list-pine-prop/">org.pinelang.core.ChildrenListPineProp</a><a class="headerlink" href="#orgpinelangcorechildrenlistpineprop" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorecompileobjectmetadata"><a href="../org.pinelang.core/-compile-object-meta-data/">org.pinelang.core.CompileObjectMetaData</a><a class="headerlink" href="#orgpinelangcorecompileobjectmetadata" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorecustomflatbufferbuilder"><a href="../org.pinelang.core/-custom-flat-buffer-builder/">org.pinelang.core.CustomFlatBufferBuilder</a><a class="headerlink" href="#orgpinelangcorecustomflatbufferbuilder" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsdebuginfo"><a href="../org.pinelang.ast.fbs/-debug-info/">org.pinelang.ast.fbs.DebugInfo</a><a class="headerlink" href="#orgpinelangastfbsdebuginfo" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsexpr"><a href="../org.pinelang.ast.fbs/-expr/">org.pinelang.ast.fbs.Expr</a><a class="headerlink" href="#orgpinelangastfbsexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastexpressionvisitor"><a href="../org.pinelang.ast/-expression-visitor/">org.pinelang.ast.ExpressionVisitor</a><a class="headerlink" href="#orgpinelangastexpressionvisitor" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsexprvalue"><a href="../org.pinelang.ast.fbs/-expr-value/">org.pinelang.ast.fbs.ExprValue</a><a class="headerlink" href="#orgpinelangastfbsexprvalue" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangutilindexedmap"><a href="../org.pinelang.util/-indexed-map/">org.pinelang.util.IndexedMap</a><a class="headerlink" href="#orgpinelangutilindexedmap" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangmainitem"><a href="../org.pinelang.main/-item/">org.pinelang.main.Item</a><a class="headerlink" href="#orgpinelangmainitem" title="Permanent link">&para;</a></h5>
+<p>| (extensions in package org.pinelang.util)</p>
+<h5 id="kotlincollectionslist"><a href="../org.pinelang.util/kotlin.collections.-list/">kotlin.collections.List</a><a class="headerlink" href="#kotlincollectionslist" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcoremetaprop"><a href="../org.pinelang.core/-meta-prop/">org.pinelang.core.MetaProp</a><a class="headerlink" href="#orgpinelangcoremetaprop" title="Permanent link">&para;</a></h5>
+<p>| (extensions in package org.pinelang.util)</p>
+<h5 id="kotlincollectionsmutablemap"><a href="../org.pinelang.util/kotlin.collections.-mutable-map/">kotlin.collections.MutableMap</a><a class="headerlink" href="#kotlincollectionsmutablemap" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsobjectdefinition"><a href="../org.pinelang.ast.fbs/-object-definition/">org.pinelang.ast.fbs.ObjectDefinition</a><a class="headerlink" href="#orgpinelangastfbsobjectdefinition" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastobjectdefinitionvisitor"><a href="../org.pinelang.ast/-object-definition-visitor/">org.pinelang.ast.ObjectDefinitionVisitor</a><a class="headerlink" href="#orgpinelangastobjectdefinitionvisitor" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineboolean"><a href="../org.pinelang.core/-pine-boolean/">org.pinelang.core.PineBoolean</a><a class="headerlink" href="#orgpinelangcorepineboolean" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinecallable"><a href="../org.pinelang.core/-pine-callable/">org.pinelang.core.PineCallable</a><a class="headerlink" href="#orgpinelangcorepinecallable" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinecompiler"><a href="../org.pinelang.core/-pine-compiler/">org.pinelang.core.PineCompiler</a><a class="headerlink" href="#orgpinelangcorepinecompiler" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineconnection"><a href="../org.pinelang.core/-pine-connection/">org.pinelang.core.PineConnection</a><a class="headerlink" href="#orgpinelangcorepineconnection" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinecontext"><a href="../org.pinelang.core/-pine-context/">org.pinelang.core.PineContext</a><a class="headerlink" href="#orgpinelangcorepinecontext" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinedouble"><a href="../org.pinelang.core/-pine-double/">org.pinelang.core.PineDouble</a><a class="headerlink" href="#orgpinelangcorepinedouble" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineengine"><a href="../org.pinelang.core/-pine-engine/">org.pinelang.core.PineEngine</a><a class="headerlink" href="#orgpinelangcorepineengine" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineexpr"><a href="../org.pinelang.core/-pine-expr/">org.pinelang.core.PineExpr</a><a class="headerlink" href="#orgpinelangcorepineexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineint"><a href="../org.pinelang.core/-pine-int/">org.pinelang.core.PineInt</a><a class="headerlink" href="#orgpinelangcorepineint" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangparserpinelexer"><a href="../org.pinelang.parser/-pine-lexer/">org.pinelang.parser.PineLexer</a><a class="headerlink" href="#orgpinelangparserpinelexer" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinelist"><a href="../org.pinelang.core/-pine-list/">org.pinelang.core.PineList</a><a class="headerlink" href="#orgpinelangcorepinelist" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinemetaobject"><a href="../org.pinelang.core/-pine-meta-object/">org.pinelang.core.PineMetaObject</a><a class="headerlink" href="#orgpinelangcorepinemetaobject" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinenumber"><a href="../org.pinelang.core/-pine-number/">org.pinelang.core.PineNumber</a><a class="headerlink" href="#orgpinelangcorepinenumber" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineobject"><a href="../org.pinelang.core/-pine-object/">org.pinelang.core.PineObject</a><a class="headerlink" href="#orgpinelangcorepineobject" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepineprop"><a href="../org.pinelang.core/-pine-prop/">org.pinelang.core.PineProp</a><a class="headerlink" href="#orgpinelangcorepineprop" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangparserpinescript"><a href="../org.pinelang.parser/-pine-script/">org.pinelang.parser.PineScript</a><a class="headerlink" href="#orgpinelangparserpinescript" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangparserpinescriptbaselistener"><a href="../org.pinelang.parser/-pine-script-base-listener/">org.pinelang.parser.PineScriptBaseListener</a><a class="headerlink" href="#orgpinelangparserpinescriptbaselistener" title="Permanent link">&para;</a></h5>
+<p>This class provides an empty implementation of <code>`[</code>PineScriptListener`](../org.pinelang.parser/-pine-script-listener/index.md), which can be extended to create a listener which only needs to handle a subset of the available methods.</p>
+<p>|</p>
+<h5 id="orgpinelangparserpinescriptbasevisitor"><a href="../org.pinelang.parser/-pine-script-base-visitor/">org.pinelang.parser.PineScriptBaseVisitor</a><a class="headerlink" href="#orgpinelangparserpinescriptbasevisitor" title="Permanent link">&para;</a></h5>
+<p>This class provides an empty implementation of <code>`[</code>PineScriptVisitor`](../org.pinelang.parser/-pine-script-visitor/index.md), which can be extended to create a visitor which only needs to handle a subset of the available methods.</p>
+<p>|</p>
+<h5 id="orgpinelangcorepinescriptexception"><a href="../org.pinelang.core/-pine-script-exception/">org.pinelang.core.PineScriptException</a><a class="headerlink" href="#orgpinelangcorepinescriptexception" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangparserpinescriptlistener"><a href="../org.pinelang.parser/-pine-script-listener/">org.pinelang.parser.PineScriptListener</a><a class="headerlink" href="#orgpinelangparserpinescriptlistener" title="Permanent link">&para;</a></h5>
+<p>This interface defines a complete listener for a parse tree produced by <code>`[</code>PineScript`](../org.pinelang.parser/-pine-script/index.md).</p>
+<p>|</p>
+<h5 id="orgpinelangcorepinescriptparseexception"><a href="../org.pinelang.core/-pine-script-parse-exception/">org.pinelang.core.PineScriptParseException</a><a class="headerlink" href="#orgpinelangcorepinescriptparseexception" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastpinescriptvisitor"><a href="../org.pinelang.ast/-pine-script-visitor/">org.pinelang.ast.PineScriptVisitor</a><a class="headerlink" href="#orgpinelangastpinescriptvisitor" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangparserpinescriptvisitor"><a href="../org.pinelang.parser/-pine-script-visitor/">org.pinelang.parser.PineScriptVisitor</a><a class="headerlink" href="#orgpinelangparserpinescriptvisitor" title="Permanent link">&para;</a></h5>
+<p>This interface defines a complete generic visitor for a parse tree produced by <code>`[</code>PineScript`](../org.pinelang.parser/-pine-script/index.md).</p>
+<p>|</p>
+<h5 id="orgpinelangcorepinesignal"><a href="../org.pinelang.core/-pine-signal/">org.pinelang.core.PineSignal</a><a class="headerlink" href="#orgpinelangcorepinesignal" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinestring"><a href="../org.pinelang.core/-pine-string/">org.pinelang.core.PineString</a><a class="headerlink" href="#orgpinelangcorepinestring" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcorepinetype"><a href="../org.pinelang.core/-pine-type/">org.pinelang.core.PineType</a><a class="headerlink" href="#orgpinelangcorepinetype" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsposition"><a href="../org.pinelang.ast.fbs/-position/">org.pinelang.ast.fbs.Position</a><a class="headerlink" href="#orgpinelangastfbsposition" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsprimitiveexpr"><a href="../org.pinelang.ast.fbs/-primitive-expr/">org.pinelang.ast.fbs.PrimitiveExpr</a><a class="headerlink" href="#orgpinelangastfbsprimitiveexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsprimitivetype"><a href="../org.pinelang.ast.fbs/-primitive-type/">org.pinelang.ast.fbs.PrimitiveType</a><a class="headerlink" href="#orgpinelangastfbsprimitivetype" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsprogram"><a href="../org.pinelang.ast.fbs/-program/">org.pinelang.ast.fbs.Program</a><a class="headerlink" href="#orgpinelangastfbsprogram" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastprogramvisitor"><a href="../org.pinelang.ast/-program-visitor/">org.pinelang.ast.ProgramVisitor</a><a class="headerlink" href="#orgpinelangastprogramvisitor" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbspropdefinition"><a href="../org.pinelang.ast.fbs/-prop-definition/">org.pinelang.ast.fbs.PropDefinition</a><a class="headerlink" href="#orgpinelangastfbspropdefinition" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastpropertyvisitor"><a href="../org.pinelang.ast/-property-visitor/">org.pinelang.ast.PropertyVisitor</a><a class="headerlink" href="#orgpinelangastpropertyvisitor" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsproprefexpr"><a href="../org.pinelang.ast.fbs/-prop-ref-expr/">org.pinelang.ast.fbs.PropRefExpr</a><a class="headerlink" href="#orgpinelangastfbsproprefexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbsrange"><a href="../org.pinelang.ast.fbs/-range/">org.pinelang.ast.fbs.Range</a><a class="headerlink" href="#orgpinelangastfbsrange" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangastfbssignalexpr"><a href="../org.pinelang.ast.fbs/-signal-expr/">org.pinelang.ast.fbs.SignalExpr</a><a class="headerlink" href="#orgpinelangastfbssignalexpr" title="Permanent link">&para;</a></h5>
+<p>|</p>
+<h5 id="orgpinelangcoreslot"><a href="../org.pinelang.core/-slot/">org.pinelang.core.Slot</a><a class="headerlink" href="#orgpinelangcoreslot" title="Permanent link">&para;</a></h5>
+<p>| (extensions in package org.pinelang.core)</p>
+<h5 id="kotlinubyte"><a href="../org.pinelang.core/kotlin.-u-byte/">kotlin.UByte</a><a class="headerlink" href="#kotlinubyte" title="Permanent link">&para;</a></h5>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 Paulo Pinheiro
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

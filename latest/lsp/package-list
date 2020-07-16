@@ -1,0 +1,10 @@
+$dokka.format:gfm
+$dokka.linkExtension:md
+$dokka.location:org.pinelang.lsp.lsp.models$charIndexAtPosition(kotlin.String, org.pinelang.lsp.lsp.models.Position)org.pinelang.lsp.lsp.models/kotlin.-string/char-index-at-position.md
+$dokka.location:org.pinelang.lsp.lsp.models$getNextWordToRight(kotlin.String, kotlin.Int)org.pinelang.lsp.lsp.models/kotlin.-string/get-next-word-to-right.md
+$dokka.location:org.pinelang.lsp.lsp.models$getObjectTypeEnclosingPosition(kotlin.String, org.pinelang.lsp.lsp.models.Position)org.pinelang.lsp.lsp.models/kotlin.-string/get-object-type-enclosing-position.md
+$dokka.location:org.pinelang.lsp.lsp.models$getWordAtPosition(kotlin.String, org.pinelang.lsp.lsp.models.Position)org.pinelang.lsp.lsp.models/kotlin.-string/get-word-at-position.md
+org.pinelang.lsp.lsp
+org.pinelang.lsp.lsp.models
+org.pinelang.lsp.lsp.sandbox.ui
+org.pinelang.lsp.main.sandbox.ui
