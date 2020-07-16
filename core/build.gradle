@@ -64,6 +64,6 @@ task flatbuffer(type: Exec) {
 
 compileKotlin {
 //TODO: add a way to generate flatbuffers on circleCI
-  dependsOn flatbuffer
+  // dependsOn flatbuffer
   dependsOn generateGrammarSource
 }
