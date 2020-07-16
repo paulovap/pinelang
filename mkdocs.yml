@@ -38,7 +38,6 @@ markdown_extensions:
   - tables
 
 nav:
-  - 'Overview': Readme.md
   - 'API Docs':
       - 'core': latest/core/index.md
       - 'lsp': latest/lsp/index.md
