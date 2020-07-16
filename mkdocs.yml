@@ -39,3 +39,7 @@ markdown_extensions:
 
 nav:
   - 'Overview': Readme.md
+  - 'API Docs':
+      - 'core': latest/core/index.md
+      - 'lsp': latest/lsp/index.md
+      - 'android': latest/android/index.md
