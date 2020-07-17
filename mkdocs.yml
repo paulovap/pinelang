@@ -10,8 +10,8 @@ copyright: 'Copyright &copy; 2020 Paulo Pinheiro'
 
 theme:
   name: 'material'
-  favicon: images/icon.png
-  logo: images/icon.png
+  favicon: images/pine_logo.png
+  logo: images/pine_logo.png
   palette:
     primary: 'teal'
     accent: 'white'
