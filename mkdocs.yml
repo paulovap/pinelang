@@ -1,7 +1,7 @@
 site_name: Pinelang
 site_url: https://paulovap.github.com/pinelang
-repo_name: pinelang
-repo_url: https://paulovap.github.com/pinelang
+repo_name: Pinelang
+repo_url: https://github.com/paulovap/pinelang
 site_description: "An small scripting language for mobile development"
 site_author: Paulo Pinheiro
 remote_branch: gh-pages
@@ -16,13 +16,13 @@ theme:
     primary: 'teal'
     accent: 'white'
 
-extra_css:
-  - 'css/app.css'
+#extra_css:
+#  - 'css/app.css'
 
 markdown_extensions:
   - smarty
   - codehilite:
-      guess_lang: false
+      guess_lang: true
   - footnotes
   - meta
   - toc:
