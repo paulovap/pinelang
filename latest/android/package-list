@@ -1,0 +1,4 @@
+$dokka.format:gfm
+$dokka.linkExtension:md
+$dokka.location:org.pinelang.android.compose$parseColor(kotlin.String)org.pinelang.android.compose/kotlin.-string/parse-color.md
+org.pinelang.android.compose
