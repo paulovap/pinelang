@@ -36,14 +36,9 @@ version '1.0-SNAPSHOT'
 
 
 dokka {
-	outputFormat = 'html'
-	outputDirectory = "$buildDir/dokka"
 	subProjects = [':pinelangandroid', 'core', 'lsp', ':android']
 	if (project.file('Module.md').exists()) {
 		includes = ['Module.md']
-	}
-	externalDocumentationLink {
-		url = URL("https://paulovap.github.io/pinelang/")
 	}
 }
 
