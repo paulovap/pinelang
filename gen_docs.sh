@@ -52,5 +52,5 @@ cp Readme.md docs/index.md
 mkdocs gh-deploy
 
 # Delete our temp folder
-#cd ..
-#rm -rf $DIR
+cd ..
+rm -rf $DIR

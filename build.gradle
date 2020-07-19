@@ -39,6 +39,9 @@ dokka {
 	outputFormat = 'html'
 	outputDirectory = "$buildDir/dokka"
 	subProjects = [':pinelangandroid', 'core', 'lsp', ':android']
+	if (project.file('Module.md').exists()) {
+		includes = ['Module.md']
+	}
 }
 
 allprojects {
