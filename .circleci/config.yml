@@ -40,4 +40,10 @@ jobs:
 
       # run tests!
       - run: ./gradlew check
+        branches:
+          ignore:
+            - gh-pages
       - run: ./gradlew test
+        branches:
+          ignore:
+            - gh-pages
