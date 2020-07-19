@@ -73,7 +73,7 @@ dependencies {
 	androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
-	implementation project(path: ":core")
+	api project(path: ":core")
 	implementation project(path: ":lsp")
 
 	implementation("io.coil-kt:coil:0.11.0")

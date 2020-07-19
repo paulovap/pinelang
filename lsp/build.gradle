@@ -12,7 +12,7 @@ afterEvaluate { project ->
 
 dependencies {
 
-	implementation project(path: ":core")
+	api project(path: ":core")
 
 	implementation "io.netty:netty-all:4.1.16.Final"
 

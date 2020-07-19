@@ -21,7 +21,8 @@ git clone $REPO $DIR
 cd $DIR
 
 # Generate the API docs
-./gradlew build :core:dokka :lsp:dokka
+./gradlew assemble
+./gradlew :core:dokka :lsp:dokka :android:dokka
 
 # Dokka filenames like `-http-url/index.md` don't work well with MkDocs <title> tags.
 # Assign metadata to the file's first Markdown heading.
