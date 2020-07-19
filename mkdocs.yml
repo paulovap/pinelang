@@ -39,6 +39,6 @@ markdown_extensions:
 
 nav:
   - 'API Docs':
-      - 'core': latest/core/Module.md
-      - 'lsp': latest/lsp/Module.md
-      - 'android': latest/android/Module.md
+      - 'core': latest/core/index.md
+      - 'lsp': latest/lsp/index.md
+      - 'android': latest/android/index.md

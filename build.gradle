@@ -42,6 +42,9 @@ dokka {
 	if (project.file('Module.md').exists()) {
 		includes = ['Module.md']
 	}
+	externalDocumentationLink {
+		url = URL("https://paulovap.github.io/pinelang/")
+	}
 }
 
 allprojects {
