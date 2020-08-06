@@ -1,0 +1,36 @@
+
+// Set up everything required for releasing on Bintray
+ext {
+    bintrayRepo = 'Pinelang'
+    bintrayUserOrg = 'paulovap'
+    bintrayName = "${GROUP}:${POM_ARTIFACT_ID}"
+    bintrayDescription = POM_DESCRIPTION
+    projectUrl = POM_URL
+    issuesUrl = 'https://github.com/paulovap/pinelang/issues'
+    scmUrl = POM_SCM_URL
+    scmConnection = POM_SCM_CONNECTION
+    scmDeveloperConnection = POM_SCM_DEV_CONNECTION
+
+    publishedGroupId = GROUP
+    libraryName = 'pinelang'
+    artifact = 'pinelang'
+
+    developerId = POM_DEVELOPER_ID
+    developerName = POM_DEVELOPER_NAME
+
+    projectLicenses = {
+        license {
+            name = POM_LICENSE_NAME
+            url = POM_LICENSE_URL
+            distribution = POM_LICENSE_DIST
+        }
+    }
+}
+
+plugins.withId("com.android.library") {
+// Set up the Android Maven publication (POM etc.)
+    apply from: rootProject.file('gradle/android-maven-install.gradle')
+}
+
+// Upload to Bintray
+apply from: rootProject.file('gradle/bintray.gradle')

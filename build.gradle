@@ -16,9 +16,11 @@ buildscript {
 
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-		classpath 'com.android.tools.build:gradle:4.2.0-alpha04'
+		classpath 'com.android.tools.build:gradle:4.2.0-alpha07'
 		classpath "androidx.benchmark:benchmark-gradle-plugin:1.0.0"
 		classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
+		classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:${GRADLE_BINTRAY_PLUGIN_VERSION}"
+		classpath "com.github.dcendents:android-maven-gradle-plugin:${ANDROID_MAVEN_GRADLE_PLUGIN_VERSION}"
 
 	}
 }
@@ -26,14 +28,18 @@ buildscript {
 plugins {
 	id 'org.jetbrains.kotlin.jvm' version '1.3.72'
 	id "com.diffplug.gradle.spotless" version "4.5.1"
-	id 'org.jetbrains.dokka' version '0.10.1'
+	id 'org.jetbrains.dokka' version "${dokka_version}"
 }
 
 apply plugin: 'antlr'
 
-group 'com.flexscript'
+group 'org.pinelang'
 version '1.0-SNAPSHOT'
 
+ext.forceReleaseBuild = project.hasProperty('forceReleaseBuild')
+ext.isRelease = { forceReleaseBuild ||
+		['uploadArchives', 'bintrayUpload'].any { gradle.startParameter.taskNames.contains(it) } }
+ext.isSnapshot = { VERSION_NAME.endsWith('-SNAPSHOT') }
 
 dokka {
 	subProjects = [':pinelangandroid', 'core', 'lsp', ':android']

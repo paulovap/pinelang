@@ -3,6 +3,11 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm'
 }
 
+apply plugin: 'maven'
+
+project.group = GROUP
+version = VERSION_NAME
+
 afterEvaluate { project ->
 	project.tasks.dokka {
 		outputDirectory = "$rootDir/docs/latest"
@@ -26,3 +31,16 @@ dependencies {
 	implementation 'com.google.flatbuffers:flatbuffers-java:1.12.0'
 	implementation 'net.sf.squirrel-sql.thirdparty-non-maven:com-fifesoft-rsyntaxtextarea:1.0.0'
 }
+
+// Upload to Bintray
+apply from: rootProject.file('gradle/release-bintray.gradle')
+
+// Upload directly to standard Maven Central (for SNAPSHOTS)
+apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+
+task sourcesJar(type: Jar) {
+	from sourceSets.main.java.srcDirs
+	archiveClassifier.set('sources')
+}
+
+artifacts.add('archives', sourcesJar)
