@@ -11,9 +11,6 @@ version = VERSION_NAME
 
 dependencies {
 
-	// Moshi
-	implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
-	implementation("com.squareup.moshi:moshi:1.9.2")
 	// Kotlin
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 	implementation "org.jetbrains.kotlin:kotlin-test-junit5"
