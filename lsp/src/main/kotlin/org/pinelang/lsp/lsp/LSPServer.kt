@@ -37,7 +37,6 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
@@ -136,7 +135,7 @@ fun jsonRPCHeader(data: String): JsonRPCHeader {
 class LSPRequestAdapter : JsonAdapter<JsonRPCRequest>() {
 
   private val moshi =
-      Moshi.Builder().add(TextDocumentSyncKindAdapter()).add(KotlinJsonAdapterFactory()).build()
+      Moshi.Builder().add(TextDocumentSyncKindAdapter()).build()
 
   @FromJson
   override fun fromJson(reader: JsonReader): JsonRPCRequest? {
@@ -170,7 +169,6 @@ class LSPServer(private val delegate: LSPDelegate) {
       Moshi.Builder()
           .add(TextDocumentSyncKindAdapter())
           .add(LSPRequestAdapter())
-          .add(KotlinJsonAdapterFactory())
           .build()
 
   private fun jsonRPCRequest(data: String): JsonRPCRequest {

@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id 'org.jetbrains.kotlin.jvm'
+	id "org.jetbrains.kotlin.kapt"
 }
 
 apply plugin: 'maven'
@@ -22,7 +23,8 @@ dependencies {
 	implementation "io.netty:netty-all:4.1.16.Final"
 
 	// Moshi
-	implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+	//implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+	kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.3")
 	implementation("com.squareup.moshi:moshi:1.9.2")
 	implementation("com.squareup.moshi:moshi-adapters:1.8.0")
 	// Kotlin
