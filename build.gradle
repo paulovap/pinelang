@@ -1,8 +1,10 @@
 
 buildscript {
 	ext.compose_version = '0.1.0-dev14'
-	ext.kotlin_version = '1.3.72'
+	ext.kotlin_version = '1.4.0-rc'
 	ext.dokka_version = '0.10.1'
+    ext.gradle_bintray_plugin_version = "1.8.0"
+	ext.android_maven_gradle_plugin_version = 2.1
 
 	repositories {
 		google()
@@ -19,8 +21,8 @@ buildscript {
 		classpath 'com.android.tools.build:gradle:4.2.0-alpha07'
 		classpath "androidx.benchmark:benchmark-gradle-plugin:1.0.0"
 		classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
-		classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:${GRADLE_BINTRAY_PLUGIN_VERSION}"
-		classpath "com.github.dcendents:android-maven-gradle-plugin:${ANDROID_MAVEN_GRADLE_PLUGIN_VERSION}"
+		classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:${gradle_bintray_plugin_version}"
+		classpath "com.github.dcendents:android-maven-gradle-plugin:${android_maven_gradle_plugin_version}"
 
 	}
 }
